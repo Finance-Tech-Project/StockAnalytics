@@ -19,4 +19,6 @@ public interface UserAccountService {
 
 	void changePassword(String login, String newPassword);
 
+	void sendTemporaryPassword(String login);
+
 }

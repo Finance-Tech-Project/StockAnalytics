@@ -16,6 +16,8 @@ public class UserAccount {
 	@Id
 	String login;
 	@Setter
+	String email;
+	@Setter
 	String password;
 	@Setter
 	String firstName;
@@ -33,6 +35,7 @@ public class UserAccount {
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.email=email;
 	}
 
 	public boolean addRole(String role) {

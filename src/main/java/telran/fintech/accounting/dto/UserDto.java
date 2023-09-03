@@ -14,6 +14,7 @@ import lombok.Singular;
 @Builder
 public class UserDto {
 	String login;
+	String email;
 	String firstName;
 	String lastName;
 	@Singular

@@ -26,6 +26,10 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
@@ -57,6 +61,17 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					 <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <logger name="telran.fintech.accounting.service.UserAccountServiceImpl" level="INFO"/>
+    
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
