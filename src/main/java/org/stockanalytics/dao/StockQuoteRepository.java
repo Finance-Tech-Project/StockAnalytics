@@ -1,0 +1,27 @@
+package org.stockanalytics.dao;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.stockanalytics.model.StockQuote;
+import org.stockanalytics.model.Symbol;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDate> {
+    @Query("select r from StockQuote r where r.id.symbol = :index and r.id.date = :date")
+    StockQuote getByIndexAndDate(@Param("index") String index,
+                                 @Param("date") LocalDate date);
+
+    @Query("select r from StockQuote r where r.id.symbol = :symbol and r.id.date between :startdate and :enddate")
+    List<StockQuote> findAllByIdIdAndDateBetween(@Param("symbol") Symbol symbol,
+                                                 @Param("startdate") LocalDate startDate,
+                                                 @Param("enddate") LocalDate endDate);
+
+    @Query("select distinct r.id.symbol from StockQuote r")
+    List<String> findAllIndexes();
+
+    @Query("select r.id.date from StockQuote r where r.id.symbol = :index order by r.id.date")
+    List<LocalDate> findAllDatedByIndex(@Param("index") String s);
+}
