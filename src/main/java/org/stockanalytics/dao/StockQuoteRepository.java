@@ -20,8 +20,13 @@ public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDat
                                                  @Param("enddate") LocalDate endDate);
 
     @Query("select distinct r.id.symbol from StockQuote r")
-    List<String> findAllIndexes();
+    List<String> getAllSymbols();
 
     @Query("select r.id.date from StockQuote r where r.id.symbol = :index order by r.id.date")
-    List<LocalDate> findAllDatedByIndex(@Param("index") String s);
+    List<LocalDate> findAllDatedBySymbol(@Param("index") String s);
+
+    List<StockQuote> findAllById_Symbol(Symbol symbol);
+    boolean existsById_Symbol(Symbol symbol);
+
+    List<Symbol> getSymbolsFromStockQuotes();
 }

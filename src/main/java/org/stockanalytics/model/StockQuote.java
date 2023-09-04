@@ -20,7 +20,7 @@ public class StockQuote {
     Double high;
     Double low;
     Double close;
-    Double volume;
+    Long volume;
 
     public LocalDate getDate() {
         return getId().getDate();

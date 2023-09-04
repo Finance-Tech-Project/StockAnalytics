@@ -1,5 +1,6 @@
 package org.stockanalytics.model;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
@@ -19,6 +20,6 @@ public class Symbol {
     String exchange;
     String industryCategory;
     String type;
-    @NonNull
-    SymbolStatus status;
+    @NotNull
+    boolean status;
 }

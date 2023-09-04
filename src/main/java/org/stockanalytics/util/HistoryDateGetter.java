@@ -1,5 +1,6 @@
 package org.stockanalytics.util;
 
+
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.stockanalytics.dto.StockQuoteDto;
+import org.stockanalytics.model.Symbol;
 
 import java.io.StringReader;
 import java.time.LocalDate;
@@ -18,7 +20,7 @@ public class HistoryDateGetter {
 
 
 
-    public List<StockQuoteDto> getAllHistoryStockQuotes(String symbol) {
+    public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol) {
         LocalDate startDate = LocalDate.of(2001,1,1);
         long startTimestamp = startDate.atStartOfDay().toInstant(ZoneOffset.UTC).getEpochSecond();
         LocalDate endDate = LocalDate.now().minusDays(1);

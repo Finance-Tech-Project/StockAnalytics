@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.stockanalytics.dto.SymbolDto;
 import org.stockanalytics.service.SymbolService;
+import org.stockanalytics.service.SymbolServiceInterface;
 
 import java.util.List;
 
@@ -22,8 +23,7 @@ public class SymbolController {
     }
 
     @GetMapping(path = "/allsymbols")
-    public List<SymbolDto> findAllSymbols() {
-        return symbolService.findAllSymbols();
+    public List<SymbolDto> getAllSymbols() {
+        return symbolService.getAllSymbols();
     }
-
 }
