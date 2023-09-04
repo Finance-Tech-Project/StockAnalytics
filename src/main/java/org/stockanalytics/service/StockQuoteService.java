@@ -2,6 +2,7 @@ package org.stockanalytics.service;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.stockanalytics.dao.StockQuoteRepository;
 import org.stockanalytics.dao.SymbolRepository;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Repository
 public class StockQuoteService implements StockQuoteServiceInterface {
 
 //    private final String HISTORY_API_URL = "https://query1.finance.yahoo.com/v7/finance/download/%s?period1=-631159200&period2=%s&interval=1d&events=history";
@@ -66,13 +68,6 @@ final StockQuoteRepository stockQuoteRepository;
                 .collect(Collectors.toList());
         return processor.getAllQuoteLists(list, dateFrom, dateTo);
     }
-
-//    @Override
-    public Symbol getSymbol(String ticker) {
-        Symbol symbol = symbolRepository.findById(ticker).get();
-        return symbol;
-    }
-
 
     public List<List<StockQuoteDto>> findDatesInterval(String symbolName, String firstDate, String lastDate) {
         return null;

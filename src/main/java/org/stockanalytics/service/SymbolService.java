@@ -2,6 +2,7 @@ package org.stockanalytics.service;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Repository
 @RequiredArgsConstructor
 public class SymbolService implements SymbolServiceInterface {
     private final SymbolRepository symbolRepository;
@@ -59,6 +61,10 @@ public class SymbolService implements SymbolServiceInterface {
                 .status(false)
                 .build();
         return newSymbol == null ? null : symbolRepository.save(newSymbol);
+    }
+    public Symbol getSymbol(String ticker) {
+        Symbol symbol = symbolRepository.findById(ticker).get();
+        return symbol;
     }
 
 }

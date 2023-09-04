@@ -28,5 +28,5 @@ public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDat
     List<StockQuote> findAllById_Symbol(Symbol symbol);
     boolean existsById_Symbol(Symbol symbol);
 
-    List<Symbol> getSymbolsFromStockQuotes();
+//    List<Symbol> getSymbolsFromStockQuotes();
 }
