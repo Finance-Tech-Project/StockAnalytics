@@ -39,7 +39,7 @@ final StockQuoteRepository stockQuoteRepository;
     @Transactional
     public List<List<StockQuoteDto>> getData(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
 
-        if (stockQuoteRepository.existsById_Symbol(symbol)) {
+        if (symbol.getStatus() != 0) {
             return getQuotesByPeriodAndTicker(dateFrom, dateTo, symbol);
         } else {
             List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);

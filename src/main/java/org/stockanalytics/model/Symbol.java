@@ -21,5 +21,5 @@ public class Symbol {
     String industryCategory;
     String type;
     @NotNull
-    boolean status;
+    int status;
 }

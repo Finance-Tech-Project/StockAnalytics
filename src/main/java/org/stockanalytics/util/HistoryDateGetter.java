@@ -25,9 +25,9 @@ public class HistoryDateGetter {
         long startTimestamp = startDate.atStartOfDay().toInstant(ZoneOffset.UTC).getEpochSecond();
         LocalDate endDate = LocalDate.now().minusDays(1);
         long endTimestamp = endDate.atStartOfDay().toInstant(ZoneOffset.UTC).getEpochSecond();
-
+        String ticker = symbol.getName();
         String BASE_URL = "https://query1.finance.yahoo.com/v7/finance/download/%s";
-        String urlString = String.format(BASE_URL, symbol) +
+        String urlString = String.format(BASE_URL, ticker) +
                 "?period1=" + startTimestamp +
                 "&period2=" + endTimestamp +
                 "&interval=" + "1d" +
@@ -45,6 +45,7 @@ public class HistoryDateGetter {
         String csvData = response.getBody();
         CSVReader csvReader = null;
         if (csvData != null) {
+            symbol.setStatus(1);
             csvReader = new CSVReader(new StringReader(csvData));
         }
         CsvToBean<StockQuoteDto> csvToBean = null;
