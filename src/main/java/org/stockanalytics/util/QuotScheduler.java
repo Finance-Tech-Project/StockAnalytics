@@ -29,6 +29,7 @@ public class QuotScheduler {
     final StockQuoteService stockQuoteService;
     final DateGetter getter;
 
+
     @Scheduled(cron = "0 0 * * * 1-5") // Расписание в формате cron
     public void updateData() {
         List<Symbol> sym = symbolRepository.findAllByStatusIsGreaterThan(0);
