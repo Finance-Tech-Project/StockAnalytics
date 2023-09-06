@@ -1,10 +1,10 @@
-package org.stockanalytics.dto;
+package com.stockanalytics.dto;
 
 
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvCustomBindByName;
+import com.stockanalytics.util.LocalDateConverter;
 import lombok.*;
-import org.stockanalytics.util.LocalDateConverter;
 
 import java.time.LocalDate;
 

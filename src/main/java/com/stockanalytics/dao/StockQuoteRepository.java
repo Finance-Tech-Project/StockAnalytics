@@ -1,10 +1,10 @@
-package org.stockanalytics.dao;
+package com.stockanalytics.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.stockanalytics.model.StockQuote;
-import org.stockanalytics.model.Symbol;
+import com.stockanalytics.model.StockQuote;
+import com.stockanalytics.model.Symbol;
 
 import java.time.LocalDate;
 import java.util.List;

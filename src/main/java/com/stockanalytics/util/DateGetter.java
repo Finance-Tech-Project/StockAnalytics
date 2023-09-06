@@ -1,4 +1,4 @@
-package org.stockanalytics.util;
+package com.stockanalytics.util;
 
 
 import com.opencsv.CSVReader;
@@ -9,8 +9,8 @@ import lombok.Setter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-import org.stockanalytics.dto.StockQuoteDto;
-import org.stockanalytics.model.Symbol;
+import com.stockanalytics.dto.StockQuoteDto;
+import com.stockanalytics.model.Symbol;
 
 import java.io.StringReader;
 import java.time.LocalDate;

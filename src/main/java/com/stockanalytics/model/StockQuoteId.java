@@ -1,4 +1,4 @@
-package org.stockanalytics.model;
+package com.stockanalytics.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

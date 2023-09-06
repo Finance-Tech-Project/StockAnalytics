@@ -1,9 +1,9 @@
-package org.stockanalytics.controller;
+package com.stockanalytics.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.stockanalytics.dto.SymbolDto;
-import org.stockanalytics.service.SymbolService;
+import com.stockanalytics.dto.SymbolDto;
+import com.stockanalytics.service.SymbolService;
 
 import java.util.List;
 

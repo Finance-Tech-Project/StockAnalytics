@@ -1,23 +1,18 @@
-package org.stockanalytics.util;
+package com.stockanalytics.util;
 
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.stockanalytics.dao.StockQuoteRepository;
-import org.stockanalytics.dao.SymbolRepository;
-import org.stockanalytics.dto.StockQuoteDto;
-import org.stockanalytics.model.StockQuote;
-import org.stockanalytics.model.StockQuoteId;
-import org.stockanalytics.model.Symbol;
-import org.stockanalytics.service.StockQuoteService;
+import com.stockanalytics.dao.StockQuoteRepository;
+import com.stockanalytics.dao.SymbolRepository;
+import com.stockanalytics.dto.StockQuoteDto;
+import com.stockanalytics.model.StockQuote;
+import com.stockanalytics.model.StockQuoteId;
+import com.stockanalytics.model.Symbol;
+import com.stockanalytics.service.StockQuoteService;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 
