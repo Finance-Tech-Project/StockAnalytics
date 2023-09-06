@@ -1,11 +1,11 @@
-package org.stockanalytics.util;
+package com.stockanalytics.util;
 
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.stockanalytics.dto.StockQuoteDto;
+import com.stockanalytics.dto.StockQuoteDto;
 
 
 import java.io.IOException;

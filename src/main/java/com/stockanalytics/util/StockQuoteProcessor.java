@@ -1,7 +1,7 @@
-package org.stockanalytics.util;
+package com.stockanalytics.util;
 
 import lombok.NoArgsConstructor;
-import org.stockanalytics.dto.StockQuoteDto;
+import com.stockanalytics.dto.StockQuoteDto;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

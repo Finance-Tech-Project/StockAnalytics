@@ -1,11 +1,11 @@
-package org.stockanalytics.controller;
+package com.stockanalytics.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.stockanalytics.dto.StockQuoteDto;
-import org.stockanalytics.model.Symbol;
-import org.stockanalytics.service.StockQuoteService;
-import org.stockanalytics.service.SymbolService;
+import com.stockanalytics.dto.StockQuoteDto;
+import com.stockanalytics.model.Symbol;
+import com.stockanalytics.service.StockQuoteService;
+import com.stockanalytics.service.SymbolService;
 
 import java.time.LocalDate;
 import java.util.List;

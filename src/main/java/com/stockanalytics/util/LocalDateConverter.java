@@ -1,4 +1,4 @@
-package org.stockanalytics.util;
+package com.stockanalytics.util;
 
 import com.opencsv.bean.AbstractBeanField;
 

@@ -1,4 +1,4 @@
-package org.stockanalytics.model;
+package com.stockanalytics.model;
 
 import com.sun.istack.NotNull;
 import lombok.*;

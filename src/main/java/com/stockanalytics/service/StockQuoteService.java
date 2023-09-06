@@ -1,16 +1,16 @@
-package org.stockanalytics.service;
+package com.stockanalytics.service;
 
+import com.stockanalytics.dao.StockQuoteRepository;
+import com.stockanalytics.dao.SymbolRepository;
+import com.stockanalytics.dto.StockQuoteDto;
+import com.stockanalytics.model.StockQuote;
+import com.stockanalytics.model.StockQuoteId;
+import com.stockanalytics.model.Symbol;
+import com.stockanalytics.util.DateGetter;
+import com.stockanalytics.util.StockQuoteProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-import org.stockanalytics.dao.StockQuoteRepository;
-import org.stockanalytics.dao.SymbolRepository;
-import org.stockanalytics.dto.StockQuoteDto;
-import org.stockanalytics.model.StockQuote;
-import org.stockanalytics.model.StockQuoteId;
-import org.stockanalytics.model.Symbol;
-import org.stockanalytics.util.DateGetter;
-import org.stockanalytics.util.StockQuoteProcessor;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ public class StockQuoteService {
 
 final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
-    final  StockQuoteProcessor processor = new StockQuoteProcessor();
+    final StockQuoteProcessor processor = new StockQuoteProcessor();
     DateGetter getter = new DateGetter();
 
     @Transactional

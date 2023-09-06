@@ -1,4 +1,4 @@
-package org.stockanalytics.dto;
+package com.stockanalytics.dto;
 
 import lombok.*;
 

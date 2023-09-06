@@ -1,4 +1,4 @@
-package org.stockanalytics.configuration;
+package com.stockanalytics.configuration;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
