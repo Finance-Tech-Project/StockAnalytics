@@ -45,14 +45,13 @@ public class StockQuoteProcessor {
     public List<StockQuoteDto> getMonthlyStockQuotes(List<StockQuoteDto> quotes, LocalDate dateFrom, LocalDate dateTo) {
         LocalDate start = YearMonth.from(dateFrom).atDay(1);
         LocalDate end = dateTo.withDayOfMonth(dateTo.getMonth().length(dateTo.isLeapYear()));
-         List<StockQuoteDto> res = quotes.stream()
-                .filter(quote -> quote.getDate().isAfter(start.minusDays(1)) && quote.getDate().isBefore(end.plusDays(1)))
-                .collect(Collectors.groupingBy(quote -> YearMonth.from(quote.getDate())))
-                .values().stream()
-                .map(this::calculateMonthlyQuote)
-                .sorted(Comparator.comparing(StockQuoteDto::getDate))
-                .collect(Collectors.toList());
-        return res;
+        return quotes.stream()
+               .filter(quote -> quote.getDate().isAfter(start.minusDays(1)) && quote.getDate().isBefore(end.plusDays(1)))
+               .collect(Collectors.groupingBy(quote -> YearMonth.from(quote.getDate())))
+               .values().stream()
+               .map(this::calculateMonthlyQuote)
+               .sorted(Comparator.comparing(StockQuoteDto::getDate))
+               .collect(Collectors.toList());
     }
 
     public List<StockQuoteDto> getYearlyStockQuotes(List<StockQuoteDto> quotes, LocalDate dateFrom, LocalDate dateTo) {
@@ -87,7 +86,6 @@ public class StockQuoteProcessor {
         Long volume = quotes.stream().mapToLong(StockQuoteDto::getVolume).sum();
         return new StockQuoteDto(startingDate, open, high, low, close, volume);
     }
-
 
     public List<List<StockQuoteDto>> getAllQuoteLists(List<StockQuoteDto> quotes, LocalDate dateFrom, LocalDate dateTo) {
         List<StockQuoteDto> daylyQuotes = getDailyStockQuotes(quotes, dateFrom, dateTo);

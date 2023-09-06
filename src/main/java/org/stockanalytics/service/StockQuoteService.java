@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Repository
-public class StockQuoteService implements StockQuoteServiceInterface {
+public class StockQuoteService {
 
 final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
-    StockQuoteProcessor processor = new StockQuoteProcessor();
+    final  StockQuoteProcessor processor = new StockQuoteProcessor();
     DateGetter getter = new DateGetter();
 
     @Transactional
@@ -49,6 +49,7 @@ final StockQuoteRepository stockQuoteRepository;
             return processor.getAllQuoteLists(result, dateFrom, dateTo);
         }
     }
+
     public List<List<StockQuoteDto>> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
         List<StockQuote> quotes = stockQuoteRepository.findAllById_Symbol(symbol);
         LocalDate start = dateFrom.withMonth(1).withDayOfMonth(1);

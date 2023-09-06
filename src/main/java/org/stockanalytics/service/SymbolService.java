@@ -21,18 +21,16 @@ import java.util.stream.Collectors;
 @Service
 @Repository
 @RequiredArgsConstructor
-public class SymbolService implements SymbolServiceInterface {
+public class SymbolService {
     private final SymbolRepository symbolRepository;
     private final ModelMapper modelMapper;
 
-    //    @Override
     public int addSymbolsFromList(List<String> symbolNames) {
         return symbolNames.stream()
                 .map(sn -> loadSymbolFromYf(sn) == null ? 0 : 1)
                 .reduce(0, Integer::sum);
     }
 
-    //    @Override
     public List<SymbolDto> getAllSymbols() {
         return symbolRepository.findAll().stream()
                 .map(t -> modelMapper.map(t, SymbolDto.class))
@@ -45,33 +43,6 @@ public class SymbolService implements SymbolServiceInterface {
        }
         String SYMBOL_API_URL = "https://query2.finance.yahoo.com/v1/finance/search?q=%s";
         RestTemplate restTemplate = new RestTemplate();
-//        @Getter
-//        @Setter
-//        class YfSymbolDto {
-//            private String symbol;
-//            private String exchange;
-//            private String shortname;
-//            private String longname;
-//            private String sector;
-//            private String industry;
-//            private String typeDisp;
-//        }
-////        @Getter
-//        @Setter
-//        class YfSymbolListDto {
-//            private List<YfSymbolDto> quotes;
-//
-//        }
-//        YfSymbolListDto yfSymbolListDto;
-//            try {
-//                yfSymbolListDto = restTemplate.getForObject(String.format(SYMBOL_API_URL, symbolName), YfSymbolListDto.class);
-//            } catch (HttpClientErrorException e) {
-//                return null;
-//            }
-//            YfSymbolDto yfSymbolDto = yfSymbolListDto.getQuotes().stream()
-//                    .filter(q -> symbolName.equals(q.getSymbol()))
-//                    .findAny()
-//                    .orElseThrow();
         ResponseEntity<String> response = restTemplate.exchange(
                 String.format(SYMBOL_API_URL, symbolName),
                 HttpMethod.GET,

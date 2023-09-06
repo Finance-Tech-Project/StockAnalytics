@@ -27,11 +27,7 @@ public class DateGetter {
 
     public List<StockQuoteDto> getHistoryStockQuotes(LocalDate startDate, LocalDate endDate, Symbol symbol) {
         ZoneId newYorkZone = ZoneId.of("America/New_York");
-
-        // Получите текущее время в Нью-Йорке
         ZonedDateTime currentTimeInNewYork = ZonedDateTime.now(newYorkZone);
-
-        // Получите ZoneOffset для текущего времени в Нью-Йорке
         ZoneOffset offset = currentTimeInNewYork.getOffset();
         long startTimestamp = startDate.atStartOfDay().toInstant(offset).getEpochSecond();
         long endTimestamp = endDate.atStartOfDay().toInstant(offset).getEpochSecond();

@@ -17,5 +17,4 @@ public class ModelMapperConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT);
         return modelMapper;
     }
-
 }

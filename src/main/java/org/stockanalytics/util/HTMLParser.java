@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-
 public class HTMLParser {
     public String ticker;
     public LocalDate dateFrom;
