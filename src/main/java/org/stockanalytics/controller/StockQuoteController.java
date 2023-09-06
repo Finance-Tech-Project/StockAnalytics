@@ -18,12 +18,12 @@ public class StockQuoteController {
     private final StockQuoteService stockQuoteService;
     private  final SymbolService symbolService;
 
-    @GetMapping(path = "/ticker/daily/symbol/{symbolName}/{firstDate}/{lastDate}")
-    public List<List<StockQuoteDto>> findDatesInterval(@PathVariable String symbolName,
-                                                       @PathVariable String firstDate,
-                                                       @PathVariable String lastDate) {
-        return stockQuoteService.findDatesInterval(symbolName, firstDate, lastDate);
-    }
+//    @GetMapping(path = "/ticker/daily/symbol/{symbolName}/{firstDate}/{lastDate}")
+//    public List<List<StockQuoteDto>> findDatesInterval(@PathVariable String symbolName,
+//                                                       @PathVariable String firstDate,
+//                                                       @PathVariable String lastDate) {
+//        return stockQuoteService.findDatesInterval(symbolName, firstDate, lastDate);
+//    }
     @GetMapping("/quote/history")
     public List<List<StockQuoteDto>> getHistoryBySymbol (@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker ){
 

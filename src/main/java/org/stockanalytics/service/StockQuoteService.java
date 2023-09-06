@@ -1,7 +1,6 @@
 package org.stockanalytics.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.stockanalytics.dao.StockQuoteRepository;
@@ -10,7 +9,7 @@ import org.stockanalytics.dto.StockQuoteDto;
 import org.stockanalytics.model.StockQuote;
 import org.stockanalytics.model.StockQuoteId;
 import org.stockanalytics.model.Symbol;
-import org.stockanalytics.util.HistoryDateGetter;
+import org.stockanalytics.util.DateGetter;
 import org.stockanalytics.util.StockQuoteProcessor;
 
 import javax.transaction.Transactional;
@@ -24,23 +23,15 @@ import java.util.stream.Collectors;
 @Repository
 public class StockQuoteService implements StockQuoteServiceInterface {
 
-//    private final String HISTORY_API_URL = "https://query1.finance.yahoo.com/v7/finance/download/%s?period1=-631159200&period2=%s&interval=1d&events=history";
 final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
-    ModelMapper mapper = new ModelMapper();
     StockQuoteProcessor processor = new StockQuoteProcessor();
-    HistoryDateGetter getter = new HistoryDateGetter();
+    DateGetter getter = new DateGetter();
 
-//    @Override
-//    public List<List<StockQuoteDto>> findDatesInterval(String symbolName, String firstDate, String lastDate) {
-//        return null;
-//    }
-//    @Override
     @Transactional
     public List<List<StockQuoteDto>> getData(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
-
         if (symbol.getStatus() != 0) {
-            return getQuotesByPeriodAndTicker(dateFrom, dateTo, symbol);
+            return getQuotesByPeriod(dateFrom, dateTo, symbol);
         } else {
             List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);
             List<StockQuote> stockQuotes = new ArrayList<>();
@@ -58,7 +49,7 @@ final StockQuoteRepository stockQuoteRepository;
             return processor.getAllQuoteLists(result, dateFrom, dateTo);
         }
     }
-    public List<List<StockQuoteDto>> getQuotesByPeriodAndTicker(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
+    public List<List<StockQuoteDto>> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
         List<StockQuote> quotes = stockQuoteRepository.findAllById_Symbol(symbol);
         LocalDate start = dateFrom.withMonth(1).withDayOfMonth(1);
         LocalDate end = dateTo.withMonth(12).withDayOfMonth(31);
@@ -69,7 +60,4 @@ final StockQuoteRepository stockQuoteRepository;
         return processor.getAllQuoteLists(list, dateFrom, dateTo);
     }
 
-    public List<List<StockQuoteDto>> findDatesInterval(String symbolName, String firstDate, String lastDate) {
-        return null;
-    }
 }

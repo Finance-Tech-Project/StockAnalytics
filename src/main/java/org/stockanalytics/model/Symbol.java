@@ -13,6 +13,7 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Getter
 @Setter
+
 public class Symbol {
     @Id
     String name;

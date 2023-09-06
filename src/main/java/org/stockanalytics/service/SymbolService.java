@@ -40,6 +40,9 @@ public class SymbolService implements SymbolServiceInterface {
     }
 
     public Symbol loadSymbolFromYf(String symbolName) {
+       if (symbolRepository.existsById(symbolName)){
+           return null;
+       }
         String SYMBOL_API_URL = "https://query2.finance.yahoo.com/v1/finance/search?q=%s";
         RestTemplate restTemplate = new RestTemplate();
 //        @Getter
@@ -75,7 +78,6 @@ public class SymbolService implements SymbolServiceInterface {
                 null,
                 String.class
         );
-        System.out.println(response.getBody());
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(response.getBody(), JsonObject.class);
         JsonArray quotesArray = jsonObject.getAsJsonArray("quotes");
