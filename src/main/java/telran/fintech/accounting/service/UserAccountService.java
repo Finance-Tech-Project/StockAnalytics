@@ -21,4 +21,6 @@ public interface UserAccountService {
 
 	void sendTemporaryPassword(String login);
 
+	String getPasswordLink(String login);
+
 }

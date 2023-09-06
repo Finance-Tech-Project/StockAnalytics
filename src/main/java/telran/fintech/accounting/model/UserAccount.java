@@ -1,28 +1,35 @@
 package telran.fintech.accounting.model;
 
 import java.util.HashSet;
+
 import java.util.Set;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.hibernate.annotations.Table;
 
+//import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+@AllArgsConstructor
 
 @Getter
-@Document(collection = "users")
+@Entity
+//@Document(collection = "FIN_TechUsers")
 public class UserAccount {
 	@Id
-	String login;
+private	String login;
 	@Setter
-	String email;
+	private	String email;
 	@Setter
-	String password;
+	private	String password;
 	@Setter
-	String firstName;
+	private	String firstName;
 	@Setter
-	String lastName;
+	private String lastName;
 	Set<String> roles;
 	
 	public UserAccount() {

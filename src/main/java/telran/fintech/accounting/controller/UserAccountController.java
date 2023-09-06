@@ -79,4 +79,9 @@ public class UserAccountController {
 
 	}
 
+	@GetMapping("/recovery/{login}")
+	public String getPasswordLink(@PathVariable String login) {
+		return userAccountService.getPasswordLink(login);
+	}
+
 }

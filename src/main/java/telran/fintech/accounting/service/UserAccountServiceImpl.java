@@ -68,6 +68,22 @@ public class UserAccountServiceImpl implements UserAccountService {
 	}
 
 	@Override
+	public String getPasswordLink(String login) {
+		String tempPassword = UUID.randomUUID().toString();
+
+		UserDto userDto = getUser(login);
+	
+		String toEmail = userDto.getEmail();
+		try {
+			emailSenderService.sendEmail(toEmail, "This is temporary password", tempPassword);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tempPassword;
+	}
+
+	@Override
 	public UserDto getUser(String login) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(userAccount, UserDto.class);
