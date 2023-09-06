@@ -30,7 +30,7 @@ public class QuotScheduler {
     final DateGetter getter;
 
 
-    @Scheduled(cron = "0 0 * * * 1-5") // Расписание в формате cron
+    @Scheduled(cron = "0 0 * * * 1-5") //
     public void updateData() {
         List<Symbol> sym = symbolRepository.findAllByStatusIsGreaterThan(0);
         for (Symbol symbol : sym){
