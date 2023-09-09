@@ -62,4 +62,21 @@ public class DateGetter {
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol){
         return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now().minusDays(1), symbol);
     }
+
+    public void getStatistcs(String ticker){
+        String BASE_URL = "https://query1.finance.yahoo.com/v6/finance/quoteSummary/%s?modules=defaultKeyStatistics";
+        String urlString = String.format(BASE_URL, ticker);
+
+
+        System.out.println(urlString);
+        ResponseEntity<String> response = restTemplate.exchange(
+                urlString,
+                HttpMethod.GET,
+                null,
+                String.class
+        );
+
+        String csvData = response.getBody();
+        System.out.println(csvData);
+    }
 }

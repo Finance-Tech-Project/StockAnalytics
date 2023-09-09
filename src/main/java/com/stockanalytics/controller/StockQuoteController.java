@@ -6,6 +6,7 @@ import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.service.StockQuoteService;
 import com.stockanalytics.service.SymbolService;
+import com.stockanalytics.dto.StatisticsDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +24,11 @@ public class StockQuoteController {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
         return stockQuoteService.getData(start, end, symbol);
+    }
+
+    @GetMapping("/statistics")
+    public StatisticsDto getStatistics(@RequestParam String ticker) {
+        return symbolService.getStatistics(ticker);
     }
 
 }

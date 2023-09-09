@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.stockanalytics.dao.SymbolRepository;
+import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.SymbolDto;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
@@ -68,5 +69,9 @@ public class SymbolService {
     public Symbol getSymbol (String ticker){
         Optional<Symbol> opt = symbolRepository.findById(ticker);
         return opt.orElse(null);
+    }
+
+    public StatisticsDto getStatistics(String ticker) {
+        return null;
     }
 }
