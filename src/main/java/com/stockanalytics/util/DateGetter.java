@@ -4,6 +4,7 @@ package com.stockanalytics.util;
 import com.opencsv.CSVReader;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
+import com.stockanalytics.dto.StatisticsDto;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpMethod;
@@ -63,7 +64,7 @@ public class DateGetter {
         return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now().minusDays(1), symbol);
     }
 
-    public void getStatistcs(String ticker){
+    public StatisticsDto getStatistcs(String ticker){
         String BASE_URL = "https://query1.finance.yahoo.com/v6/finance/quoteSummary/%s?modules=defaultKeyStatistics";
         String urlString = String.format(BASE_URL, ticker);
 
@@ -78,5 +79,7 @@ public class DateGetter {
 
         String csvData = response.getBody();
         System.out.println(csvData);
+
+        return null;
     }
 }

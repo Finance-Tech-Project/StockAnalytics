@@ -7,6 +7,7 @@ import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.SymbolDto;
 import com.stockanalytics.model.Symbol;
+import com.stockanalytics.util.DateGetter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class SymbolService {
     private final SymbolRepository symbolRepository;
     private final ModelMapper modelMapper;
+    private final DateGetter getter;
 
     public int addSymbolsFromList(List<String> symbolNames) {
         return symbolNames.stream()
@@ -72,6 +74,6 @@ public class SymbolService {
     }
 
     public StatisticsDto getStatistics(String ticker) {
-        return null;
+        return getter.getStatistcs(ticker);
     }
 }
