@@ -1,4 +1,4 @@
-package telran.fintech.configuration;
+package com.stockanalytics.configuration;
 
 import java.util.Properties;
 
@@ -14,15 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ServiceConfiguration {
-	@Bean
-    ModelMapper getModelMapper() {
-    	ModelMapper modelMapper = new ModelMapper();
-    	modelMapper.getConfiguration()
-    				.setFieldMatchingEnabled(true)
-    				.setFieldAccessLevel(AccessLevel.PRIVATE)
-    				.setMatchingStrategy(MatchingStrategies.STRICT);
-		return modelMapper;
-	}
+	
 	
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {

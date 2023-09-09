@@ -1,4 +1,4 @@
-package telran.fintech.accounting.dto;
+package com.stockanalytics.accounting.dto;
 
 import lombok.Getter;
 

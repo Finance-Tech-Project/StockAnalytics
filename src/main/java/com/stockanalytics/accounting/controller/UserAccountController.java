@@ -1,6 +1,7 @@
-package telran.fintech.accounting.controller;
+package com.stockanalytics.accounting.controller;
 
 import java.security.Principal;
+
 
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -19,11 +20,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import telran.fintech.accounting.dto.RolesDto;
-import telran.fintech.accounting.dto.UserDto;
-import telran.fintech.accounting.dto.UserEditDto;
-import telran.fintech.accounting.dto.UserRegisterDto;
-import telran.fintech.accounting.service.UserAccountService;
+import com.stockanalytics.accounting.dto.RolesDto;
+import com.stockanalytics.accounting.dto.UserDto;
+import com.stockanalytics.accounting.dto.UserEditDto;
+import com.stockanalytics.accounting.dto.UserRegisterDto;
+import com.stockanalytics.accounting.service.UserAccountService;
 
 @RestController
 @RequestMapping("/account")

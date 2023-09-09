@@ -1,16 +1,18 @@
-package telran.fintech.accounting.model;
+package com.stockanalytics.accounting.model;
 
 import java.util.HashSet;
+
+
 
 import java.util.Set;
 
 import org.hibernate.annotations.Table;
 
 //import org.springframework.data.mongodb.core.mapping.Document;
-
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import javax.persistence.*;
+//import jakarta.persistence.EmbeddedId;
+//import jakarta.persistence.Entity;
+//import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +20,7 @@ import lombok.Setter;
 
 @Getter
 @Entity
+
 //@Document(collection = "FIN_TechUsers")
 public class UserAccount {
 	@Id
@@ -30,6 +33,7 @@ private	String login;
 	private	String firstName;
 	@Setter
 	private String lastName;
+	@ElementCollection
 	Set<String> roles;
 	
 	public UserAccount() {

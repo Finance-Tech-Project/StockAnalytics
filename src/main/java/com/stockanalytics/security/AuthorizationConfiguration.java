@@ -1,4 +1,4 @@
-package telran.fintech.security;
+package com.stockanalytics.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,21 +18,21 @@ public class AuthorizationConfiguration {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests(authorize -> authorize
-        		.requestMatchers("/account/register", "/forum/posts/**")
+        		.mvcMatchers("/account/register", "/forum/posts/**")
         			.permitAll()
-        		.requestMatchers("/account/user/{login}/role/{role}")
+        		.mvcMatchers("/account/user/{login}/role/{role}")
         			.hasRole("ADMINISTRATOR")
-        		.requestMatchers(HttpMethod.PUT, "/account/user/{login}")
+        		.mvcMatchers(HttpMethod.PUT, "/account/user/{login}")
         			.access("#login == authentication.name")
-        		.requestMatchers(HttpMethod.DELETE, "/account/user/{login}")
+        		.mvcMatchers(HttpMethod.DELETE, "/account/user/{login}")
         			.access("#login == authentication.name or hasRole('ADMINISTRATOR')")
-        		.requestMatchers(HttpMethod.POST, "/forum/post/{author}")
+        		.mvcMatchers(HttpMethod.POST, "/forum/post/{author}")
         			.access("#author == authentication.name")
-        		.requestMatchers(HttpMethod.PUT, "/forum/post/{id}/comment/{author}")
+        		.mvcMatchers(HttpMethod.PUT, "/forum/post/{id}/comment/{author}")
         			.access("#author == authentication.name")
-        		.requestMatchers(HttpMethod.PUT, "/forum/post/{id}")
+        		.mvcMatchers(HttpMethod.PUT, "/forum/post/{id}")
         			.access("@customSecurity.checkPostAuthor(#id, authentication.name)")
-        		.requestMatchers(HttpMethod.DELETE, "/forum/post/{id}")
+        		.mvcMatchers(HttpMethod.DELETE, "/forum/post/{id}")
         			.access("@customSecurity.checkPostAuthor(#id, authentication.name) or hasRole('MODERATOR')")
         		.anyRequest()
         			.authenticated()

@@ -1,6 +1,7 @@
-package telran.fintech.accounting.service;
+package com.stockanalytics.accounting.service;
 
 import java.util.UUID;
+
 import java.util.regex.Pattern;
 
 import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
@@ -9,15 +10,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import telran.fintech.accounting.EmailService.EmailSenderService;
-import telran.fintech.accounting.dao.UserAccountRepository;
-import telran.fintech.accounting.dto.RolesDto;
-import telran.fintech.accounting.dto.UserDto;
-import telran.fintech.accounting.dto.UserEditDto;
-import telran.fintech.accounting.dto.UserRegisterDto;
-import telran.fintech.accounting.dto.exceptions.UserExistsException;
-import telran.fintech.accounting.dto.exceptions.UserNotFoundException;
-import telran.fintech.accounting.model.UserAccount;
+import com.stockanalytics.accounting.EmailService.EmailSenderService;
+import com.stockanalytics.accounting.dao.UserAccountRepository;
+import com.stockanalytics.accounting.dto.RolesDto;
+import com.stockanalytics.accounting.dto.UserDto;
+import com.stockanalytics.accounting.dto.UserEditDto;
+import com.stockanalytics.accounting.dto.UserRegisterDto;
+import com.stockanalytics.accounting.dto.exceptions.UserExistsException;
+import com.stockanalytics.accounting.dto.exceptions.UserNotFoundException;
+import com.stockanalytics.accounting.model.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

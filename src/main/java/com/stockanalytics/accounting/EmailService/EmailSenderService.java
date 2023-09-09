@@ -1,4 +1,4 @@
-package telran.fintech.accounting.EmailService;
+package com.stockanalytics.accounting.EmailService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

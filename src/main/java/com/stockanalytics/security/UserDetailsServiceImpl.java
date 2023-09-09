@@ -1,6 +1,7 @@
-package telran.fintech.security;
+package com.stockanalytics.security;
 
 import org.springframework.security.core.authority.AuthorityUtils;
+
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -8,8 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import telran.fintech.accounting.dao.UserAccountRepository;
-import telran.fintech.accounting.model.UserAccount;
+import com.stockanalytics.accounting.dao.UserAccountRepository;
+import com.stockanalytics.accounting.model.UserAccount;
 
 @Service
 @RequiredArgsConstructor

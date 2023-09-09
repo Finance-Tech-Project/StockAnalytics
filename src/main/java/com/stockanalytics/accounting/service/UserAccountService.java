@@ -1,9 +1,9 @@
-package telran.fintech.accounting.service;
+package com.stockanalytics.accounting.service;
 
-import telran.fintech.accounting.dto.RolesDto;
-import telran.fintech.accounting.dto.UserDto;
-import telran.fintech.accounting.dto.UserEditDto;
-import telran.fintech.accounting.dto.UserRegisterDto;
+import com.stockanalytics.accounting.dto.RolesDto;
+import com.stockanalytics.accounting.dto.UserDto;
+import com.stockanalytics.accounting.dto.UserEditDto;
+import com.stockanalytics.accounting.dto.UserRegisterDto;
 
 public interface UserAccountService {
 
