@@ -4,10 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.stockanalytics.dao.SymbolRepository;
-import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.SymbolDto;
 import com.stockanalytics.model.Symbol;
-import com.stockanalytics.util.DateGetter;
+import com.stockanalytics.util.DataGetter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpMethod;
@@ -26,7 +25,8 @@ import java.util.stream.Collectors;
 public class SymbolService {
     private final SymbolRepository symbolRepository;
     private final ModelMapper modelMapper;
-    private final DateGetter getter;
+    private final DataGetter getter;
+
 
     public int addSymbolsFromList(List<String> symbolNames) {
         return symbolNames.stream()
@@ -73,7 +73,7 @@ public class SymbolService {
         return opt.orElse(null);
     }
 
-    public StatisticsDto getStatistics(String ticker) {
-        return getter.getStatistcs(ticker);
-    }
+//    public Map getStatistics(Symbol symbol) throws JsonProcessingException {
+//        return getter.getDataForStatistics(symbol);
+//    }
 }

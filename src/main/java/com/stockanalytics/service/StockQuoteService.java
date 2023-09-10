@@ -2,20 +2,23 @@ package com.stockanalytics.service;
 
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dao.SymbolRepository;
+import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.StockQuoteId;
 import com.stockanalytics.model.Symbol;
-import com.stockanalytics.util.DateGetter;
+import com.stockanalytics.util.DataGetter;
 import com.stockanalytics.util.StockQuoteProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class StockQuoteService {
 final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final StockQuoteProcessor processor = new StockQuoteProcessor();
-    DateGetter getter = new DateGetter();
+    DataGetter getter = new DataGetter();
 
     @Transactional
     public List<List<StockQuoteDto>> getData(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
@@ -61,4 +64,8 @@ final StockQuoteRepository stockQuoteRepository;
         return processor.getAllQuoteLists(list, dateFrom, dateTo);
     }
 
+    public List<StatisticsDto> getStatistics(Symbol symbol) throws IOException {
+        Map<String, String> parameters = getter.getDataForStatistics(symbol);
+        return  null;
+    }
 }

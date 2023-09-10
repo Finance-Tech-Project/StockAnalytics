@@ -3,12 +3,12 @@ package com.stockanalytics.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.stockanalytics.util.DateGetter;
+import com.stockanalytics.util.DataGetter;
 
 @Configuration
 public class DateGetterConfig {
     @Bean
-    DateGetter dateGetter() {
-        return new DateGetter();
+    DataGetter dateGetter() {
+        return new DataGetter();
     }
 }

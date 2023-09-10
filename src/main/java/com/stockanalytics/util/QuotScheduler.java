@@ -22,7 +22,7 @@ public class QuotScheduler {
     final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final StockQuoteService stockQuoteService;
-    final DateGetter getter;
+    final DataGetter getter;
 
 
     @Scheduled(cron = "0 0 * * * 1-5") //
