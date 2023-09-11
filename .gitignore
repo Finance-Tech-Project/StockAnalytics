@@ -2,7 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-
+.settings
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
@@ -13,14 +13,13 @@ target/
 *.ipr
 *.jar
 .idea
-.settings
+
 
 ### Eclipse ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
 .springBeans
 .sts4-cache
 
@@ -41,3 +40,5 @@ build/
 .DS_Store
 /lib/
 /.idea/
+/src/main/resources/ListParametersViaLinkYahoo
+/Dockerfile
