@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,13 @@ final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final StockQuoteProcessor processor = new StockQuoteProcessor();
     DataGetter getter = new DataGetter();
+    DecimalFormat df = new DecimalFormat("#.##");
+
+    private double round (double number){
+        String str = df.format(number).replace(",", ".");
+        Double num = Double.parseDouble(str);
+        return num;
+    }
 
     @Transactional
     public List<List<StockQuoteDto>> getData(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
@@ -40,14 +48,19 @@ final StockQuoteRepository stockQuoteRepository;
             List<StockQuote> stockQuotes = new ArrayList<>();
             for (StockQuoteDto quote : quotes) {
                 StockQuoteId id = new StockQuoteId(quote.getDate(), symbol);
-                StockQuote stockQuote = new StockQuote(id, quote.getOpen(), quote.getHigh(), quote.getLow(), quote.getClose(), quote.getVolume());
+                StockQuote stockQuote = new StockQuote(id, round(quote.getOpen()), round(quote.getHigh()), round(quote.getLow()), round(quote.getClose()), quote.getVolume());
                 stockQuoteRepository.save(stockQuote);
                 stockQuotes.add(stockQuote);
             }
             List<StockQuoteDto> result = new ArrayList<>();
             for (StockQuoteDto quote : quotes) {
-                if (quote.getDate().isBefore(dateTo) && quote.getDate().isAfter(dateFrom))
-                    result.add(quote);
+                if (quote.getDate().isBefore(dateTo) && quote.getDate().isAfter(dateFrom)){
+                    quote.setOpen(round(quote.getOpen()));
+                    quote.setHigh(round(quote.getHigh()));
+                    quote.setLow(round(quote.getLow()));
+                    quote.setClose(round(quote.getClose()));
+                }
+            result.add(quote);
             }
             return processor.getAllQuoteLists(result, dateFrom, dateTo);
         }

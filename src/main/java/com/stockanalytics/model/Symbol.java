@@ -3,6 +3,7 @@ package com.stockanalytics.model;
 import com.sun.istack.NotNull;
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.Serializable;
@@ -21,6 +22,10 @@ public class Symbol implements Serializable {
     String exchange;
     String industryCategory;
     String type;
+    @Column(nullable = false)
+    int isStarting;
     @NotNull
     int status;
+
+
 }
