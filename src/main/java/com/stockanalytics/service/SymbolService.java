@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SymbolService {
     private final SymbolRepository symbolRepository;
+    private final StockQuoteService stockQuoteService;
     private final ModelMapper modelMapper;
     private final DataGetter getter;
 
@@ -88,6 +90,26 @@ public class SymbolService {
         return null;
     }
 
+    public List<Symbol> findStartingSymbols() {
+
+        return  symbolRepository.findAllByIsStartingEquals(1);
+    }
+
+    public List<Symbol> addSymbolToStart(String ticker) {
+        Symbol symbol = symbolRepository.getByName(ticker);
+        symbol.setIsStarting(1);
+        stockQuoteService.getData(LocalDate.now().minusDays(1),LocalDate.now(), symbol);
+        symbol.setStatus(1);
+        symbolRepository.save(symbol);
+        return symbolRepository.findAllByIsStartingEquals(1);
+    }
+
+    public List<Symbol> removeSymbolFromStart(String ticker){
+        Symbol symbol = symbolRepository.getByName(ticker);
+        symbol.setIsStarting(0);
+        symbolRepository.save(symbol);
+        return symbolRepository.findAllByIsStartingEquals(1);
+    }
 //    public Map getStatistics(Symbol symbol) throws JsonProcessingException {
 //        return getter.getDataForStatistics(symbol);
 //    }

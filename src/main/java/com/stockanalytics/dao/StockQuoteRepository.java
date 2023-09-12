@@ -26,6 +26,7 @@ public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDat
     List<LocalDate> findAllDatedBySymbol(@Param("index") String s);
 
     List<StockQuote> findAllById_Symbol(Symbol symbol);
+
     boolean existsById_Symbol(Symbol symbol);
 
     @Query(value = "select sq.id.date from StockQuote sq where sq.id.symbol = :symbol order by sq.id.date desc")

@@ -68,7 +68,7 @@ public class DataGetter {
     }
 
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol){
-        return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now().minusDays(1), symbol);
+        return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now(), symbol);
     }
 
     public StatisticsDto getStatistcs(String ticker){
@@ -107,7 +107,7 @@ public class DataGetter {
         String csvData = response.getBody();
 
         LinkedHashMap<String, Object> json = objectMapper.readValue(response.getBody(), LinkedHashMap.class);
-        LinkedHashMap<String, Map<String, Object>> defaultKeyStatistics = (LinkedHashMap) ((LinkedHashMap) ((ArrayList) ((LinkedHashMap) json.get("quoteSummary"))
+        LinkedHashMap<String, Map<String, Object>> defaultKeyStatistics = (LinkedHashMap<String, Map<String, Object>>) ((LinkedHashMap) ((ArrayList) ((LinkedHashMap) json.get("quoteSummary"))
                 .get("result"))
                 .get(0))
                 .get("defaultKeyStatistics");
