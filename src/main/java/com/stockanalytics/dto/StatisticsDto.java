@@ -1,9 +1,9 @@
 package com.stockanalytics.dto;
 
+import com.stockanalytics.dto.statistcs.*;
 import lombok.*;
 
-import java.util.Map;
-
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -11,22 +11,22 @@ import java.util.Map;
 @ToString
 public class StatisticsDto {
 
-    Map<String, String> valuationMeasures;
+    private ValuationMeasures valuationMeasures;
 
-    Map<String, String> profitability;
+    Profitability profitability;
 
-    Map<String, String> stockPriceHistory;
+    StockPriceHistory stockPriceHistory;
 
-    Map<String, String> shareStatistics;
+    ShareStatistics shareStatistics;
 
-    Map<String, String> incomeStatement;
+    IncomeStatement incomeStatement;
 
-    Map<String, String> balanceSheet;
+    BalanceSheet balanceSheet;
 
-    Map<String, String> cashFlowStatement;
+    CashFlowStatement cashFlowStatement;
 
-    Map<String, String> dividendsAndSplits;
+    DividendsAndSplits dividendsAndSplits;
 
-    Map<String, String> fiscalYear;
+    FiscalYear fiscalYear;
 }
 

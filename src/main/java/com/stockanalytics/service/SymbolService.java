@@ -85,7 +85,7 @@ public class SymbolService {
     }
     public Symbol getSymbol (String ticker){
         if(symbolRepository.existsById(ticker)) {
-            return   symbolRepository.getById(ticker);
+            return   symbolRepository.getByName(ticker);
         }
         return null;
     }

@@ -30,8 +30,7 @@ public class StockQuoteController {
 
     @GetMapping("/statistics")
     public StatisticsDto getStatistics(@RequestParam String ticker) throws JsonProcessingException {
-        Symbol symbol = symbolService.getSymbol(ticker);
-        return statisticsService.getStatisticsDto(symbol);
+        return statisticsService.getStatisticsDto(ticker);
     }
 
 }
