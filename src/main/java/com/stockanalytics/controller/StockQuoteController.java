@@ -2,7 +2,7 @@ package com.stockanalytics.controller;
 
 import com.stockanalytics.dto.StatisticsDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.stockanalytics.service.StatisticService;
+import com.stockanalytics.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import com.stockanalytics.dto.StockQuoteDto;
@@ -18,7 +18,7 @@ import java.util.List;
 public class StockQuoteController {
     private final StockQuoteService stockQuoteService;
     private  final SymbolService symbolService;
-    private final StatisticService statisticsService;
+    private final StatisticsService statisticsService;
 
     @GetMapping("/quote/history")
     public List<List<StockQuoteDto>> getHistoryBySymbol (@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker ){

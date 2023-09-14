@@ -1,12 +1,14 @@
 package com.stockanalytics.util;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.StockQuoteId;
 import com.stockanalytics.model.Symbol;
+import com.stockanalytics.service.StatisticsService;
 import com.stockanalytics.service.StockQuoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,11 +25,12 @@ public class QuotScheduler {
     final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final StockQuoteService stockQuoteService;
+    final StatisticsService statisticsService;
     final DataGetter getter;
 
 
-    @Scheduled(cron = "0 0 7 * * 1-5") //
-    public void updateData() {
+    @Scheduled(cron = "0 0 4 * * 1-5") //
+    public void updateHistoryData() {
         List<Symbol> sym = symbolRepository.findAllByStatusIsGreaterThan(0);
         for (Symbol symbol : sym){
             LocalDate lastDate= stockQuoteRepository.getQuotDatesList(symbol).get(0);
@@ -39,4 +42,11 @@ public class QuotScheduler {
             }
         }
     }
+
+    @Scheduled(cron = "* * 6 * * 4")
+    public void updateStatistics() throws JsonProcessingException {
+        statisticsService.updateStatistics();
+        System.out.println("Statistics  updated  " + LocalDate.now() + " at " + LocalTime.now());
+    }
+
 }

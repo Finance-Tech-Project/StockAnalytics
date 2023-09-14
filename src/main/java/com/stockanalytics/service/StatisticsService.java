@@ -1,9 +1,13 @@
 package com.stockanalytics.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.stockanalytics.dao.StatisticsRepository;
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.StatisticsDto;
-import com.stockanalytics.dto.statistcs.*;
+import com.stockanalytics.dto.statistcs.Profitability;
+import com.stockanalytics.dto.statistcs.ShareStatistics;
+import com.stockanalytics.dto.statistcs.StockPriceHistory;
+import com.stockanalytics.dto.statistcs.ValuationMeasures;
 import com.stockanalytics.model.Statistics;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
@@ -24,7 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 @Repository
-public class StatisticService {
+public class StatisticsService {
     List<String> listValuationMeasures = List.of("Market Cap", "bookValue", "enterpriseValue", "forwardPE", "pegRatio", "priceToSalesTrailing12Months", "priceToBook",
             "enterpriseToRevenue", "enterpriseToEbitda", "forwardEps", "trailingEps");
     List<String> StockPriceHistory = List.of("beta", "beta3Year", "SandP52WeekChange");
@@ -40,37 +44,35 @@ public class StatisticService {
             "Trailing Annual Dividend Yield", " fiveYearAverageReturn", "threeYearAverageReturn", "lastDividendDate", "lastDividendValue", "Payout Ratio", "Dividend Date", "Ex-Dividend Date", "Last Split Factor", "lastSplitDate"  );
     List<String> FiscalYear = List.of("nextFiscalYearEnd", "mostRecentQuarter", "lastFiscalYearEnd");
 
-//    ValuationMeasures valuationMeasures = new ValuationMeasures();
-//    StockPriceHistory stockPriceHistory = new StockPriceHistory();
-//    ShareStatistics shareStatistics = new ShareStatistics();
-//    Profitability profitability = new Profitability ();
-//    IncomeStatement incomeStatement = new IncomeStatement ();
-//    BalanceSheet balanceSheet = new BalanceSheet();
-//    CashFlowStatement cashFlowStatement = new CashFlowStatement ();
-//    DividendsAndSplits dividendsAndSplits = new DividendsAndSplits ();
-//    FiscalYear fiscalYear = new FiscalYear ();
-//    Map<String, String> mapNotFuckingNeedThis = new HashMap<>();
-//    Map<String, String> zeroSize = new HashMap<>();
+
 
     DecimalFormat df = new DecimalFormat("#.##");
     private final StockQuoteRepository stockQuoteRepository;
     private final SymbolService symbolService;
-//    private  final StatisticsRepository statisticsRepository;
+    private  final StatisticsRepository statisticsRepository;
     private final DataGetter getter;
     private final ModelMapper mapper;
     Statistics stat = new Statistics();
 
+    public void updateStatistics() throws JsonProcessingException {
+        List<Statistics> listStat = statisticsRepository.findAll();
+        for (Statistics stat : listStat) {
+            Statistics newStat = getNewStatistics(stat.getSymbol());
+           stat = statisticsRepository.findBySymbol(stat.getSymbol()).get();
+            if (newStat != null) {
+                statisticsRepository.delete(stat);
+                statisticsRepository.saveAndFlush(newStat);
+            }
+        }
+    }
 
     private String calcMovingAverage(List <StockQuote> list, Symbol symbol, int days) {
-
         double movingAverage = list.stream()
                 .filter(quot -> quot.getDate().isAfter(LocalDate.now().minusDays(days)))
                 .mapToDouble(StockQuote::getClose)
                 .average().orElse(0.);
-
         return df.format(movingAverage);
     }
-
 
     private void calcStatistics(Symbol symbol) {
         List<StockQuote> sortedList = stockQuoteRepository
@@ -79,7 +81,6 @@ public class StatisticService {
                 .sorted(Comparator.comparing(StockQuote::getDate))
                 .collect(Collectors.toList());
         df.setRoundingMode(RoundingMode.HALF_UP);
-
         Double lastPrice = sortedList.get(sortedList.size() - 1).getClose();
         Double firstPrice = sortedList.get(0).getClose();
         double difference = lastPrice - firstPrice;
@@ -101,6 +102,7 @@ public class StatisticService {
 
     public Statistics getStatisticsFromYahoo(Symbol symbol) throws JsonProcessingException {
         Map<String, String> receivedData = getter.getDataForStatistics(symbol);
+        System.out.println(receivedData);
         receivedData.forEach((str1, str2) -> {
         String str = str1.replace(" ","").replace("/", "To");
         });
@@ -110,7 +112,7 @@ public class StatisticService {
         return stat;
     }
 
-        public Statistics getStatistics (Symbol symbol) throws JsonProcessingException {
+        public Statistics getNewStatistics(Symbol symbol) throws JsonProcessingException {
            Statistics stat = getStatisticsFromYahoo(symbol);
            calcStatistics(symbol);
            return stat;
@@ -118,9 +120,14 @@ public class StatisticService {
 
         public StatisticsDto getStatisticsDto (String ticker) throws JsonProcessingException {
             Symbol symbol = symbolService.getSymbol(ticker);
-            Statistics stat = getStatistics(symbol);
+            Statistics stat;
             StatisticsDto dto =  new StatisticsDto();
-
+            if(statisticsRepository.existsBySymbol(symbol)) {
+                stat = statisticsRepository.findBySymbol(symbol).get();
+            }else{
+                stat = getNewStatistics(symbol);
+                statisticsRepository.save(stat);
+            }
             dto.setValuationMeasures(mapper.map(stat, ValuationMeasures.class));
             dto.setStockPriceHistory(mapper.map(stat, StockPriceHistory.class));
             dto.setBalanceSheet(mapper.map(stat, com.stockanalytics.dto.statistcs.BalanceSheet.class));
