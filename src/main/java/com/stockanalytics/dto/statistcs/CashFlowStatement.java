@@ -6,6 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CashFlowStatement{
-    String operatingCashFlow;
-    String leveredFreeCashFlow;
+    String freeCashflow;
+    String operatingCashflow;
+//    String leveredFreeCashFlow;
 }

@@ -16,7 +16,13 @@ public class ShareStatistics{
     String shortRatio;
     String shortPercentOfFloat;
     String sharesPercentSharesOut;
-    String sharesShortPriorMonth;
+    String sharesShortPrevMonth;
+    String sharesShortPreviousMonthDate;
+    String averageDailyVolume3Month;
+    String averageDailyVolume10Day;
+    String averageVolume10days;
+//    String ytdReturn;
+//    String yield;
 //
 //    public boolean containsField(String fieldName) {
 //        return "sharesOutstanding".equals(fieldName) || "impliedSharesOutstanding".equals(fieldName);

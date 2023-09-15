@@ -8,7 +8,6 @@ import lombok.Setter;
 
 public class StockPriceHistory{
     String beta;
-    String beta3Year;
     String SandP52WeekChange;
     String FiftyTowWeekChange;
     String FiftyTowWeekHigh;

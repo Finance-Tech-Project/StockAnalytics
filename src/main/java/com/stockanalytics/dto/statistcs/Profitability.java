@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class Profitability {
     String profitMargins;
-    String operatingMargin;
+    String operatingMargins;
+    String grossMargins;
 }

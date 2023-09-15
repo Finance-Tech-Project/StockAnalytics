@@ -32,13 +32,16 @@ public class ValuationMeasures {
     String bookValue;
     String enterpriseValue;
     String forwardPE;
+    String trailingPE;
     String pegRatio;
-    String priceToSalesTrailing12Months;
+    String priceToSales;
     String priceToBook;
     String enterpriseToRevenue;
     String enterpriseToEbitda;
+    String epsCurrentYear;
     String forwardEps;
     String trailingEps;
+    String quickRatio;
 //
 //    public boolean containsField(String fieldName) {
 //        return "marketCap".equals(fieldName)||"bookValue".equals(fieldName)||"enterpriseValue".equals(fieldName)||"forwardPE".equals(fieldName)

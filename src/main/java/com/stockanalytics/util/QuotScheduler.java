@@ -1,7 +1,6 @@
 package com.stockanalytics.util;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.dto.StockQuoteDto;
@@ -14,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -43,8 +43,8 @@ public class QuotScheduler {
         }
     }
 
-    @Scheduled(cron = "* * 6 * * 4")
-    public void updateStatistics() throws JsonProcessingException {
+    @Scheduled(cron = "0 0 7 * * 6")
+    public void updateStatistics() throws IOException, InterruptedException {
         statisticsService.updateStatistics();
         System.out.println("Statistics  updated  " + LocalDate.now() + " at " + LocalTime.now());
     }

@@ -35,22 +35,19 @@ final StockQuoteRepository stockQuoteRepository;
 
     private double round (double number){
         String str = df.format(number).replace(",", ".");
-        Double num = Double.parseDouble(str);
-        return num;
+        return Double.parseDouble(str);
     }
 
     @Transactional
-    public List<List<StockQuoteDto>> getData(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
+    public List<StockQuoteDto> getData(Symbol symbol,LocalDate dateFrom, LocalDate dateTo) {
         if (symbol.getStatus() != 0) {
             return getQuotesByPeriod(dateFrom, dateTo, symbol);
         } else {
             List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);
-            List<StockQuote> stockQuotes = new ArrayList<>();
             for (StockQuoteDto quote : quotes) {
                 StockQuoteId id = new StockQuoteId(quote.getDate(), symbol);
                 StockQuote stockQuote = new StockQuote(id, round(quote.getOpen()), round(quote.getHigh()), round(quote.getLow()), round(quote.getClose()), quote.getVolume());
                 stockQuoteRepository.save(stockQuote);
-                stockQuotes.add(stockQuote);
             }
             List<StockQuoteDto> result = new ArrayList<>();
             for (StockQuoteDto quote : quotes) {
@@ -62,23 +59,27 @@ final StockQuoteRepository stockQuoteRepository;
                 }
             result.add(quote);
             }
-            return processor.getAllQuoteLists(result, dateFrom, dateTo);
+            return result;
         }
     }
+    public List<List<StockQuoteDto>> getListsForChart (Symbol symbol, LocalDate dateFrom, LocalDate dateTo){
+        List<StockQuoteDto> list = getData(symbol, dateFrom, dateTo);
+        return processor.getAllQuoteLists(list,dateFrom, dateTo);
+    }
 
-    public List<List<StockQuoteDto>> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
+
+    public List<StockQuoteDto> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
         List<StockQuote> quotes = stockQuoteRepository.findAllById_Symbol(symbol);
         LocalDate start = dateFrom.withMonth(1).withDayOfMonth(1);
         LocalDate end = dateTo.withMonth(12).withDayOfMonth(31);
-        List<StockQuoteDto> list = quotes.stream()
+        return quotes.stream()
                 .filter(quote -> quote.getId().getDate().isAfter(start.minusDays(1)) && quote.getId().getDate().isBefore(end.plusDays(1)))
                 .map(quote -> new StockQuoteDto(quote.getId().getDate(), quote.getOpen(), quote.getHigh(), quote.getLow(), quote.getClose(), quote.getVolume()))
                 .collect(Collectors.toList());
-        return processor.getAllQuoteLists(list, dateFrom, dateTo);
     }
 
     public List<StatisticsDto> getStatistics(Symbol symbol) throws IOException {
-        Map<String, String> parameters = getter.getDataForStatistics(symbol);
+        Map<String, String> parameters = getter.getDataForStatisticsFromYahoo(symbol);
         return  null;
     }
 }

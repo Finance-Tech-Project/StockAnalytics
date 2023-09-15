@@ -6,10 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BalanceSheet{
+    String totalAssets;
     String totalCash;
     String totalCashPerShare;
     String totalDebt;
-    String totalDebtToEquity;
+    String debtToEquity;
     String currentRatio;
     String bookValuePerShare;
 }

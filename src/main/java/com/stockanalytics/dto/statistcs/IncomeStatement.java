@@ -8,10 +8,12 @@ import lombok.Setter;
 public class IncomeStatement{
     String revenue;
     String revenuePerShare;
-    String revenueQuarterlyGrowth;
-    String GrossProfit;
-    String EBITDA;
+    String revenueGrowth;
+    String grossProfits;
+    String epsTrailingTwelveMonths;
+    String ebitda;
+    String ebitdaMargins;
     String netIncomeToCommon;
-    String dilutedEPS;
-    String earningsQuarterlyGrowth;
+//    String dilutedEPS;
+//    String earningsQuarterlyGrowth;
 }

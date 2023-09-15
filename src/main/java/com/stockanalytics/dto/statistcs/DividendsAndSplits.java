@@ -11,14 +11,15 @@ public class DividendsAndSplits {
     String forwardAnnualDividendYield;
     String trailingAnnualDividendRate;
     String trailingAnnualDividendYield;
-    String fiveYearAverageReturn;
-    String threeYearAverageReturn;
+//    String fiveYearAverageReturn;
+//    String threeYearAverageReturn;
     String lastDividendDate;
     String lastDividendValue;
-    String payOutRatio;
+    String payoutRatio;
     String dividendDate;
-    String exDividendDate;
-    String lastSplitFactor;
+//    String exDividendDate;
+//    String lastSplitFactor;
     String lastSplitDate;
+    String dividendsPerShare;
 
 }

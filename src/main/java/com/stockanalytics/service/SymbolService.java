@@ -76,13 +76,13 @@ public class SymbolService {
                     .status(0)
                     .isStarting(0)
                     .build();
-
             symbolRepository.save(symbol);
         }
          i++;
     }
         return null;
     }
+
     public Symbol getSymbol (String ticker){
         if(symbolRepository.existsById(ticker)) {
             return   symbolRepository.getByName(ticker);
@@ -91,14 +91,13 @@ public class SymbolService {
     }
 
     public List<Symbol> findStartingSymbols() {
-
         return  symbolRepository.findAllByIsStartingEquals(1);
     }
 
     public List<Symbol> addSymbolToStart(String ticker) {
         Symbol symbol = symbolRepository.getByName(ticker);
         symbol.setIsStarting(1);
-        stockQuoteService.getData(LocalDate.now().minusDays(1),LocalDate.now(), symbol);
+        stockQuoteService.getData(symbol, LocalDate.now().minusDays(1),LocalDate.now() );
         symbol.setStatus(1);
         symbolRepository.save(symbol);
         return symbolRepository.findAllByIsStartingEquals(1);
@@ -110,7 +109,4 @@ public class SymbolService {
         symbolRepository.save(symbol);
         return symbolRepository.findAllByIsStartingEquals(1);
     }
-//    public Map getStatistics(Symbol symbol) throws JsonProcessingException {
-//        return getter.getDataForStatistics(symbol);
-//    }
 }
