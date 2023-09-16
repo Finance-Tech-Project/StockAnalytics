@@ -3,9 +3,6 @@ package com.stockanalytics.accounting.controller;
 import java.security.Principal;
 
 
-
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,15 +12,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import lombok.RequiredArgsConstructor;
 import com.stockanalytics.accounting.dto.RolesDto;
 import com.stockanalytics.accounting.dto.UserDto;
 import com.stockanalytics.accounting.dto.UserEditDto;
 import com.stockanalytics.accounting.dto.UserRegisterDto;
+import com.stockanalytics.accounting.model.UserAccount;
 import com.stockanalytics.accounting.service.UserAccountService;
 
 @RestController
@@ -37,9 +36,9 @@ public class UserAccountController {
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
 		return userAccountService.register(userRegisterDto);
 	}
-
 	@PostMapping("/login")
 	public UserDto login(Principal principal) {
+		System.out.println("Hello");
 		return userAccountService.getUser(principal.getName());
 	}
 
@@ -50,6 +49,8 @@ public class UserAccountController {
 
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
+		
+System.out.println("in controller getUser");		
 		return userAccountService.getUser(login);
 	}
 
@@ -58,10 +59,11 @@ public class UserAccountController {
 		return userAccountService.removeUser(login);
 	}
 
-	@PutMapping("/user/{login}")
+	@PutMapping("/user/{login}/update")
 	public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
 		return userAccountService.updateUser(login, userEditDto);
 	}
+	
 
 	@PutMapping("/user/{login}/role/{role}")
 	public RolesDto addRole(@PathVariable String login, @PathVariable String role) {
@@ -84,5 +86,6 @@ public class UserAccountController {
 	public String getPasswordLink(@PathVariable String login) {
 		return userAccountService.getPasswordLink(login);
 	}
+	
 
 }

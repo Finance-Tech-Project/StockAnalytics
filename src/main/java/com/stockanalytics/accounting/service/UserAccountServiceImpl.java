@@ -2,10 +2,13 @@ package com.stockanalytics.accounting.service;
 
 import java.util.UUID;
 
+
 import java.util.regex.Pattern;
 
 import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
-public class UserAccountServiceImpl implements UserAccountService {
+public class UserAccountServiceImpl implements UserAccountService ,CommandLineRunner{
 
 	final UserAccountRepository userAccountRepository;
 	final ModelMapper modelMapper;
@@ -46,9 +49,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 		
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
 		userAccount.addRole("USER");
+		
 		String password = passwordEncoder.encode(userRegisterDto.getPassword());
 		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
+		
 		 logger.info("Пользователь {} успешно зарегистрирован", userRegisterDto.getLogin());
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -86,7 +91,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 
 	@Override
 	public UserDto getUser(String login) {
+		
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+		System.out.println("in service getUser"+userAccount.getRoles());
 		return modelMapper.map(userAccount, UserDto.class);
 	}
 
@@ -116,6 +123,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	@Override
 	public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		System.out.println("inservice"+userAccount.getRoles());
 		boolean res;
 		if (isAddRole) {
 			res = userAccount.addRole(role.toUpperCase());
@@ -136,5 +144,15 @@ public class UserAccountServiceImpl implements UserAccountService {
 		userAccountRepository.save(userAccount);
 
 	}
-
+	@Override
+	public void run(String... args) throws Exception {
+		if(!userAccountRepository.existsById("admin")) {
+			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
+			UserAccount userAccount = new UserAccount("admin", password, "", "");
+			userAccount.addRole("USER");
+			userAccount.addRole("MODERATOR");
+			userAccount.addRole("ADMINISTRATOR");
+			userAccountRepository.save(userAccount);
+		}
+	}
 }
