@@ -18,6 +18,5 @@ public class UserDto {
 	String email;
 	String firstName;
 	String lastName;
-	@Singular
-	Set<String> roles;
+	String role;
 }

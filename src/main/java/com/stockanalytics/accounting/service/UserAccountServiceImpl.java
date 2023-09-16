@@ -93,7 +93,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	public UserDto getUser(String login) {
 		
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-		System.out.println("in service getUser"+userAccount.getRoles());
+		System.out.println("in service getUser"+userAccount.getRole());
 		return modelMapper.map(userAccount, UserDto.class);
 	}
 
@@ -123,16 +123,14 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	@Override
 	public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
-		System.out.println("inservice"+userAccount.getRoles());
-		boolean res;
+		System.out.println("inservice"+userAccount.getRole());
+
 		if (isAddRole) {
-			res = userAccount.addRole(role.toUpperCase());
+			userAccount.addRole(role.toUpperCase());
 		} else {
-			res = userAccount.removeRole(role.toUpperCase());
+			userAccount.removeRole();
 		}
-		if (res) {
-			userAccountRepository.save(userAccount);
-		}
+		userAccountRepository.save(userAccount);
 		return modelMapper.map(userAccount, RolesDto.class);
 	}
 
@@ -149,9 +147,9 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 		if(!userAccountRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
 			UserAccount userAccount = new UserAccount("admin", password, "", "");
-			userAccount.addRole("USER");
+//			userAccount.addRole("USER");
 			userAccount.addRole("MODERATOR");
-			userAccount.addRole("ADMINISTRATOR");
+//			userAccount.addRole("ADMINISTRATOR");
 			userAccountRepository.save(userAccount);
 		}
 	}

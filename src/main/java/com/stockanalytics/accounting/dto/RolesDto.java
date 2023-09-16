@@ -14,6 +14,5 @@ import lombok.Singular;
 @Builder
 public class RolesDto {
 	String login;
-	@Singular
-	Set<String> roles;
+	String role;
 }

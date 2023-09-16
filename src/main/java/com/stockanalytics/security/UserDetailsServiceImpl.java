@@ -27,17 +27,23 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		System.out.println("in userdetails 401 not found "+userName);
+		System.out.println("In the loadUserByUsername method with username: " + userName);
+
 		UserAccount userAccount = userAccountRepository.findById(userName)
 				.orElseThrow(() -> new UsernameNotFoundException(userName));
-		System.out.println("userAccount from repo...  "+userAccount.getRoles());		
 
-	String[] roles = userAccount.getRoles()	
-			.stream()
-			.map(r -> "ROLE_" + r)	
-			.toArray(String[]::new);
-		
-	return new User(userName, userAccount.getPassword(), AuthorityUtils.createAuthorityList(roles));
+		// Retrieve the role of the userAccount
+		String role = userAccount.getRole();
+
+		// Create a UserDetails object with the username, password, and role
+
+		UserDetails userDetails = org.springframework.security.core.userdetails.User
+				.withUsername(userName)
+				.password(userAccount.getPassword()) // You should use a proper password encoder here
+				.roles(role)
+				.build();
+
+		return userDetails;
 	}
 
 }

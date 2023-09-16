@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.1</version>
+		<version>2.7.15</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.stockanalytics</groupId>
@@ -17,27 +17,26 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-mongodb</artifactId>-->
+<!--		</dependency>-->
 		<!-- Uncomment and adjust the following dependencies as needed -->
-		<!--
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.h2database</groupId>-->
+<!--            <artifactId>h2</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.6.0</version>
         </dependency>
-        -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -113,15 +112,15 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-						<encoder>
-							<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-						</encoder>
-					</appender>
-					<logger name="telran.fintech.accounting.service.UserAccountServiceImpl" level="INFO" />
-					<root level="INFO">
-						<appender-ref ref="STDOUT" />
-					</root>
+<!--					<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--						<encoder>-->
+<!--							<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>-->
+<!--						</encoder>-->
+<!--					</appender>-->
+<!--					<logger name="telran.fintech.accounting.service.UserAccountServiceImpl" level="INFO" />-->
+<!--					<root level="INFO">-->
+<!--						<appender-ref ref="STDOUT" />-->
+<!--					</root>-->
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
