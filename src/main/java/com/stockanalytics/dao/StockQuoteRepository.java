@@ -10,8 +10,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDate> {
-    @Query("select r from StockQuote r where r.id.symbol = :index and r.id.date = :date")
-    StockQuote getByIndexAndDate(@Param("index") String index,
+    @Query("select r from StockQuote r where r.id.symbol = :symbol and r.id.date = :date")
+    StockQuote getBySymbolAndDate(@Param("symbol") Symbol symbol,
                                  @Param("date") LocalDate date);
 
     @Query("select r from StockQuote r where r.id.symbol = :symbol and r.id.date between :startdate and :enddate")
@@ -26,10 +26,11 @@ public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDat
     List<LocalDate> findAllDatedBySymbol(@Param("index") String s);
 
     List<StockQuote> findAllById_Symbol(Symbol symbol);
+
     boolean existsById_Symbol(Symbol symbol);
 
     @Query(value = "select sq.id.date from StockQuote sq where sq.id.symbol = :symbol order by sq.id.date desc")
     List<LocalDate>   getQuotDatesList(@Param("symbol") Symbol symbol);
 
-
+//    List<StockQuote> findAllById_SymbolAndDateBetween(Symbol symbol, LocalDate dateFrom,LocalDate dateTo);
 }

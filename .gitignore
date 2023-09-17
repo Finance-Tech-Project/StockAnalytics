@@ -6,6 +6,7 @@ target/
 /.mvn/
 /mvnw
 /mvnw.cmd
+.settings
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -17,14 +18,13 @@ target/
 *.ipr
 *.jar
 .idea
-.settings
+
 
 ### Eclipse ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
 .springBeans
 .sts4-cache
 /.mvn/
@@ -60,3 +60,5 @@ build/
 .DS_Store
 /lib/
 /.idea/
+/src/main/resources/ListParametersViaLinkYahoo
+/Dockerfile

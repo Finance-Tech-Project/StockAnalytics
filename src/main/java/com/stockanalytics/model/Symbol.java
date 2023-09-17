@@ -2,10 +2,11 @@ package com.stockanalytics.model;
 
 import com.sun.istack.NotNull;
 import lombok.*;
-import org.springframework.lang.NonNull;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Entity
 @Builder
@@ -14,13 +15,17 @@ import javax.persistence.Id;
 @Getter
 @Setter
 
-public class Symbol {
+public class Symbol implements Serializable {
     @Id
     String name;
     String companyName;
     String exchange;
     String industryCategory;
     String type;
+    @Column(nullable = false)
+    int isStarting;
     @NotNull
     int status;
+
+
 }
