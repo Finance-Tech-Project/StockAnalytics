@@ -30,7 +30,6 @@ import javax.persistence.ElementCollection;
 @Setter
 @Entity
 @EqualsAndHashCode
-//@Document(collection = "FIN_TechUsers")
 public class UserAccount implements Serializable {
 	
 	private static final long serialVersionUID = -6631032945500720346L;
@@ -41,13 +40,6 @@ public class UserAccount implements Serializable {
     String firstName;
 	String lastName;
 	String role;
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private Set<String> roles;
-//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL) // Добавьте это поле для связи с портфолио
-//    private List<Portfolio> portfolios;
-//	public UserAccount() {
-//		roles = new HashSet<>();
-//	}
 
 	public UserAccount() {}
 	public UserAccount(String login, String password, String firstName, String lastName) {

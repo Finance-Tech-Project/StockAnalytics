@@ -39,11 +39,11 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	public UserDto register(UserRegisterDto userRegisterDto) {
 		  String email = userRegisterDto.getEmail();
 	if (!EMAIL_PATTERN.matcher(email).matches()) {
-           logger.error("Логин {} не соответствует формату example@gmail.com",email);
-            throw new ClassFormatException("Логин должен иметь формат example@gmail.com");
+           logger.error("Login {} does not match the format example@gmail.com",email);
+            throw new ClassFormatException("сexample@gmail.com");
         }
 				if (userAccountRepository.existsById(userRegisterDto.getLogin())) {
-        logger.error("Пользователь с логином {} уже существует", userRegisterDto.getLogin());
+        logger.error("User with login {} already exists", userRegisterDto.getLogin());
         throw new UserExistsException();
    }
 		
@@ -54,7 +54,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
 		
-		 logger.info("Пользователь {} успешно зарегистрирован", userRegisterDto.getLogin());
+		 logger.info("User {} has been successfully registered", userRegisterDto.getLogin());
 		return modelMapper.map(userAccount, UserDto.class);
 	}
 
@@ -93,7 +93,6 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	public UserDto getUser(String login) {
 		
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-		System.out.println("in service getUser"+userAccount.getRole());
 		return modelMapper.map(userAccount, UserDto.class);
 	}
 

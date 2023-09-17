@@ -38,7 +38,6 @@ public class UserAccountController {
 	}
 	@PostMapping("/login")
 	public UserDto login(Principal principal) {
-		System.out.println("Hello");
 		return userAccountService.getUser(principal.getName());
 	}
 
@@ -49,8 +48,7 @@ public class UserAccountController {
 
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
-		
-System.out.println("in controller getUser");		
+
 		return userAccountService.getUser(login);
 	}
 
@@ -59,7 +57,7 @@ System.out.println("in controller getUser");
 		return userAccountService.removeUser(login);
 	}
 
-	@PutMapping("/user/{login}/update")
+	@PutMapping("/user/update/{login}")
 	public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
 		return userAccountService.updateUser(login, userEditDto);
 	}
