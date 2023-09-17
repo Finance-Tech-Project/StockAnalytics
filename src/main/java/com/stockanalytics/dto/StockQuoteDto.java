@@ -23,6 +23,7 @@ public class StockQuoteDto {
     Double high;
     @CsvBindByName(column = "low")
     Double low;
+
     @CsvBindByName(column = "close")
     Double close;
     @CsvBindByName(column = "volume")

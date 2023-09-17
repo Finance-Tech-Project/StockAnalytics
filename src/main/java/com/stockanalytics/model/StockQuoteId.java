@@ -1,9 +1,6 @@
 package com.stockanalytics.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -16,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @ToString
+@EqualsAndHashCode(of = {"date", "symbol"})
 public class StockQuoteId implements Serializable {
 
     @Column(nullable = false)
