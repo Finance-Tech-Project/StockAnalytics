@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,5 +110,12 @@ public class SymbolService {
         symbol.setIsStarting(0);
         symbolRepository.save(symbol);
         return symbolRepository.findAllByIsStartingEquals(1);
+    }
+
+    public List<Symbol> searchSymbolsBySubstring(String substring) {
+        List<Symbol> searchedSymbols = symbolRepository.findByCompanyNameOrTickerStartingWith(substring);
+        Comparator<Symbol> statusComparator = Comparator.comparingInt(Symbol::getStatus).reversed();
+        Collections.sort(searchedSymbols, statusComparator);
+        return searchedSymbols.subList(0, 10);
     }
 }

@@ -2,7 +2,6 @@ package com.stockanalytics.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stockanalytics.dao.StatisticsRepository;
-import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.dto.statistcs.Profitability;
@@ -21,7 +20,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,48 +31,43 @@ import java.util.stream.Collectors;
 @Service
 @Repository
 public class StatisticsService {
-    List<String> listValuationMeasures = List.of("Market Cap", "bookValue", "enterpriseValue", "forwardPE", "pegRatio", "priceToSalesTrailing12Months", "priceToBook",
-            "enterpriseToRevenue", "enterpriseToEbitda", "forwardEps", "trailingEps");
-    List<String> StockPriceHistory = List.of("beta", "beta3Year", "SandP52WeekChange");
-    List<String> Profitability = List.of("profitMargins", "Operating Margin (ttm)");
-    List<String> ShareStatistics = List.of("Avg Vol (3 month)", "Avg Vol (10 day)", "sharesOutstanding", "impliedSharesOutstanding",
-            "floatShares", "heldPercentInsiders", "heldPercentInstitutions", "sharesShort", "shortRatio", "shortPercentOfFloat", "sharesPercentSharesOut", "sharesShortPriorMonth");
-    List<String> IncomeStatement = List.of("Revenue", "Revenue Per Share", "revenueQuarterlyGrowth", "Gross Profit", "EBITDA",
-            "netIncomeToCommon", "Diluted EPS", "earningsQuarterlyGrowth");
-    List<String> BalanceSheet = List.of("Total Cash", "Total Cash Per Share ", "Total Debt", "Total Debt/Equity", "Current Ratio",
-            "Book Value Per Share");
-    List<String> CashFlowStatement = List.of("Operating Cash Flow", "Levered Free Cash Flow");
-    List<String> DividendsAndSplits = List.of("Forward Annual Dividend Rate", "Forward Annual Dividend Yield", "Trailing Annual Dividend Rate",
-            "Trailing Annual Dividend Yield", " fiveYearAverageReturn", "threeYearAverageReturn", "lastDividendDate", "lastDividendValue", "Payout Ratio", "Dividend Date", "Ex-Dividend Date", "Last Split Factor", "lastSplitDate"  );
-    List<String> FiscalYear = List.of("nextFiscalYearEnd", "mostRecentQuarter", "lastFiscalYearEnd");
+//    List<String> listValuationMeasures = List.of("Market Cap", "bookValue", "enterpriseValue", "forwardPE", "pegRatio", "priceToSalesTrailing12Months", "priceToBook",
+//            "enterpriseToRevenue", "enterpriseToEbitda", "forwardEps", "trailingEps");
+//    List<String> StockPriceHistory = List.of("beta", "beta3Year", "SandP52WeekChange");
+//    List<String> Profitability = List.of("profitMargins", "Operating Margin (ttm)");
+//    List<String> ShareStatistics = List.of("Avg Vol (3 month)", "Avg Vol (10 day)", "sharesOutstanding", "impliedSharesOutstanding",
+//            "floatShares", "heldPercentInsiders", "heldPercentInstitutions", "sharesShort", "shortRatio", "shortPercentOfFloat", "sharesPercentSharesOut", "sharesShortPriorMonth");
+//    List<String> IncomeStatement = List.of("Revenue", "Revenue Per Share", "revenueQuarterlyGrowth", "Gross Profit", "EBITDA",
+//            "netIncomeToCommon", "Diluted EPS", "earningsQuarterlyGrowth");
+//    List<String> BalanceSheet = List.of("Total Cash", "Total Cash Per Share ", "Total Debt", "Total Debt/Equity", "Current Ratio",
+//            "Book Value Per Share");
+//    List<String> CashFlowStatement = List.of("Operating Cash Flow", "Levered Free Cash Flow");
+//    List<String> DividendsAndSplits = List.of("Forward Annual Dividend Rate", "Forward Annual Dividend Yield", "Trailing Annual Dividend Rate",
+//            "Trailing Annual Dividend Yield", " fiveYearAverageReturn", "threeYearAverageReturn", "lastDividendDate", "lastDividendValue", "Payout Ratio", "Dividend Date", "Ex-Dividend Date", "Last Split Factor", "lastSplitDate"  );
+//    List<String> FiscalYear = List.of("nextFiscalYearEnd", "mostRecentQuarter", "lastFiscalYearEnd");
 
 
 
     DecimalFormat df = new DecimalFormat("#.##");
-    private final StockQuoteRepository stockQuoteRepository;
     private final StockQuoteService stockQuoteService;
     private final SymbolService symbolService;
     private  final StatisticsRepository statisticsRepository;
     private final DataGetter getter;
     private final ModelMapper mapper;
-//    Statistics stat = new Statistics();
 
 
-    private double round (double number){
-        String str = df.format(number).replace(",", ".");
-        return Double.parseDouble(str);
-    }
+
+//    private double round (double number){
+//        String str = df.format(number).replace(",", ".");
+//        return Double.parseDouble(str);
+//    }
 
     public void updateStatistics() throws IOException, InterruptedException {
         List<Statistics> listStat = statisticsRepository.findAll();
         for (Statistics stat : listStat) {
             statisticsRepository.delete(stat);
             Statistics newStat = getNewStatistics(stat.getSymbol());
-//           stat = statisticsRepository.findBySymbol(stat.getSymbol()).get();
-//            if (newStat != null) {
-//                statisticsRepository.delete(stat);
                 statisticsRepository.save(newStat);
-//            }
         }
     }
 
@@ -109,16 +106,14 @@ public class StatisticsService {
         return calcMap;
     }
 
-
     public Map<String, String> getStatisticsFromYahoo(Symbol symbol) throws JsonProcessingException {
         return getter.getDataForStatisticsFromYahoo(symbol);
     }
 
         public Statistics getNewStatistics(Symbol symbol) throws IOException, InterruptedException {
             Statistics stat = new Statistics();
-            List<Map<String, String>> statData = new ArrayList<>();
             List <Map<String, String>> mapList = getter.getDataForAnalisisFromRapidAPI(symbol);
-            statData.addAll(mapList);
+            List<Map<String, String>> statData = new ArrayList<>(mapList);
             statData.add(getStatisticsFromRapidAPI(symbol));
             statData.add(getStatisticsFromYahoo(symbol))      ;
             statData.add(calcStatistics(symbol));
@@ -154,45 +149,52 @@ public class StatisticsService {
         df.setRoundingMode(RoundingMode.HALF_UP);
         Map<String, Object> receivedData = getter.getDataForStatisticsFromRapidAPI(symbol);
         Map<String, String> parameters = new HashMap<>();
-        for (Map.Entry<String,  Object> entry : receivedData.entrySet()) {
-            if(entry.getValue() instanceof String){
+        for (Map.Entry<String, Object> entry : receivedData.entrySet()) {
+            if (entry.getValue() instanceof String) {
                 parameters.put(entry.getKey(), (String) entry.getValue());
-            }else if (entry.getValue() instanceof Integer) {
-           String str = String.valueOf(entry.getValue());
-           parameters.put(entry.getKey(), str);
-            }else if(entry.getValue() instanceof Double){
-                parameters.put(entry.getKey(), df.format(entry.getValue()));
-            }else if(entry.getValue() instanceof Long){
-                long l;
-                double d;
-                if( Math.abs((Long) entry.getValue()) > 999_999_999_999L){
-                    l =  ((long) entry.getValue()) / 1_000_000;
-                    d = l/1000000.;
-                    String str = df.format(d).concat("T");
-                    parameters.put(entry.getKey(), str);
-                }else  if  (Math.abs((long)entry.getValue()) > 999_999_999){
-                    d =  ((long)entry.getValue()) / 1_000_000_000.;
-                    String str = df.format(d).concat("B");
-                    parameters.put(entry.getKey(), str);
-                }else{
-                    d = ((long) entry.getValue()) / 1_000_000.;
-                    String str = df.format(d).concat("M");
-                    parameters.put(entry.getKey(), str);
+            } else if (entry.getValue() instanceof Double) {
+                if ((Double) entry.getValue() > 1000) {
+                    Number numberValue = (Number) entry.getValue();
+                    Long l = numberValue.longValue();
+                    entry.setValue(l);
+                } else {
+                    parameters.put(entry.getKey(), df.format(entry.getValue()));
+                }
+                if (entry.getValue() instanceof Integer || entry.getValue() instanceof Long) {
+                    Number numberValue = (Number) entry.getValue();
+                    Long l = numberValue.longValue();
+                    if (entry.getKey().contains("Date") || entry.getKey().contains("Time")) {
+                        Instant instant = Instant.ofEpochMilli(l);
+                        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        parameters.put(entry.getKey(), localDate.format(formatter));
+                    } else {
+                        double d;
+                        if (l > 999_999_999_999L) {
+                            l = l / 1_000_000;
+                            d = l / 1000000.;
+                            String str = df.format(d).concat("T");
+                            parameters.put(entry.getKey(), str);
+                        } else if (Math.abs(l) > 999_999_999) {
+                            d = l / 1_000_000_000.;
+                            String str = df.format(d).concat("B");
+                            parameters.put(entry.getKey(), str);
+                        } else if (Math.abs(l) > 999_999) {
+                             parameters.put(entry.getKey(), String.valueOf(l));
+                        }
+                    }
                 }
             }
-        }
-        return parameters;
+        } return parameters;
     }
 
     public StatisticsDto getStatisticsDto (String ticker) throws IOException, InterruptedException {
             Symbol symbol = symbolService.getSymbol(ticker);
-            Statistics st = new Statistics();
+            Statistics st;
             StatisticsDto dto =  new StatisticsDto();
             if(statisticsRepository.existsBySymbol(symbol)) {
-                Optional o = statisticsRepository.findBySymbol(symbol);
-                if(o.isPresent()) {
-                    st = (Statistics) o.get();
-                }
+                //noinspection SingleStatementInBlock
+                st = statisticsRepository.findBySymbol(symbol).get();
             }else{
                 st = getNewStatistics(symbol);
                 statisticsRepository.save(st);
