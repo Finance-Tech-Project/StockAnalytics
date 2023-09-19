@@ -160,32 +160,37 @@ public class StatisticsService {
                 } else {
                     parameters.put(entry.getKey(), df.format(entry.getValue()));
                 }
-                if (entry.getValue() instanceof Integer || entry.getValue() instanceof Long) {
-                    Number numberValue = (Number) entry.getValue();
-                    Long l = numberValue.longValue();
-                    if (entry.getKey().contains("Date") || entry.getKey().contains("Time")) {
-                        Instant instant = Instant.ofEpochMilli(l);
-                        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        parameters.put(entry.getKey(), localDate.format(formatter));
-                    } else {
-                        double d;
-                        if (l > 999_999_999_999L) {
-                            l = l / 1_000_000;
-                            d = l / 1000000.;
-                            String str = df.format(d).concat("T");
-                            parameters.put(entry.getKey(), str);
-                        } else if (Math.abs(l) > 999_999_999) {
-                            d = l / 1_000_000_000.;
-                            String str = df.format(d).concat("B");
-                            parameters.put(entry.getKey(), str);
-                        } else if (Math.abs(l) > 999_999) {
-                             parameters.put(entry.getKey(), String.valueOf(l));
-                        }
+            }
+            if (entry.getValue() instanceof Integer || entry.getValue() instanceof Long) {
+                Number numberValue = (Number) entry.getValue();
+                Long l = numberValue.longValue();
+                if (entry.getKey().contains("Date") || entry.getKey().contains("Time")) {
+                    Instant instant = Instant.ofEpochMilli(l);
+                    LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    parameters.put(entry.getKey(), localDate.format(formatter));
+                } else {
+                    double d;
+                    if (l > 999_999_999_999L) {
+                        l = l / 1_000_000;
+                        d = l / 1000000.;
+                        String str = df.format(d).concat("T");
+                        parameters.put(entry.getKey(), str);
+                    } else if (Math.abs(l) > 999_999_999) {
+                        d = l / 1_000_000_000.;
+                        String str = df.format(d).concat("B");
+                        parameters.put(entry.getKey(), str);
+                    } else if (Math.abs(l) > 999_999) {
+                        d = l / 1_000_000.;
+                        String str = df.format(d).concat("M");
+                         parameters.put(entry.getKey(), str);
+                    }else{
+                        parameters.put(entry.getKey(), String.valueOf(l));
                     }
                 }
             }
-        } return parameters;
+        }
+        return parameters;
     }
 
     public StatisticsDto getStatisticsDto (String ticker) throws IOException, InterruptedException {
