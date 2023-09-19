@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@Table(name = "statistics")
 public class Statistics {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -87,7 +88,7 @@ public class Statistics {
     String payoutRatio;
     String dividendsPerShare;
     String dividendDate;
-//    String exDividendDate; //exDividendDate
+    String exDividendDate;
 //    String lastSplitFactor;
     String lastSplitDate;
     String freeCashflow;
@@ -103,8 +104,3 @@ public class Statistics {
     String returnOnEquity;
 
 }
-
-//dividendYield=0,54, regularMarketDayRange=173.98 - 177.3, earningsTimestampEnd=1698667200, targetPriceLow=138,6,fiftyDayAverageChange=-11,16,
-//exchangeDataDelayedBy=0,averageDailyVolume3Month=57331690,firstTradeDateMilliseconds=345,48B,dividendRate=0,96,regularMarketVolume=83919060,priceHint=2,
-// priceEpsNextQuarter=88,43,epsTrailingTwelveMonths=5,96,epsNextQuarter=1,97,epsForward=6,14,targetPriceMean=186,05, trailingPE=29,23priceEpsCurrentYear=30,89,
-//epsCurrentYear=5,64, dividendsPerShare=0,93
