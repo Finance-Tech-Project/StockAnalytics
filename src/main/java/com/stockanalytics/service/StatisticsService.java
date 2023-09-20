@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -55,13 +54,6 @@ public class StatisticsService {
     private final DataGetter getter;
     private final ModelMapper mapper;
 
-
-
-//    private double round (double number){
-//        String str = df.format(number).replace(",", ".");
-//        return Double.parseDouble(str);
-//    }
-
     public void updateStatistics() throws IOException, InterruptedException {
         List<Statistics> listStat = statisticsRepository.findAll();
         for (Statistics stat : listStat) {
@@ -71,7 +63,7 @@ public class StatisticsService {
         }
     }
 
-    private String calcMovingAverage(List <StockQuoteDto> list, Symbol symbol, int days) {
+    private String calcMovingAverage(List <StockQuoteDto> list, int days) {
         double movingAverage = list.stream()
                 .filter(quot -> quot.getDate().isAfter(LocalDate.now().minusDays(days)))
                 .mapToDouble(StockQuoteDto::getClose)
@@ -81,35 +73,36 @@ public class StatisticsService {
 
     private Map<String, String> calcStatistics(Symbol symbol) {
         Map<String, String> calcMap = new HashMap<>();
-        List<StockQuoteDto> sortedList = stockQuoteService.getData(symbol, LocalDate.now().minusDays(365), LocalDate.now())
-                .stream()
-                .sorted(Comparator.comparing(StockQuoteDto::getDate))
-                .collect(Collectors.toList());
-        df.setRoundingMode(RoundingMode.HALF_UP);
-        Double lastPrice = sortedList.get(sortedList.size() - 1).getClose();
-        Double firstPrice = sortedList.get(0).getClose();
-        double difference = lastPrice - firstPrice;
-        String fmt = df.format(100 * difference / firstPrice).concat("%");
-        calcMap.put("fiftyTowWeekChange", fmt);
-        Double minLow = sortedList.stream()
-                .map(StockQuoteDto::getLow)
-                .min(Double::compare)
-                .orElse(0.);
-        Double maxHigh = sortedList.stream()
-                .map(StockQuoteDto::getHigh)
-                .max(Double::compare)
-                .orElse(0.);
-        calcMap.put("fiftyTowWeekHigh", df.format(maxHigh));
-        calcMap.put("fiftyTowWeekLow", df.format(minLow));
-        calcMap.put("twoHundredDaysMovingAverage", calcMovingAverage(sortedList, symbol, 200));
-        calcMap.put("fiftyDaysMovingAverage", calcMovingAverage(sortedList, symbol, 50));
-        return calcMap;
+        List<StockQuoteDto> sortedList = stockQuoteService.getData(symbol, LocalDate.now().minusDays(365), LocalDate.now());
+        if (sortedList.size() > 0){
+            df.setRoundingMode(RoundingMode.HALF_UP);
+            Double lastPrice = sortedList.get(sortedList.size() - 1).getClose();
+            Double firstPrice = sortedList.get(0).getClose();
+            double difference = lastPrice - firstPrice;
+            String fmt = df.format(100 * difference / firstPrice).concat("%");
+            calcMap.put("fiftyTowWeekChange", fmt);
+            Double minLow = sortedList.stream()
+                    .map(StockQuoteDto::getLow)
+                    .min(Double::compare)
+                    .orElse(0.);
+            Double maxHigh = sortedList.stream()
+                    .map(StockQuoteDto::getHigh)
+                    .max(Double::compare)
+                    .orElse(0.);
+            calcMap.put("fiftyTowWeekHigh", df.format(maxHigh));
+            calcMap.put("fiftyTowWeekLow", df.format(minLow));
+            calcMap.put("twoHundredDaysMovingAverage", calcMovingAverage(sortedList, 200));
+            calcMap.put("fiftyDaysMovingAverage", calcMovingAverage(sortedList, 50));
+            return calcMap;
+        }
+        return null;
     }
 
     public Map<String, String> getStatisticsFromYahoo(Symbol symbol) throws JsonProcessingException {
         return getter.getDataForStatisticsFromYahoo(symbol);
     }
 
+        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
         public Statistics getNewStatistics(Symbol symbol) throws IOException, InterruptedException {
             Statistics stat = new Statistics();
             List <Map<String, String>> mapList = getter.getDataForAnalisisFromRapidAPI(symbol);
@@ -165,7 +158,7 @@ public class StatisticsService {
                 Number numberValue = (Number) entry.getValue();
                 Long l = numberValue.longValue();
                 if (entry.getKey().contains("Date") || entry.getKey().contains("Time")) {
-                    Instant instant = Instant.ofEpochMilli(l);
+                    Instant instant = Instant.ofEpochSecond(l);
                     LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                     parameters.put(entry.getKey(), localDate.format(formatter));
@@ -193,12 +186,12 @@ public class StatisticsService {
         return parameters;
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     public StatisticsDto getStatisticsDto (String ticker) throws IOException, InterruptedException {
             Symbol symbol = symbolService.getSymbol(ticker);
             Statistics st;
             StatisticsDto dto =  new StatisticsDto();
             if(statisticsRepository.existsBySymbol(symbol)) {
-                //noinspection SingleStatementInBlock
                 st = statisticsRepository.findBySymbol(symbol).get();
             }else{
                 st = getNewStatistics(symbol);
