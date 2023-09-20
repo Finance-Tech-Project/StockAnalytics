@@ -2,6 +2,7 @@ package com.stockanalytics.util;
 
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
+import com.stockanalytics.dto.IncomePercentByPeriodDto;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
@@ -52,5 +53,36 @@ public class Calculator {
         }
         return movingAverage;
     }
+
+    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
+        List<IncomePercentByPeriodDto> incomeList = new ArrayList<>();
+        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusDays(days), dateTo).stream()
+                .sorted(Comparator.comparing(StockQuote::getDate))
+                .collect(Collectors.toList());
+
+        for (StockQuote quote : quotes) {
+            LocalDate currentDate = quote.getDate();
+
+            if (currentDate.isAfter(dateFrom) && !currentDate.isAfter(dateTo)) {
+                LocalDate previousDate = currentDate.minusDays(days);
+
+                StockQuote previousQuot = null;
+                for (StockQuote q : quotes) {
+                    if (q.getDate().isEqual(previousDate) || q.getDate().isAfter(previousDate)) {
+                        previousQuot = q;
+                        break;
+                    }
+                }
+
+                if (previousQuot != null) {
+                    double income = quote.getClose() - previousQuot.getClose();
+                    BigDecimal incomePercent = new BigDecimal(100 * income / previousQuot.getClose()).setScale(2, RoundingMode.HALF_UP);
+                    incomeList.add(new IncomePercentByPeriodDto(currentDate, incomePercent));
+                }
+            }
+        }
+        return incomeList;
+    }
+
 }
 

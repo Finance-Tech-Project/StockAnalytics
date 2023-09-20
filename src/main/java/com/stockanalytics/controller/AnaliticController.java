@@ -2,6 +2,7 @@ package com.stockanalytics.controller;
 
 
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
+import com.stockanalytics.dto.IncomePercentByPeriodDto;
 import com.stockanalytics.service.AnaliticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,14 @@ public class AnaliticController {
                                                           @RequestParam String ticker, @RequestParam int period){
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-      return analiticsService.getMovingAverage(start, end, ticker, period);
+        return analiticsService.getMovingAverage(start, end, ticker, period);
+    }
+
+    @GetMapping("/analitics/simpleIncome")
+    public List<IncomePercentByPeriodDto> getSimpleIncome(@RequestParam String dateFrom, @RequestParam String dateTo,
+                                                           @RequestParam String ticker, @RequestParam int period){
+        LocalDate end = LocalDate.parse(dateTo);
+        LocalDate start = LocalDate.parse(dateFrom);
+        return analiticsService.getSimpleIncome(start, end, ticker, period);
     }
 }
