@@ -19,9 +19,10 @@ public class AuthorizationConfiguration {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
          http.authorizeRequests(authorize -> authorize
-        		.mvcMatchers("/account/register")
+
+        		.mvcMatchers("/start/remove","/start/add","/service/addsymbols","/account/register","/start/symbols", "/statistics?ticker={tickerName}", "/searchSymbol/?search={searchedTickerForLetters}", "/quote/history?dateFrom={dateFrom}&dateTo={dateTo}&ticker={tickerName}")
        		.permitAll()
-       		.mvcMatchers(HttpMethod.GET, "/account/user/{login}","/account/recovery/{login}")
+       		.mvcMatchers(HttpMethod.GET,"/allsymbols","/account/user/{login}","/account/recovery/{login}","/quote/history","/statistics")
        		.permitAll()
        		.mvcMatchers("/account/user/{login}/role/{role}")
        		.access("#login == authentication.name or hasRole('ADMINISTRATOR')")
@@ -31,8 +32,8 @@ public class AuthorizationConfiguration {
         	    .mvcMatchers(HttpMethod.DELETE, "/account/user/{login}")
        	    .access("#login == authentication.name or hasRole('ADMINISTRATOR')")
    	    
-        	    .anyRequest()
-        	    .authenticated()
+ 	    .anyRequest()
+  	    .authenticated()
        );
 		
 		return http.build();
