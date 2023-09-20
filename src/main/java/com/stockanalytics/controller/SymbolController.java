@@ -38,10 +38,9 @@ public class SymbolController {
         return symbolService.removeSymbolFromStart(ticker);
         }
 
-    @GetMapping("/searchSymbol")
-    public List<Symbol> searсhSymbolsBySubstring(@RequestParam String search){
-        List<Symbol> list =  symbolService.searchSymbolsBySubstring(search);
-        return list;
+    @GetMapping("/searchSymbol/")
+    public List<Symbol> searchSymbolsBySubstring(@RequestParam String search){
+        return  symbolService.searchSymbolsBySubstring(search);
     }
 
 }

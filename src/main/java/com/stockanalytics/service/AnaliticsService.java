@@ -1,0 +1,25 @@
+package com.stockanalytics.service;
+
+import com.stockanalytics.dao.StockQuoteRepository;
+import com.stockanalytics.dto.AveragePriceByPeriodDto;
+import com.stockanalytics.model.Symbol;
+import com.stockanalytics.util.Calculator;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@RequiredArgsConstructor
+@Service
+public class AnaliticsService {
+    private final Calculator calculator;
+    private final SymbolService symbolService;
+    private final StockQuoteRepository stockQuoteRepository;
+
+
+    public List<AveragePriceByPeriodDto> getMovingAverage(LocalDate dateFrom, LocalDate dateTo, String ticker, int period) {
+        Symbol symbol = symbolService.getSymbol(ticker);
+        return  calculator.calcMovingAvg(dateFrom, dateTo,symbol, period);
+    }
+}
