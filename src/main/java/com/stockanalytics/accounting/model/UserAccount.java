@@ -34,7 +34,7 @@ public class UserAccount implements Serializable {
 	
 	private static final long serialVersionUID = -6631032945500720346L;
 	@Id
-	String login;
+	public String login;
 	String email;
 	String password;
     String firstName;
