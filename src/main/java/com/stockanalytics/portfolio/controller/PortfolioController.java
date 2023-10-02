@@ -1,5 +1,7 @@
 package com.stockanalytics.portfolio.controller;
+import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.portfolio.dto.StockDto;
+import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.dto.PortfolioDto;
@@ -15,6 +17,7 @@ public class PortfolioController {
 
     public PortfolioController(PortfolioService portfolioService) {
         this.portfolioService = portfolioService;
+
     }
 
     // Создать новый портфель
@@ -30,8 +33,17 @@ public class PortfolioController {
     }
     // Добавить акцию в портфель
     @PostMapping("/addStock")
-    public StockDto addStockToPortfolio(@RequestParam Long portfolioId,@RequestParam String symbol, @RequestParam int quantity) {
-      return   portfolioService.addStock(portfolioId,symbol, quantity);
+    public StockDto addStockToPortfolio(@RequestParam String userName,@RequestParam String portfolioName,@RequestParam String symbol, @RequestParam int quantity) {
+      return   portfolioService.addStock(userName,portfolioName,symbol, quantity);
+    }
+    @PostMapping("/addToWatchList")
+    public void addToWatchList(@RequestParam String userName,@RequestParam String symbol) throws InterruptedException {
+          portfolioService.addToWatchList(userName,symbol);
+    }
+    @DeleteMapping("/removeFromWatchList")
+    public void removeFromWatchList(@RequestParam String userName,@RequestParam String symbol) {
+
+        portfolioService.removeFromWatchList(userName,symbol);
     }
     @PutMapping("/{username}")
     public PortfolioDto updatePortfolio(@PathVariable String username, @RequestBody PortfolioDto portfolioDto) {
@@ -40,8 +52,8 @@ public class PortfolioController {
     }
     // Удалить акцию из портфеля
     @DeleteMapping("/removeStock")
-    public StockDto removeStockFromPortfolio(@RequestParam Long portfolioId,@RequestParam String symbol, @RequestParam int quantity) {
-      return   portfolioService.removeStock(portfolioId,symbol, quantity);
+    public StockDto removeStockFromPortfolio(@RequestParam String portfolioName,@RequestParam String symbol, @RequestParam int quantity) {
+      return   portfolioService.removeStock(portfolioName,symbol, quantity);
     }
 
     @DeleteMapping("/{username}")
@@ -50,8 +62,8 @@ public class PortfolioController {
     }
     // Рассчитать стоимость портфеля на указанную дату
     @GetMapping("/calculateValue")
-    public double calculatePortfolioValue(@RequestParam LocalDate date,@PathVariable Long portfolioId) {
-        return portfolioService.calculatePortfolioValue(date,portfolioId);
+    public double calculatePortfolioValue(@RequestParam LocalDate date,@PathVariable String portfolioName) {
+        return portfolioService.calculatePortfolioValue(date,portfolioName);
     }
 
     // Проверить существование акций в портфеле

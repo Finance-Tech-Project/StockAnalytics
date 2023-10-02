@@ -9,5 +9,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 public class StockDto {
+    public  String portfolioName;
     private Map<String, Integer> stocks;
 }

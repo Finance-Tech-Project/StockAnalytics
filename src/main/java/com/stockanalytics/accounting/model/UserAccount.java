@@ -40,8 +40,15 @@ public class UserAccount implements Serializable {
     String firstName;
 	String lastName;
 	String role;
+	@ElementCollection
+	@CollectionTable(name = "user_watchlist", joinColumns = @JoinColumn(name = "user_id"))
+	@Column(name = "stock_symbol")
+	private List<String> watchlist;
 
-	public UserAccount() {}
+	public UserAccount() {
+		this.watchlist = new ArrayList<>();
+	}
+
 	public UserAccount(String login, String password, String firstName, String lastName) {
 		this.login = login;
 		this.password = password;
@@ -49,6 +56,7 @@ public class UserAccount implements Serializable {
 		this.lastName = lastName;
 		this.email=email;
 		this.role = "USER";
+		this.watchlist = new ArrayList<>();
 	}
 
 	public void addRole(String role) {
@@ -57,6 +65,18 @@ public class UserAccount implements Serializable {
 
 	public void removeRole() {
 		this.role = "USER";
+	}
+	public void addToWatchList(String symbol) {
+		if (watchlist == null) {
+			watchlist = new ArrayList<>();
+		}
+		watchlist.add(symbol);
+	}
+	public void removeFromWatchList(String symbol) {
+		if (watchlist == null) {
+			watchlist = new ArrayList<>();
+		}
+		watchlist.remove(symbol);
 	}
 
 }
