@@ -3,6 +3,7 @@ package com.stockanalytics.service;
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
 import com.stockanalytics.dto.IncomePercentByPeriodDto;
+import com.stockanalytics.dto.VolatilityDto;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.util.Calculator;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,13 @@ public class AnaliticsService {
         return  calculator.calcMovingAvg(dateFrom, dateTo,symbol, period);
     }
 
-    public List<IncomePercentByPeriodDto> getSimpleIncome(LocalDate dateFrom, LocalDate dateTo, String ticker, int days) {
+    public List<IncomePercentByPeriodDto> getSimpleIncome(LocalDate dateFrom, LocalDate dateTo, String ticker, int years) {
         Symbol symbol = symbolService.getSymbol(ticker);
-        return calculator.calcSimpleIncomeList(dateFrom, dateTo, symbol, days);
+        return calculator.calcSimpleIncomeList(dateFrom, dateTo, symbol, years);
+    }
+
+    public List<VolatilityDto> getDataAboutVolatility(LocalDate dateFrom, LocalDate dateTo, String ticker, int days) {
+        Symbol symbol = symbolService.getSymbol(ticker);
+        return calculator.calculateVolatility(dateFrom, dateTo, symbol, days);
     }
 }

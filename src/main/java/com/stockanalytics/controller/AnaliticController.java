@@ -3,6 +3,7 @@ package com.stockanalytics.controller;
 
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
 import com.stockanalytics.dto.IncomePercentByPeriodDto;
+import com.stockanalytics.dto.VolatilityDto;
 import com.stockanalytics.service.AnaliticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +28,17 @@ public class AnaliticController {
 
     @GetMapping("/analitics/simpleIncome")
     public List<IncomePercentByPeriodDto> getSimpleIncome(@RequestParam String dateFrom, @RequestParam String dateTo,
-                                                           @RequestParam String ticker, @RequestParam int period){
+                                                           @RequestParam String ticker, @RequestParam int years){
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return analiticsService.getSimpleIncome(start, end, ticker, period);
+        return analiticsService.getSimpleIncome(start, end, ticker, years);
+    }
+
+    @GetMapping("/analitics/volatility")
+    public List<VolatilityDto> getDataAboutVolatility(@RequestParam String dateFrom, @RequestParam String dateTo,
+                                                      @RequestParam String ticker, @RequestParam int days){
+        LocalDate end = LocalDate.parse(dateTo);
+        LocalDate start = LocalDate.parse(dateFrom);
+        return analiticsService.getDataAboutVolatility(start, end, ticker, days);
     }
 }

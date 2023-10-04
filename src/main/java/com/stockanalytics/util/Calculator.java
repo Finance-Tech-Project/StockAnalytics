@@ -3,9 +3,11 @@ package com.stockanalytics.util;
 import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
 import com.stockanalytics.dto.IncomePercentByPeriodDto;
+import com.stockanalytics.dto.VolatilityDto;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -54,9 +56,9 @@ public class Calculator {
         return movingAverage;
     }
 
-    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
+    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
         List<IncomePercentByPeriodDto> incomeList = new ArrayList<>();
-        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusDays(days), dateTo).stream()
+        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
                 .collect(Collectors.toList());
 
@@ -64,7 +66,7 @@ public class Calculator {
             LocalDate currentDate = quote.getDate();
 
             if (currentDate.isAfter(dateFrom) && !currentDate.isAfter(dateTo)) {
-                LocalDate previousDate = currentDate.minusDays(days);
+                LocalDate previousDate = currentDate.minusYears(years);
 
                 StockQuote previousQuot = null;
                 for (StockQuote q : quotes) {
@@ -84,5 +86,43 @@ public class Calculator {
         return incomeList;
     }
 
+    private static double calculateVolatilityForWindow(List<StockQuote> window) {
+        DescriptiveStatistics stats = new DescriptiveStatistics();       // Create an object to calculate the standard deviation
+        for (StockQuote quote : window) {
+            stats.addValue(quote.getClose());      // Add closing prices to the stats object
+        }
+        return stats.getStandardDeviation();  // Calculate and return standard deviation
+    }
+
+    public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
+        List<VolatilityDto> result = new ArrayList<>();
+        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusDays(days+1), dateTo).stream()
+                .sorted(Comparator.comparing(StockQuote::getDate))
+                .collect(Collectors.toList());
+
+        for (StockQuote quote : quotes) {
+            LocalDate currentDate = quote.getDate();
+            DescriptiveStatistics stats = new DescriptiveStatistics();
+            if (currentDate.isAfter(dateFrom.minusDays(1)) && !currentDate.isAfter(dateTo.minusDays(1))) {
+                LocalDate startDate = currentDate.minusDays(days);
+
+                for (StockQuote q : quotes) {
+                    if (q.getDate().isAfter(quote.getDate())) {
+                        break;
+                    }
+                    if (q.getDate().isEqual(startDate) || q.getDate().isAfter(startDate)) {
+                        stats.addValue(q.getClose());
+                    }
+                }
+                if (stats.getN() > 0) {
+                    double vol = stats.getStandardDeviation();
+                    BigDecimal volatility = new BigDecimal(vol).setScale(2, RoundingMode.HALF_UP);
+                    result.add(new VolatilityDto(quote.getDate(), volatility));
+                }
+            }
+        }
+        return result;
+    }
 }
+
 
