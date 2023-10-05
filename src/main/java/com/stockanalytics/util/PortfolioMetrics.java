@@ -29,8 +29,7 @@ public class PortfolioMetrics {
     }
 
     private static double calculatePortfolioReturn(List<StockQuote> stockQuotes, List<BondYield> bondYields, LocalDate startDate, LocalDate endDate) {
-        // Рассчитать доходность портфеля (например, среднюю доходность акций за период)
-        // В этом примере, мы просто рассчитываем среднюю доходность акций за период
+        // TODO Рассчитать доходность портфеля (среднюю доходность акций за период)
         double totalStockReturn = 0;
         int stockCount = 0;
 
@@ -42,9 +41,7 @@ public class PortfolioMetrics {
         }
 
         double averageStockReturn = totalStockReturn / stockCount;
-
-        // Рассчитать доходность безрискового актива (например, среднюю доходность облигаций за период)
-        // В этом примере, мы просто рассчитываем среднюю доходность облигаций за период
+        // TODO Рассчитать доходность безрискового актива (среднюю доходность облигаций за период)
         double totalBondReturn = 0;
         int bondCount = 0;
 
@@ -60,9 +57,8 @@ public class PortfolioMetrics {
     }
 
     private static double calculatePortfolioStdDev(List<StockQuote> stockQuotes, List<BondYield> bondYields, LocalDate startDate, LocalDate endDate) {
-        // Рассчитать стандартное отклонение доходности портфеля
-        // В этом примере, мы просто возвращаем фиксированное значение (для упрощения)
-        return 0.1; // Замените на реальное стандартное отклонение
+        // TODO Рассчитать стандартное отклонение доходности портфеля
+        return 0.1; // Возвращаем фиксированное значение для простоты
     }
 }
 

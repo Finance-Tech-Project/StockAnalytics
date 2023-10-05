@@ -1,6 +1,5 @@
 package com.stockanalytics.service;
 
-import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
 import com.stockanalytics.dto.IncomePercentByPeriodDto;
 import com.stockanalytics.dto.VolatilityDto;
@@ -17,8 +16,6 @@ import java.util.List;
 public class AnaliticsService {
     private final Calculator calculator;
     private final SymbolService symbolService;
-    private final StockQuoteRepository stockQuoteRepository;
-
 
     public List<AveragePriceByPeriodDto> getMovingAverage(LocalDate dateFrom, LocalDate dateTo, String ticker, int period) {
         Symbol symbol = symbolService.getSymbol(ticker);

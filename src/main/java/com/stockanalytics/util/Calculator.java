@@ -24,10 +24,6 @@ import java.util.stream.Collectors;
 public class Calculator {
     private final StockQuoteRepository stockQuoteRepository;
 
-    private Double calcAvgPriceByPeriod(List<StockQuote> list) {
-        return list.stream().map(StockQuote::getClose).mapToDouble(Double::doubleValue).average().orElse(0);
-    }
-
     public List<AveragePriceByPeriodDto> calcMovingAvg(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
         List<AveragePriceByPeriodDto> movingAverage = new ArrayList<>();
         List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusDays(days), dateTo).stream()
@@ -64,7 +60,6 @@ public class Calculator {
 
         for (StockQuote quote : quotes) {
             LocalDate currentDate = quote.getDate();
-
             if (currentDate.isAfter(dateFrom) && !currentDate.isAfter(dateTo)) {
                 LocalDate previousDate = currentDate.minusYears(years);
 
@@ -84,14 +79,6 @@ public class Calculator {
             }
         }
         return incomeList;
-    }
-
-    private static double calculateVolatilityForWindow(List<StockQuote> window) {
-        DescriptiveStatistics stats = new DescriptiveStatistics();       // Create an object to calculate the standard deviation
-        for (StockQuote quote : window) {
-            stats.addValue(quote.getClose());      // Add closing prices to the stats object
-        }
-        return stats.getStandardDeviation();  // Calculate and return standard deviation
     }
 
     public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
@@ -115,7 +102,7 @@ public class Calculator {
                     }
                 }
                 if (stats.getN() > 0) {
-                    double vol = stats.getStandardDeviation();
+                    double vol = stats.getStandardDeviation()*100;
                     BigDecimal volatility = new BigDecimal(vol).setScale(2, RoundingMode.HALF_UP);
                     result.add(new VolatilityDto(quote.getDate(), volatility));
                 }
