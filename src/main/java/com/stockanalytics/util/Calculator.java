@@ -102,7 +102,7 @@ public class Calculator {
                     }
                 }
                 if (stats.getN() > 0) {
-                    double vol = stats.getStandardDeviation()*100;
+                    double vol = stats.getStandardDeviation();
                     BigDecimal volatility = new BigDecimal(vol).setScale(2, RoundingMode.HALF_UP);
                     result.add(new VolatilityDto(quote.getDate(), volatility));
                 }
