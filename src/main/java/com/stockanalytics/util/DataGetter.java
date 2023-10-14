@@ -2,9 +2,6 @@ package com.stockanalytics.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opencsv.CSVReader;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
 import lombok.AllArgsConstructor;
@@ -15,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -55,15 +51,54 @@ public class DataGetter {
         );
         String csvData = response.getBody();
         symbol.setStatus(1);
-        CSVReader csvReader = null;
-        if (csvData != null) {
-            csvReader = new CSVReader(new StringReader(csvData));
+        List<StockQuoteDto> stockQuotes = new ArrayList<>();
+
+        String[] lines = csvData.split("\n");
+
+        for (String line : lines) {
+            String[] values = line.split(",");
+            if (values.length >= 7) {
+                try {
+                    LocalDate date = LocalDate.parse(values[0]);
+                    Double open = Double.parseDouble(values[1]);
+                    Double high = Double.parseDouble(values[2]);
+                    Double low = Double.parseDouble(values[3]);
+                    Double close = Double.parseDouble(values[4]);
+                    Long volume = Long.parseLong(values[6]);
+
+                    if (date != null ) {
+                        StockQuoteDto stockQuote = new StockQuoteDto(date, open, high, low, close, volume);
+                        stockQuotes.add(stockQuote);
+                    }
+                } catch (Exception e) {
+                    // Обработка ошибок преобразования данных, если необходимо
+                }
+            }
         }
-        CsvToBean<StockQuoteDto> csvToBean = new CsvToBeanBuilder<StockQuoteDto>(csvReader)
-                .withType(StockQuoteDto.class)
-                .withSeparator(',')
-                .build();
-        return csvToBean.parse();
+
+        return stockQuotes;
+//        CSVReader csvReader = null;
+//        if (csvData != null) {
+//            csvReader = new CSVReader(new StringReader(csvData));
+//        }
+//        CsvToBean<StockQuoteDto> csvToBean = new CsvToBeanBuilder<StockQuoteDto>(csvReader)
+//                .withType(StockQuoteDto.class)
+//                .withSeparator(',')
+//                .build();
+//        List<StockQuoteDto> list = null;
+//
+//			try {
+//                list = csvToBean.parse();
+//            } catch (IllegalStateException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (NumberFormatException e){
+//                    e.printStackTrace();
+//            } catch(RuntimeException e){
+//                e.printStackTrace();
+//			}
+//
+//        return list;
     }
 
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol){

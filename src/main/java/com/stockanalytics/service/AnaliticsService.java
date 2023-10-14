@@ -2,6 +2,7 @@ package com.stockanalytics.service;
 
 import com.stockanalytics.dto.AveragePriceByPeriodDto;
 import com.stockanalytics.dto.IncomePercentByPeriodDto;
+import com.stockanalytics.dto.SharpRatioDto;
 import com.stockanalytics.dto.VolatilityDto;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.util.Calculator;
@@ -30,5 +31,10 @@ public class AnaliticsService {
     public List<VolatilityDto> getDataAboutVolatility(LocalDate dateFrom, LocalDate dateTo, String ticker, int days) {
         Symbol symbol = symbolService.getSymbol(ticker);
         return calculator.calculateVolatility(dateFrom, dateTo, symbol, days);
+    }
+
+    public List<SharpRatioDto> getSharpRatios(LocalDate start, LocalDate end, String ticker, int years) {
+        Symbol symbol = symbolService.getSymbol(ticker);
+        return calculator.calculateSharpRatios(start,end,symbol, years);
     }
 }

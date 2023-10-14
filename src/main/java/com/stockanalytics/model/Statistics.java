@@ -10,15 +10,15 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
-@Table(name = "statistics")
+//@Table(name = "statistics")
 public class Statistics {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+//    @Column(name = "id", nullable = false)
     private Long id;
 
     @OneToOne(optional = false)
-    @JoinColumn(name = "symbol_name")
+//    @JoinColumn(name = "symbol_name")
     Symbol symbol;
 
     String marketCap;
