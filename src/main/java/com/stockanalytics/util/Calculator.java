@@ -1,9 +1,9 @@
 package com.stockanalytics.util;
 
+import com.stockanalytics.dao.BondYieldRepository;
 import com.stockanalytics.dao.StockQuoteRepository;
-import com.stockanalytics.dto.AveragePriceByPeriodDto;
-import com.stockanalytics.dto.IncomePercentByPeriodDto;
-import com.stockanalytics.dto.VolatilityDto;
+import com.stockanalytics.dto.*;
+import com.stockanalytics.model.BondYield;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 public class Calculator {
     private final StockQuoteRepository stockQuoteRepository;
+    private final BondYieldRepository bondYieldRepository;
 
     public List<AveragePriceByPeriodDto> calcMovingAvg(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
         List<AveragePriceByPeriodDto> movingAverage = new ArrayList<>();
@@ -61,19 +62,19 @@ public class Calculator {
         for (StockQuote quote : quotes) {
             LocalDate currentDate = quote.getDate();
             if (currentDate.isAfter(dateFrom) && !currentDate.isAfter(dateTo)) {
-                LocalDate previousDate = currentDate.minusYears(years);
+                LocalDate startDate = currentDate.minusYears(years);
 
-                StockQuote previousQuot = null;
+                StockQuote startQuot = null;
                 for (StockQuote q : quotes) {
-                    if (q.getDate().isEqual(previousDate) || q.getDate().isAfter(previousDate)) {
-                        previousQuot = q;
+                    if (q.getDate().isEqual(startDate) || q.getDate().isAfter(startDate)) {
+                        startQuot = q;
                         break;
                     }
                 }
 
-                if (previousQuot != null) {
-                    double income = quote.getClose() - previousQuot.getClose();
-                    BigDecimal incomePercent = new BigDecimal(100 * income / previousQuot.getClose()).setScale(2, RoundingMode.HALF_UP);
+                if (startQuot != null) {
+                    double income = quote.getClose() - startQuot.getClose();
+                    BigDecimal incomePercent = new BigDecimal(100 * income / startQuot.getClose()).setScale(2, RoundingMode.HALF_UP);
                     incomeList.add(new IncomePercentByPeriodDto(currentDate, incomePercent));
                 }
             }
@@ -109,6 +110,50 @@ public class Calculator {
             }
         }
         return result;
+    }
+
+    public List<SharpRatioDto> calculateSharpRatios(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+
+        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo);
+        List<BondYield> bondYields = bondYieldRepository.findBondYieldsBetweenDates(dateFrom, dateTo);
+        List<SharpRatioDto> sharpRatios = new ArrayList<>();
+        double stockReturn = 0.;
+        double currentYield = 0.;
+        double volatility = 0.;
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        for (StockQuote quote : quotes) {
+            LocalDate currentDate = quote.getDate();
+            if (currentDate.isAfter(dateFrom) && !currentDate.isAfter(dateTo)) {
+                LocalDate startDate = currentDate.minusYears(years);
+                StockQuote startQuot = null;
+                for (StockQuote q : quotes) {
+                    if (q.getDate().isEqual(startDate) || q.getDate().isAfter(startDate)) {
+                        startQuot = q;
+                        stats.addValue(q.getClose());
+                        break;
+                    }
+                    for (BondYield yield : bondYields) {
+                        if (yield.getDate().isEqual(startDate) || yield.getDate().isAfter(startDate)) {
+                            currentYield = yield.getYield();
+                        }
+                    }
+                }
+                if (startQuot != null) {
+                    double income = quote.getClose() - startQuot.getClose();
+                    stockReturn = 100 * income / startQuot.getClose();
+                }
+                if (stats.getN() > 0) {
+                    volatility = stats.getStandardDeviation();
+                }
+                if (volatility > 0) {
+                    double sharpRatio = (stockReturn - currentYield) / volatility;
+                    sharpRatios.add(new SharpRatioDto(currentDate, sharpRatio));
+                }
+            }
+
+        }
+        return sharpRatios;
     }
 }
 
