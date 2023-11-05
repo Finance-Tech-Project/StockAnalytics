@@ -32,5 +32,8 @@ public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDat
     @Query(value = "select sq.id.date from StockQuote sq where sq.id.symbol = :symbol order by sq.id.date desc")
     List<LocalDate>   getQuotDatesList(@Param("symbol") Symbol symbol);
 
-//    List<StockQuote> findAllById_SymbolAndDateBetween(Symbol symbol, LocalDate dateFrom,LocalDate dateTo);
+    List<StockQuote> findAllById_Symbol_Name(String symbol);
+    @Query("SELECT sq.close FROM StockQuote sq WHERE sq.id.symbol.name = :symbol AND sq.id.date = :date")
+    Double findStockPriceBySymbolNameAndDate(@Param("symbol") String symbolName, @Param("date") LocalDate date);
+
 }

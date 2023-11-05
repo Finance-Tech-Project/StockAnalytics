@@ -48,11 +48,10 @@ public class UserAccountController {
 
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
-
 		return userAccountService.getUser(login);
 	}
 
-	@DeleteMapping("/user/{login}")
+	@DeleteMapping("/removeUser/{login}")
 	public UserDto removeUser(@PathVariable String login) {
 		return userAccountService.removeUser(login);
 	}

@@ -1,10 +1,15 @@
 package com.stockanalytics.accounting.service;
 
+import java.util.List;
 import java.util.UUID;
 
 
 import java.util.regex.Pattern;
 
+import com.stockanalytics.portfolio.dao.PortfolioRepository;
+import com.stockanalytics.portfolio.dto.PortfolioDto;
+import com.stockanalytics.portfolio.model.Portfolio;
+import com.stockanalytics.portfolio.service.PortfolioServiceImpl;
 import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
@@ -25,6 +30,8 @@ import com.stockanalytics.accounting.model.UserAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService ,CommandLineRunner{
@@ -33,6 +40,8 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	final ModelMapper modelMapper;
 	final PasswordEncoder passwordEncoder;
 	final EmailSenderService emailSenderService;
+	final PortfolioRepository portfolioRepository;
+	final PortfolioServiceImpl portfolioService;
 	private static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
 	   private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
 	@Override
@@ -97,8 +106,14 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	}
 
 	@Override
+	@Transactional
 	public UserDto removeUser(String login) {
 		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		List<Portfolio> userPortfolios = portfolioRepository.findByUserLogin(userAccount);
+		if (!userPortfolios.isEmpty()) {
+			portfolioRepository.deleteAllByUserLogin(userAccount);
+		}
+
 		userAccountRepository.deleteById(login);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -146,9 +161,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 		if(!userAccountRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
 			UserAccount userAccount = new UserAccount("admin", password, "", "");
-//			userAccount.addRole("USER");
 			userAccount.addRole("MODERATOR");
-//			userAccount.addRole("ADMINISTRATOR");
 			userAccountRepository.save(userAccount);
 		}
 	}

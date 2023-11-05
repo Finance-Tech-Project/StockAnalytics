@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ServiceConfiguration {
+
 	 @Bean
 	    ModelMapper getModelMapper() {
 	        ModelMapper modelMapper = new ModelMapper();
@@ -23,9 +24,10 @@ public class ServiceConfiguration {
 	                .setFieldMatchingEnabled(true)
 	                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
 	                .setMatchingStrategy(MatchingStrategies.STRICT);
+		 modelMapper.addConverter(new UserAccountToStringConverter());
 	        return modelMapper;
 	    }
-	
+
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
