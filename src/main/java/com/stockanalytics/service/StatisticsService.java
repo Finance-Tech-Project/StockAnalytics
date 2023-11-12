@@ -1,6 +1,5 @@
 package com.stockanalytics.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.stockanalytics.dao.StatisticsRepository;
 import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.StockQuoteDto;
@@ -24,7 +23,10 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -98,7 +100,7 @@ public class StatisticsService {
         return null;
     }
 
-    public Map<String, String> getStatisticsFromYahoo(Symbol symbol) throws JsonProcessingException {
+    public Map<String, String> getStatisticsFromYahoo(Symbol symbol){
         return getter.getDataForStatisticsFromYahoo(symbol);
     }
 
@@ -112,10 +114,12 @@ public class StatisticsService {
             statData.add(calcStatistics(symbol));
             HashMap<String, String> parameters = new HashMap<>();
             for (Map<String, String> map : statData) {
-                for (Map.Entry<String, String> entry : map.entrySet()) {
-                    String key = entry.getKey();
-                    String value = entry.getValue();
-                    parameters.put(key, value);
+                if (map != null) {
+                    for (Map.Entry<String, String> entry : map.entrySet()) {
+                        String key = entry.getKey();
+                        String value = entry.getValue();
+                        parameters.put(key, value);
+                    }
                 }
             }
             List<String> missingKeys = new ArrayList<>();
