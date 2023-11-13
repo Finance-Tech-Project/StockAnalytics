@@ -1,6 +1,5 @@
 package com.stockanalytics.controller;
 
-import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.service.StatisticsService;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,11 +26,6 @@ public class StockQuoteController {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
         return stockQuoteService.getListsForChart(symbol,start, end );
-    }
-
-    @GetMapping("/statistics")
-    public StatisticsDto getStatistics(@RequestParam String ticker) throws IOException, InterruptedException {
-        return statisticsService.getStatisticsDto(ticker);
     }
 
 }

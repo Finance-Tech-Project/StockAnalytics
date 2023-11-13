@@ -2,9 +2,6 @@ package com.stockanalytics.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opencsv.CSVReader;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
 import lombok.AllArgsConstructor;
@@ -12,10 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -57,15 +53,58 @@ public class DataGetter {
         );
         String csvData = response.getBody();
         symbol.setStatus(1);
-        CSVReader csvReader = null;
+        List<StockQuoteDto> stockQuotes = new ArrayList<>();
+
+        String[] lines = new String[0];
         if (csvData != null) {
-            csvReader = new CSVReader(new StringReader(csvData));
+            lines = csvData.split("\n");
         }
-        CsvToBean<StockQuoteDto> csvToBean = new CsvToBeanBuilder<StockQuoteDto>(csvReader)
-                .withType(StockQuoteDto.class)
-                .withSeparator(',')
-                .build();
-        return csvToBean.parse();
+
+        for (String line : lines) {
+            String[] values = line.split(",");
+            if (values.length >= 7) {
+                try {
+
+                    LocalDate date = LocalDate.parse(values[0]);
+                    Double open = Double.parseDouble(values[1]);
+                    Double high = Double.parseDouble(values[2]);
+                    Double low = Double.parseDouble(values[3]);
+                    Double close = Double.parseDouble(values[4]);
+                    Long volume = Long.parseLong(values[6]);
+
+//                    if (date != null ) {
+                    StockQuoteDto stockQuote = new StockQuoteDto(date, open, high, low, close, volume);
+                    stockQuotes.add(stockQuote);
+//                    }
+                } catch (Exception e) {
+                    // Обработка ошибок преобразования данных, если необходимо
+                }
+            }
+        }
+
+        return stockQuotes;
+//        CSVReader csvReader = null;
+//        if (csvData != null) {
+//            csvReader = new CSVReader(new StringReader(csvData));
+//        }
+//        CsvToBean<StockQuoteDto> csvToBean = new CsvToBeanBuilder<StockQuoteDto>(csvReader)
+//                .withType(StockQuoteDto.class)
+//                .withSeparator(',')
+//                .build();
+//        List<StockQuoteDto> list = null;
+//
+//        try {
+//                list = csvToBean.parse();
+//            } catch (IllegalStateException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (NumberFormatException e){
+//                    e.printStackTrace();
+//            } catch(RuntimeException e){
+//                e.printStackTrace();
+//        }
+//
+//        return list;
     }
 
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol){
@@ -118,10 +157,12 @@ public class DataGetter {
         return mapList;
     }
 
-        public Map<String, String> getDataForStatisticsFromYahoo (Symbol symbol) throws JsonProcessingException {
-            String ticker = symbol.getName();
-            String BASE_URL = "https://query1.finance.yahoo.com/v6/finance/quoteSummary/%s?modules=defaultKeyStatistics";
-            String urlString = String.format(BASE_URL, ticker);
+    public Map<String, String> getDataForStatisticsFromYahoo (Symbol symbol) {
+        String ticker = symbol.getName();
+        String BASE_URL = "https://query1.finance.yahoo.com/v6/finance/quoteSummary/%s?modules=defaultKeyStatistics";
+        String urlString = String.format(BASE_URL, ticker);
+        LinkedHashMap<String, Map<String, Object>> defaultKeyStatistics;
+        try {
             ResponseEntity<String> response = restTemplate.exchange(
                     urlString,
                     HttpMethod.GET,
@@ -129,17 +170,22 @@ public class DataGetter {
                     String.class
             );
             LinkedHashMap<String, Object> json = objectMapper.readValue(response.getBody(), LinkedHashMap.class);
-            LinkedHashMap<String, Map<String, Object>> defaultKeyStatistics = (LinkedHashMap<String, Map<String, Object>>) ((LinkedHashMap)
+            defaultKeyStatistics = (LinkedHashMap<String, Map<String, Object>>) ((LinkedHashMap)
                     ((ArrayList) ((LinkedHashMap) json.get("quoteSummary")).get("result")).get(0)).get("defaultKeyStatistics");
-            Map<String, String> parameters = new HashMap<>();
-            for (Map.Entry<String, Map<String, Object>> entry : defaultKeyStatistics.entrySet()) {
-                if (entry.getValue() instanceof LinkedHashMap) {
-                    String key = entry.getKey();
-                    Map<String, Object> innerMap = entry.getValue();
-                    String fmtValue = (String) innerMap.get("fmt");
-                    parameters.put(key, fmtValue);
-                }
-            }
-            return parameters;
+        } catch (HttpClientErrorException e) {
+            return null;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
+        Map<String, String> parameters = new HashMap<>();
+        for (Map.Entry<String, Map<String, Object>> entry : defaultKeyStatistics.entrySet()) {
+            if (entry.getValue() instanceof LinkedHashMap) {
+                String key = entry.getKey();
+                Map<String, Object> innerMap = entry.getValue();
+                String fmtValue = (String) innerMap.get("fmt");
+                parameters.put(key, fmtValue);
+            }
+        }
+        return parameters;
     }
+}

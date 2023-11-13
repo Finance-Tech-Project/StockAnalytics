@@ -29,12 +29,18 @@ public class SymbolController {
         }
 
     @PostMapping( "/start/add")
-    public List<Symbol> addSymbol(@RequestParam String ticker){
+    public List<Symbol> addSymbolToStartingPage(@RequestParam String ticker){
         return symbolService.addSymbolToStart(ticker);
         }
 
-        @PostMapping("/start/remove")
-    public List<Symbol> removeSymbol(@RequestParam String ticker){
+    @PostMapping("/start/remove")
+    public List<Symbol> removeSymbolFromStartingPage(@RequestParam String ticker){
         return symbolService.removeSymbolFromStart(ticker);
         }
+
+    @GetMapping("/searchSymbol/")
+    public List<Symbol> searchSymbolsBySubstring(@RequestParam String search){
+        return  symbolService.searchSymbolsBySubstring(search);
+    }
+
 }

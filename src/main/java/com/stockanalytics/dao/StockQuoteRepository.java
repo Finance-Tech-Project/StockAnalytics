@@ -1,10 +1,10 @@
 package com.stockanalytics.dao;
 
+import com.stockanalytics.model.StockQuote;
+import com.stockanalytics.model.Symbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import com.stockanalytics.model.StockQuote;
-import com.stockanalytics.model.Symbol;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,8 +16,8 @@ public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDat
 
     @Query("select r from StockQuote r where r.id.symbol = :symbol and r.id.date between :startdate and :enddate")
     List<StockQuote> findAllByIdIdAndDateBetween(@Param("symbol") Symbol symbol,
-                                                 @Param("startdate") LocalDate startDate,
-                                                 @Param("enddate") LocalDate endDate);
+                                                    @Param("startdate") LocalDate startDate,
+                                                    @Param("enddate") LocalDate endDate);
 
     @Query("select distinct r.id.symbol from StockQuote r")
     List<String> getAllSymbols();
