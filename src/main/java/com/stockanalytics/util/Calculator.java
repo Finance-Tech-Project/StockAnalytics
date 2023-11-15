@@ -153,7 +153,9 @@ public class Calculator {
             }
 
         }
-        return sharpRatios;
+        return sharpRatios.stream().sorted()
+                .sorted(Comparator.comparing(SharpRatioDto::getTime))
+                .collect(Collectors.toList());
     }
 }
 
