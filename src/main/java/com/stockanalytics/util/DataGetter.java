@@ -77,7 +77,14 @@ public class DataGetter {
                 } catch (Exception e) {
                     // Обработка ошибок преобразования данных, если необходимо
                 }
+            }else if (values.length == 2)
+                try {
+                LocalDate date = LocalDate.parse(values[0]);
+                Double open = Double.parseDouble(values[1]);
+                } catch (Exception e) {
+            // Обработка ошибок преобразования данных, если необходимо
             }
+
         }
 
         return stockQuotes;
@@ -109,6 +116,7 @@ public class DataGetter {
         return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now(), symbol);
     }
 
+    @SuppressWarnings("unchecked")
     public Map <String,Object> getDataForStatisticsFromRapidAPI(Symbol symbol) throws IOException, InterruptedException {
         String ticker = symbol.getName();
         String urlString = String.format("https://apidojo-yahoo-finance-v1.p.rapidapi.com/market/v2/get-quotes?region=US&symbols=%s", ticker);
@@ -124,6 +132,7 @@ public class DataGetter {
         return (LinkedHashMap<String, Object>) result.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     private Map <String,String> getMapFromRespons(String responseBody, String target) throws JsonProcessingException {
         LinkedHashMap<String, Object> data = (LinkedHashMap) objectMapper.readValue(responseBody, LinkedHashMap.class).get(target);
         LinkedHashMap<String, String> res = new LinkedHashMap<>();
