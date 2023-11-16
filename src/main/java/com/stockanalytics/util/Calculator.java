@@ -5,7 +5,9 @@ import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.*;
 import com.stockanalytics.model.BondYield;
 import com.stockanalytics.model.StockQuote;
+import com.stockanalytics.model.StockQuoteId;
 import com.stockanalytics.model.Symbol;
+import com.stockanalytics.service.StockQuoteService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.springframework.stereotype.Component;
@@ -24,10 +26,11 @@ import java.util.stream.Collectors;
 public class Calculator {
     private final StockQuoteRepository stockQuoteRepository;
     private final BondYieldRepository bondYieldRepository;
+    private final StockQuoteService stockQuoteService;
 
     public List<AveragePriceByPeriodDto> calcMovingAvg(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
         List<AveragePriceByPeriodDto> movingAverage = new ArrayList<>();
-        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusDays(days), dateTo).stream()
+        List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, days).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
                 .collect(Collectors.toList());
         for (StockQuote quote : quotes) {
@@ -55,7 +58,7 @@ public class Calculator {
 
     public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
         List<IncomePercentByPeriodDto> incomeList = new ArrayList<>();
-        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo).stream()
+        List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
                 .collect(Collectors.toList());
 
@@ -82,11 +85,21 @@ public class Calculator {
         return incomeList;
     }
 
+    private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+        List<StockQuote> quotes;
+        if(symbol.getStatus() == 0){
+            quotes = stockQuoteService.getData(symbol,dateFrom, dateTo).stream()
+                    .map(q -> new StockQuote(new StockQuoteId(q.getDate(), symbol), q.getOpen(), q.getHigh(), q.getLow(), q.getClose(), q.getVolume()))
+                    .collect(Collectors.toList());
+        }else{
+            quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo);
+        }
+        return quotes;
+    }
+
     public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
         List<VolatilityDto> result = new ArrayList<>();
-        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusDays(days+1), dateTo).stream()
-                .sorted(Comparator.comparing(StockQuote::getDate))
-                .collect(Collectors.toList());
+        List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, days);
 
         for (StockQuote quote : quotes) {
             LocalDate currentDate = quote.getDate();
@@ -113,8 +126,7 @@ public class Calculator {
     }
 
     public List<SharpRatioDto> calculateSharpRatios(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
-
-        List<StockQuote> quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo);
+        List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years);
         List<BondYield> bondYields = bondYieldRepository.findBondYieldsBetweenDates(dateFrom, dateTo);
         List<SharpRatioDto> sharpRatios = new ArrayList<>();
         double stockReturn = 0.;

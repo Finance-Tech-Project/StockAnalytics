@@ -9,7 +9,13 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class SharpRatioDto {
+public class SharpRatioDto implements Comparable<SharpRatioDto> {
     LocalDate time;
     Double value;
+
+    @Override
+    public int compareTo(SharpRatioDto anotherSR) {
+        // Сравниваем объекты по полю date
+        return this.time.compareTo(anotherSR.getTime());
+    }
 }
