@@ -132,7 +132,7 @@ public class DataGetter {
         return (LinkedHashMap<String, Object>) result.get(0);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Map <String,String> getMapFromRespons(String responseBody, String target) throws JsonProcessingException {
         LinkedHashMap<String, Object> data = (LinkedHashMap) objectMapper.readValue(responseBody, LinkedHashMap.class).get(target);
         LinkedHashMap<String, String> res = new LinkedHashMap<>();
@@ -164,6 +164,7 @@ public class DataGetter {
         return mapList;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Map<String, String> getDataForStatisticsFromYahoo (Symbol symbol) {
         String ticker = symbol.getName();
         String BASE_URL = "https://query1.finance.yahoo.com/v6/finance/quoteSummary/%s?modules=defaultKeyStatistics";
