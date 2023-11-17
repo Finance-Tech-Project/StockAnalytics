@@ -10,7 +10,12 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class VolatilityDto {
+public class VolatilityDto implements Comparable<VolatilityDto>{
     LocalDate time;
     BigDecimal value;
+
+    @Override
+    public int compareTo(VolatilityDto o) {
+        return this.time.compareTo(o.getTime());
+    }
 }
