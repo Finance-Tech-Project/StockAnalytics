@@ -82,7 +82,9 @@ public class Calculator {
                 }
             }
         }
-        return incomeList;
+        return incomeList.stream().sorted()
+                .sorted(Comparator.comparing(IncomePercentByPeriodDto::getTime))
+                .collect(Collectors.toList());
     }
 
     private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
@@ -122,7 +124,9 @@ public class Calculator {
                 }
             }
         }
-        return result;
+        return result.stream().sorted()
+                .sorted(Comparator.comparing(VolatilityDto::getTime))
+                .collect(Collectors.toList());
     }
 
     public List<SharpRatioDto> calculateSharpRatios(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
