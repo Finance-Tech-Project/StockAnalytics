@@ -82,7 +82,9 @@ public class Calculator {
                 }
             }
         }
-        return incomeList;
+        return incomeList.stream().sorted()
+                .sorted(Comparator.comparing(IncomePercentByPeriodDto::getTime))
+                .collect(Collectors.toList());
     }
 
     private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
@@ -97,15 +99,15 @@ public class Calculator {
         return quotes;
     }
 
-    public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
+    public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
         List<VolatilityDto> result = new ArrayList<>();
-        List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, days);
+        List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years);
 
         for (StockQuote quote : quotes) {
             LocalDate currentDate = quote.getDate();
             DescriptiveStatistics stats = new DescriptiveStatistics();
             if (currentDate.isAfter(dateFrom.minusDays(1)) && !currentDate.isAfter(dateTo.minusDays(1))) {
-                LocalDate startDate = currentDate.minusDays(days);
+                LocalDate startDate = currentDate.minusYears(years);
 
                 for (StockQuote q : quotes) {
                     if (q.getDate().isAfter(quote.getDate())) {
@@ -122,7 +124,9 @@ public class Calculator {
                 }
             }
         }
-        return result;
+        return result.stream().sorted()
+                .sorted(Comparator.comparing(VolatilityDto::getTime))
+                .collect(Collectors.toList());
     }
 
     public List<SharpRatioDto> calculateSharpRatios(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {

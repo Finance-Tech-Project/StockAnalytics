@@ -26,6 +26,8 @@ public class Symbol implements Serializable {
     int isStarting;
     @NotNull
     int status;
+    @NotNull
+    int hasDividends;
 
 
 }

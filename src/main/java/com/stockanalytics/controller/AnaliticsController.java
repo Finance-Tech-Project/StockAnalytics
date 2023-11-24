@@ -37,10 +37,10 @@ public class AnaliticsController {
 
     @GetMapping("/analitics/volatility")
     public List<VolatilityDto> getDataAboutVolatility(@RequestParam String dateFrom, @RequestParam String dateTo,
-                                                      @RequestParam String ticker, @RequestParam int days){
+                                                      @RequestParam String ticker, @RequestParam int years){
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return analiticsService.getDataAboutVolatility(start, end, ticker, days);
+        return analiticsService.getDataAboutVolatility(start, end, ticker, years);
     }
 
     @GetMapping("/analitics/sharpRatios")
