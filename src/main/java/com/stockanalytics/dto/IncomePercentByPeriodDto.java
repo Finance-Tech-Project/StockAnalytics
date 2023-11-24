@@ -10,8 +10,12 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @ToString
-public class IncomePercentByPeriodDto {
+public class IncomePercentByPeriodDto implements Comparable<IncomePercentByPeriodDto>{
     LocalDate time;
     BigDecimal value;
 
+    @Override
+    public int compareTo(IncomePercentByPeriodDto o) {
+        return this.time.compareTo(o.getTime());
+    }
 }

@@ -63,8 +63,6 @@ public class DataGetter {
 
         for (String line : lines) {
             String[] values = line.split(",");
-            if (values.length >= 7) {
-                try {
 
                     LocalDate date = LocalDate.parse(values[0]);
                     Double open = Double.parseDouble(values[1]);
@@ -72,37 +70,15 @@ public class DataGetter {
                     Double low = Double.parseDouble(values[3]);
                     Double close = Double.parseDouble(values[4]);
                     Long volume = Long.parseLong(values[6]);
-
-//                    if (date != null ) {
                     StockQuoteDto stockQuote = new StockQuoteDto(date, open, high, low, close, volume);
                     stockQuotes.add(stockQuote);
-//                    }
-                } catch (Exception e) {
-                    // Обработка ошибок преобразования данных, если необходимо
-                }
-            }else if (values.length < 7)
-                try {
-                LocalDate date = LocalDate.parse(values[0]);
-                Double dividendRate = Double.parseDouble(values[1]);
-                    Dividend dividend = new Dividend();
-                    dividend.setSymbol(symbol);
-                    dividend.setDate(date);
-                    dividend.setDividendRate(dividendRate);
-                    dividends.add(dividend);
-
-                } catch (Exception e) {
-            // Обработка ошибок преобразования данных, если необходимо
-            }
-
-        }
-
+         }
         return stockQuotes;
     }
 
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol){
-        return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now(), symbol);
+        return getHistoryStockQuotes(LocalDate.of(2022,1,1), LocalDate.now(), symbol);
     }
-
     @SuppressWarnings("unchecked")
     public Map <String,Object> getDataForStatisticsFromRapidAPI(Symbol symbol) throws IOException, InterruptedException {
         String ticker = symbol.getName();

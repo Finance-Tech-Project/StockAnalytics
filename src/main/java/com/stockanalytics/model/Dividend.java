@@ -5,19 +5,21 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Builder
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-public class Dividend {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    @Builder
+    @Entity
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public class Dividend {
+        @Id
+        @GeneratedValue(strategy = GenerationType.SEQUENCE)
+        private Long id;
 
-    @OneToOne(optional = false)
+    //    @OneToMany
+    @ManyToOne
+//    @JoinColumn(name = "symbol_name")
     Symbol symbol;
-LocalDate date;
-    Double dividendRate;
-}
+        LocalDate date;
+        Double dividendRate;
+    }
