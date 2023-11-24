@@ -16,4 +16,6 @@ public interface DividendRepository extends JpaRepository<Dividend, Symbol> {
                                                @Param("enddate") LocalDate endDate);
 
 
+
+
 }
