@@ -16,10 +16,8 @@ import java.time.LocalDate;
         @GeneratedValue(strategy = GenerationType.SEQUENCE)
         private Long id;
 
-    //    @OneToMany
-    @ManyToOne
-//    @JoinColumn(name = "symbol_name")
-    Symbol symbol;
+        @ManyToOne
+        Symbol symbol;
         LocalDate date;
         Double dividendRate;
-    }
+        }
