@@ -38,7 +38,9 @@ public class DataGetter {
         long startTimestamp = startDate.atStartOfDay().toInstant(offset).getEpochSecond();
         long endTimestamp = endDate.atStartOfDay().toInstant(offset).getEpochSecond();
         String ticker = symbol.getName();
-        String BASE_URL = "https://query1.finance.yahoo.com/v7/finance/download/%s";
+       String BASE_URL = "https://query1.finance.yahoo.com/v7/finance/download/%s";
+
+
         String urlString = String.format(BASE_URL, ticker) +
                 "?period1=" + startTimestamp +
                 "&period2=" + endTimestamp +
