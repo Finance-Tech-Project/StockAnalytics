@@ -11,6 +11,7 @@ import com.stockanalytics.model.Symbol;
 import com.stockanalytics.portfolio.dao.PortfolioRepository;
 import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.dto.StockDto;
+import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.exeptions.PortfolioNotFoundException;
 import com.stockanalytics.portfolio.service.exeptions.StocksNotFoundExсeptions;
@@ -69,6 +70,47 @@ public class PortfolioServiceImpl implements PortfolioService {
         }
         return null;
     }
+    public List<WatchlistDto> getWatchlist(String userName) {
+        UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
+        List<String> watchlist = user.getWatchlist();
+
+        // Получаем информацию о символах из репозитория символов
+        List<WatchlistDto> watchlistInfo = watchlist.stream()
+                .map(this::getWatchlistInfo) // Предполагается, что у вас есть метод getSymbolInfo в SymbolService
+                .collect(Collectors.toList());
+
+        return watchlistInfo;
+    }
+
+    @Override
+    public WatchlistDto getSymbolInfo(String symbolName) {
+        Symbol symbol = symbolRepository.getByName(symbolName);
+
+        if (symbol != null) {
+            // Преобразуйте объект Symbol в SymbolDto, чтобы получить нужные поля
+            return modelMapper.map(symbol, WatchlistDto.class);
+        } else {
+            throw new SymbolNotFoundException(); // Обработайте ситуацию, если символ не найден
+        }
+    }
+    private WatchlistDto getWatchlistInfo(String symbolName) {
+        Symbol symbol = symbolRepository.getByName(symbolName);
+
+        if (symbol != null) {
+            // Преобразуйте объект Symbol в WatchlistDto, чтобы получить нужные поля
+            return WatchlistDto.builder()
+                    .symbolName(symbol.getName())
+                    .companyName(symbol.getCompanyName())
+                    .exchange(symbol.getExchange())
+                    .industryCategory(symbol.getIndustryCategory())
+                    .dividendRate(symbol.getHasDividends())
+                    .close(getStockPriceOnDateOrClosestNext(symbolName, LocalDate.now().minusDays(1))) // Используйте ваш метод получения цены
+                    .build();
+        } else {
+            throw new SymbolNotFoundException(); // Обработайте ситуацию, если символ не найден
+        }
+    }
+
     @Override
     public void addToWatchList(String userName, String symbol) throws InterruptedException {
         UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
@@ -135,6 +177,7 @@ public class PortfolioServiceImpl implements PortfolioService {
             userAccountRepository.save(user);
         }
     }
+
 
     @Override
     public void removePortfolio(String userName, String portfolioName) {

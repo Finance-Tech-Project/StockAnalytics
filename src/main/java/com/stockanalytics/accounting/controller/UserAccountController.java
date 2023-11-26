@@ -4,6 +4,9 @@ import java.security.Principal;
 
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,14 @@ import com.stockanalytics.accounting.dto.UserRegisterDto;
 import com.stockanalytics.accounting.model.UserAccount;
 import com.stockanalytics.accounting.service.UserAccountService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
@@ -39,6 +50,16 @@ public class UserAccountController {
 	@PostMapping("/login")
 	public UserDto login(Principal principal) {
 		return userAccountService.getUser(principal.getName());
+	}
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			String username = auth.getName(); // Получаем логин пользователя
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+			return ResponseEntity.ok("User " + username + " logged out successfully");
+		}
+		return ResponseEntity.ok("No user to log out");
 	}
 
 	@PostMapping("/recovery/{login}")

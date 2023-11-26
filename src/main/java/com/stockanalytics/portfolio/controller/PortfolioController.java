@@ -1,7 +1,9 @@
 package com.stockanalytics.portfolio.controller;
 
+import com.stockanalytics.accounting.model.UserAccount;
 import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.portfolio.dto.StockDto;
+import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +28,11 @@ public class PortfolioController {
   public PortfolioDto createPortfolio(@RequestBody PortfolioDto portfolioDto) {
     return portfolioService.createPortfolio(portfolioDto);
   }
-
+@GetMapping("/watchList")
+public  List<WatchlistDto> getWatchlist(@RequestParam String username) {
+  System.out.println("in controller getWatchlist");
+  return portfolioService.getWatchlist(username);
+}
   @GetMapping("/{username}")
   public List<PortfolioDto> getPortfolios(@PathVariable String username) {
     return portfolioService.getPortfolios(username);

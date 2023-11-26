@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.dto.StockDto;
+import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 
@@ -30,4 +31,7 @@ public  interface PortfolioService {
       throws SymbolNotFoundException, InterruptedException;
 
    void removeFromWatchList(String userName, String symbol);
+
+    List<WatchlistDto> getWatchlist(String userName);
+    public WatchlistDto getSymbolInfo(String symbolName);
 }
