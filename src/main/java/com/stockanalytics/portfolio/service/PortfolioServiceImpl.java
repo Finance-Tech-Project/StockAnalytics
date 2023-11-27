@@ -85,9 +85,9 @@ public class PortfolioServiceImpl implements PortfolioService {
             watchlist.add(symbol);
             user.setWatchlist(watchlist);
             userAccountRepository.save(user);
-            logger.info("Символ успешно добавлен в список наблюдения: {}", symbol);
+            logger.info("symbol has successfully added to the watchlist: {}", symbol);
         } else {
-            logger.error("Символ '{}' уже существует в списке наблюдения.", symbol);
+            logger.error("symbol '{}' already exists in the watchlist.", symbol);
         }
     }
 
@@ -218,13 +218,13 @@ public class PortfolioServiceImpl implements PortfolioService {
     public double comparePerformance(
             String yourPortfolioName, String benchmarkSymbol, LocalDate dateFrom, LocalDate dateTo) {
         Portfolio yourPortfolio =
-                portfolioRepository.getByPortfolioName(yourPortfolioName); // Получаем ваш портфель
+                portfolioRepository.getByPortfolioName(yourPortfolioName); 
         if (yourPortfolio == null) {
-            throw new PortfolioNotFoundException(); // Проверяем, что ваш портфель существует
+            throw new PortfolioNotFoundException(); 
         }
 
                 List<SymbolDto> benchmarkSymbols =
-                symbolService.getAllSymbols(); // Получаем все доступные символы из репозитория символов
+                symbolService.getAllSymbols(); 
 
                double yourPortfolioValueFrom = calculatePortfolioValue(yourPortfolioName, dateFrom);
         double yourPortfolioValueTo = calculatePortfolioValue(yourPortfolioName, dateTo);
