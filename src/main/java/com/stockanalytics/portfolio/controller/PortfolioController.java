@@ -2,6 +2,7 @@ package com.stockanalytics.portfolio.controller;
 
 import com.stockanalytics.accounting.model.UserAccount;
 import com.stockanalytics.dao.SymbolRepository;
+import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
@@ -33,11 +34,19 @@ public  List<WatchlistDto> getWatchlist(@RequestParam String username) {
   System.out.println("in controller getWatchlist");
   return portfolioService.getWatchlist(username);
 }
+
   @GetMapping("/{username}")
   public List<PortfolioDto> getPortfolios(@PathVariable String username) {
     return portfolioService.getPortfolios(username);
       }
-
+//We receive portfolio prices for each day
+  @GetMapping("/getPortfolioValues")
+      public List<PortfolioValueDto> getPortfolioValues(
+          @RequestParam String portfolioName,
+          @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+          @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+    return portfolioService. getPortfolioValues(portfolioName,fromDate,toDate);
+  }
   // Add a stock to the portfolio
   @PostMapping("/addStock")
   public StockDto addStockToPortfolio(
@@ -83,7 +92,7 @@ public  List<WatchlistDto> getWatchlist(@RequestParam String username) {
   public double calculatePortfolioValue(@RequestParam String portfolioName, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
     return portfolioService.calculatePortfolioValue(portfolioName, date);
   }
-
+//Portfolio and symbol price comparison
   @GetMapping("/comparePerformance")
   public double comparePerformance(
       @RequestParam String yourPortfolioName, @RequestParam String benchmarkSymbol,

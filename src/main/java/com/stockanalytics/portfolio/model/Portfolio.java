@@ -47,13 +47,13 @@ public class Portfolio {
     this.stocks = stocks;
   }
 
-  // Метод для добавления акций из watchlist
+  // Method for adding stocks from watchlist
   public void addStocksFromWatchlist(List<String> watchlist) {
     if (this.stocks == null) {
       this.stocks = new HashMap<>();
     }
 
-    // Предполагается, что все акции из watchlist имеют начальное количество 1
+    // all stocks from the watchlist have an initial quantity of 1
     for (String stock : watchlist) {
       this.stocks.put(stock, 1);
     }

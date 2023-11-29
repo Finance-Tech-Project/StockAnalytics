@@ -55,7 +55,7 @@ public class UserAccountController {
 	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth != null) {
-			String username = auth.getName(); // Получаем логин пользователя
+			String username = auth.getName(); // Getting the user login
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 			return ResponseEntity.ok("User " + username + " logged out successfully");
 		}

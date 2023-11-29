@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import com.stockanalytics.portfolio.dto.PortfolioDto;
+import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
@@ -34,4 +35,6 @@ public  interface PortfolioService {
 
     List<WatchlistDto> getWatchlist(String userName);
     public WatchlistDto getSymbolInfo(String symbolName);
+
+    List<PortfolioValueDto> getPortfolioValues(String portfolioName, LocalDate fromDate, LocalDate toDate);
 }
