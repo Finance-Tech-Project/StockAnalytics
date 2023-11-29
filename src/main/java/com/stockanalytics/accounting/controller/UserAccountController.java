@@ -3,6 +3,7 @@ package com.stockanalytics.accounting.controller;
 import java.security.Principal;
 
 
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +28,11 @@ import com.stockanalytics.accounting.service.UserAccountService;
 
 @RestController
 @RequestMapping("/account")
+
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	final UserAccountService userAccountService;
+	UserAccountService userAccountService;
 
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
