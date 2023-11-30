@@ -62,9 +62,13 @@ public class DataGetter {
         if (csvData != null) {
             lines = csvData.split("\n");
         }
-
+boolean isFirstLine = true;
         for (String line : lines) {
             String[] values = line.split(",");
+            if(isFirstLine) {
+                isFirstLine = false;
+                continue;
+            }
 
                     LocalDate date = LocalDate.parse(values[0]);
                     Double open = Double.parseDouble(values[1]);
