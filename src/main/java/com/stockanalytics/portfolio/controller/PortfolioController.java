@@ -1,11 +1,8 @@
 package com.stockanalytics.portfolio.controller;
 
-import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.portfolio.dto.StockDto;
-import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.service.PortfolioService;
 

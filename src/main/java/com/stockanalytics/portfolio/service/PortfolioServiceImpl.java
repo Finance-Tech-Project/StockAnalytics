@@ -13,7 +13,7 @@ import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.exeptions.PortfolioNotFoundException;
-import com.stockanalytics.portfolio.service.exeptions.StocksNotFoundExсeptions;
+import com.stockanalytics.portfolio.service.exeptions.StocksNotFoundExсeption;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 import com.stockanalytics.service.StockQuoteService;
 import com.stockanalytics.service.SymbolService;
@@ -70,7 +70,7 @@ public class PortfolioServiceImpl implements PortfolioService {
         return null;
     }
     @Override
-    public void addToWatchList(String userName, String symbol) throws InterruptedException {
+    public void addToWatchList(String userName, String symbol) {
         UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
 
               Symbol newSymbol = symbolRepository.getByName(symbol);
@@ -159,7 +159,7 @@ public class PortfolioServiceImpl implements PortfolioService {
                 return modelMapper.map(portfolio, StockDto.class);
             } else {
                 logger.error("not enough stocks to delete", portfolioName);
-                throw new StocksNotFoundExсeptions();
+                throw new StocksNotFoundExсeption();
             }
         } else {
             logger.error("There is no stock with this symbol in the portfolio", portfolioName);

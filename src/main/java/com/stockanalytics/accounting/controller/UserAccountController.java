@@ -2,8 +2,7 @@ package com.stockanalytics.accounting.controller;
 
 import java.security.Principal;
 
-
-import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,24 +14,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.context.SecurityContextHolder;
-
 import lombok.RequiredArgsConstructor;
 import com.stockanalytics.accounting.dto.RolesDto;
 import com.stockanalytics.accounting.dto.UserDto;
 import com.stockanalytics.accounting.dto.UserEditDto;
 import com.stockanalytics.accounting.dto.UserRegisterDto;
-import com.stockanalytics.accounting.model.UserAccount;
 import com.stockanalytics.accounting.service.UserAccountService;
 
 @RestController
 @RequestMapping("/account")
-
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	UserAccountService userAccountService;
+	private final UserAccountService userAccountService;
 
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
@@ -76,7 +70,7 @@ public class UserAccountController {
 
 	@PutMapping("/password")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
+	public void changePassword(@NotNull Principal principal, @RequestHeader("X-Password") String newPassword) {
 		userAccountService.changePassword(principal.getName(), newPassword);
 
 	}

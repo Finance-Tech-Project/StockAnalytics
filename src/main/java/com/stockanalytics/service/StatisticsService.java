@@ -49,7 +49,7 @@ public class StatisticsService {
 
 
 
-    DecimalFormat df = new DecimalFormat("#.##");
+    final DecimalFormat df = new DecimalFormat("#.##");
     private final StockQuoteService stockQuoteService;
     private final SymbolService symbolService;
     private  final StatisticsRepository statisticsRepository;

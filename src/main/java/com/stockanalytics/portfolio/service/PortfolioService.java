@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.dto.StockDto;
-import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 
 public  interface PortfolioService {
@@ -27,7 +26,7 @@ public  interface PortfolioService {
     StockDto addStock(String userName, String portfolioName, String symbol, int quantity);
 
   void addToWatchList(String userName, String symbol)
-      throws SymbolNotFoundException, InterruptedException;
+      throws SymbolNotFoundException;
 
    void removeFromWatchList(String userName, String symbol);
 }

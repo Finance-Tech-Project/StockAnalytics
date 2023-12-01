@@ -83,7 +83,7 @@ boolean isFirstLine = true;
     }
 
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol){
-        return getHistoryStockQuotes(LocalDate.of(2022,1,1), LocalDate.now(), symbol);
+        return getHistoryStockQuotes(LocalDate.of(2001,1,1), LocalDate.now(), symbol);
     }
     @SuppressWarnings("unchecked")
     public Map <String,Object> getDataForStatisticsFromRapidAPI(Symbol symbol) throws IOException, InterruptedException {

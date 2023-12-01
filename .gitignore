@@ -19,7 +19,6 @@ target/
 *.jar
 .idea
 
-
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -27,18 +26,6 @@ target/
 .project
 .springBeans
 .sts4-cache
-/.mvn/
-/mvnw
-/mvnw.cmd
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-/.mvn/
-/mvnw
-/mvnw.cmd
 
 ### NetBeans ###
 /nbproject/private/
@@ -49,9 +36,7 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-/.mvn/
-/mvnw
-/mvnw.cmd
+
 
 ### VS Code ###
 .vscode/

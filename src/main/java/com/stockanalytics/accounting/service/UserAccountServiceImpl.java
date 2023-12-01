@@ -7,7 +7,6 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 import com.stockanalytics.portfolio.dao.PortfolioRepository;
-import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.PortfolioServiceImpl;
 import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
@@ -18,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import com.stockanalytics.accounting.EmailService.EmailSenderService;
+import com.stockanalytics.accounting.emailservice.EmailSenderService;
 import com.stockanalytics.accounting.dao.UserAccountRepository;
 import com.stockanalytics.accounting.dto.RolesDto;
 import com.stockanalytics.accounting.dto.UserDto;
@@ -108,7 +107,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	@Override
 	@Transactional
 	public UserDto removeUser(String login) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		List<Portfolio> userPortfolios = portfolioRepository.findByUserLogin(userAccount);
 		if (!userPortfolios.isEmpty()) {
 			portfolioRepository.deleteAllByUserLogin(userAccount);
@@ -120,7 +119,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public UserDto updateUser(String login, UserEditDto userEditDto) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		if (userEditDto.getFirstName() != null) {
 			userAccount.setFirstName(userEditDto.getFirstName());
 		}
@@ -136,7 +135,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		System.out.println("inservice"+userAccount.getRole());
 
 		if (isAddRole) {
@@ -150,14 +149,14 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public void changePassword(String login, String newPassword) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		String password = passwordEncoder.encode(newPassword);
 		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
 
 	}
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args){
 		if(!userAccountRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
 			UserAccount userAccount = new UserAccount("admin", password, "", "");

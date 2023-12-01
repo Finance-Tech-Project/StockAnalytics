@@ -1,6 +1,4 @@
-package com.stockanalytics.accounting.EmailService;
-
-import org.springframework.beans.factory.annotation.Autowired;
+package com.stockanalytics.accounting.emailservice;
 
 
 import org.springframework.mail.SimpleMailMessage;
@@ -10,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailSenderService {
 
-	@Autowired
+//	@Autowired
 	private JavaMailSender mailSender;
 
 	public void sendEmail(String toEmail, String subject, String body) {
