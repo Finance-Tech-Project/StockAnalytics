@@ -35,15 +35,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PortfolioServiceImpl implements PortfolioService {
-    final PortfolioRepository portfolioRepository;
-    final UserAccountRepository userAccountRepository;
-    final StockQuoteRepository stockQuoteRepository;
-    final SymbolRepository symbolRepository;
+      final PortfolioRepository portfolioRepository;
+     final UserAccountRepository userAccountRepository;
+     final StockQuoteRepository stockQuoteRepository;
+       final SymbolRepository symbolRepository;
     final ModelMapper modelMapper;
-    private final SymbolService symbolService;
-    private final StockQuoteService stockQuoteService;
-    private final DataGetter getter;
-    private static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
+     final SymbolService symbolService;
+
+    static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
 
     @Override
     public PortfolioDto createPortfolio(PortfolioDto portfolioDto) {

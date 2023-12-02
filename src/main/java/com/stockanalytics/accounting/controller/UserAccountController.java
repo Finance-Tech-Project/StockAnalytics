@@ -41,7 +41,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	final UserAccountService userAccountService;
+	final   UserAccountService userAccountService;
 
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {

@@ -6,6 +6,7 @@ import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import com.stockanalytics.portfolio.model.Portfolio;
@@ -16,13 +17,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/portfolio")
 public class PortfolioController {
-  private final PortfolioService portfolioService;
+  final PortfolioService portfolioService;
 
-  public PortfolioController(PortfolioService portfolioService) {
-    this.portfolioService = portfolioService;
-  }
 
   // Create a new portfolio
   @PostMapping("/create")

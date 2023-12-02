@@ -35,15 +35,14 @@ import javax.transaction.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserAccountServiceImpl implements UserAccountService ,CommandLineRunner{
-
-	final UserAccountRepository userAccountRepository;
+ final UserAccountRepository userAccountRepository;
 	final ModelMapper modelMapper;
-	final PasswordEncoder passwordEncoder;
+		final PasswordEncoder passwordEncoder;
 	final EmailSenderService emailSenderService;
-	final PortfolioRepository portfolioRepository;
-	final PortfolioServiceImpl portfolioService;
-	private static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
-	   private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
+		final PortfolioRepository portfolioRepository;
+//	private	final PortfolioServiceImpl portfolioService;
+	 static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
+	   static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
 	@Override
 	public UserDto register(UserRegisterDto userRegisterDto) {
 		  String email = userRegisterDto.getEmail();
@@ -101,7 +100,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	@Override
 	public UserDto getUser(String login) {
 		
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+		UserAccount userAccount = userAccountRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
 
@@ -156,6 +155,8 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 		userAccountRepository.save(userAccount);
 
 	}
+
+
 	@Override
 	public void run(String... args) throws Exception {
 		if(!userAccountRepository.existsById("admin")) {
