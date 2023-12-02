@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailSenderService {
 
-	@Autowired
+//	@Autowired
 	private JavaMailSender mailSender;
 
 	public void sendEmail(String toEmail, String subject, String body) {

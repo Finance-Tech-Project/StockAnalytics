@@ -3,6 +3,7 @@ package com.stockanalytics.accounting.controller;
 import java.security.Principal;
 
 
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,7 +42,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	final   UserAccountService userAccountService;
+	final UserAccountService userAccountService;
 
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
@@ -95,7 +96,7 @@ public class UserAccountController {
 
 	@PutMapping("/password")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void changePassword(Principal principal, @RequestHeader("X-Password") String newPassword) {
+	public void changePassword(@NonNull Principal principal, @RequestHeader("X-Password") String newPassword) {
 		userAccountService.changePassword(principal.getName(), newPassword);
 
 	}

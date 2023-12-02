@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import com.stockanalytics.accounting.EmailService.EmailSenderService;
+
 import com.stockanalytics.accounting.dao.UserAccountRepository;
 import com.stockanalytics.accounting.dto.RolesDto;
 import com.stockanalytics.accounting.dto.UserDto;
@@ -34,35 +35,36 @@ import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserAccountServiceImpl implements UserAccountService ,CommandLineRunner{
- final UserAccountRepository userAccountRepository;
+public class UserAccountServiceImpl implements UserAccountService ,CommandLineRunner {
+	final UserAccountRepository userAccountRepository;
 	final ModelMapper modelMapper;
-		final PasswordEncoder passwordEncoder;
+	final PasswordEncoder passwordEncoder;
 	final EmailSenderService emailSenderService;
-		final PortfolioRepository portfolioRepository;
-//	private	final PortfolioServiceImpl portfolioService;
-	 static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
-	   static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
+	final PortfolioRepository portfolioRepository;
+	//	private	final PortfolioServiceImpl portfolioService;
+	static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
+	static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
+
 	@Override
 	public UserDto register(UserRegisterDto userRegisterDto) {
-		  String email = userRegisterDto.getEmail();
-	if (!EMAIL_PATTERN.matcher(email).matches()) {
-           logger.error("Login {} does not match the format example@gmail.com",email);
-            throw new ClassFormatException("сexample@gmail.com");
-        }
-				if (userAccountRepository.existsById(userRegisterDto.getLogin())) {
-        logger.error("User with login {} already exists", userRegisterDto.getLogin());
-        throw new UserExistsException();
-   }
-		
+		String email = userRegisterDto.getEmail();
+		if (!EMAIL_PATTERN.matcher(email).matches()) {
+			logger.error("Login {} does not match the format example@gmail.com", email);
+			throw new ClassFormatException("сexample@gmail.com");
+		}
+		if (userAccountRepository.existsById(userRegisterDto.getLogin())) {
+			logger.error("User with login {} already exists", userRegisterDto.getLogin());
+			throw new UserExistsException();
+		}
+
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
 		userAccount.addRole("USER");
-		
+
 		String password = passwordEncoder.encode(userRegisterDto.getPassword());
 		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
-		
-		 logger.info("User {} has been successfully registered", userRegisterDto.getLogin());
+
+		logger.info("User {} has been successfully registered", userRegisterDto.getLogin());
 		return modelMapper.map(userAccount, UserDto.class);
 	}
 
@@ -71,11 +73,11 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 		String tempPassword = UUID.randomUUID().toString();
 
 		UserDto userDto = getUser(login);
-	
+
 		String toEmail = userDto.getEmail();
 		try {
 			emailSenderService.sendEmail(toEmail, "This is temporary password", tempPassword);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -86,11 +88,11 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 		String tempPassword = UUID.randomUUID().toString();
 
 		UserDto userDto = getUser(login);
-	
+
 		String toEmail = userDto.getEmail();
 		try {
 			emailSenderService.sendEmail(toEmail, "This is temporary password", tempPassword);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -99,7 +101,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public UserDto getUser(String login) {
-		
+
 		UserAccount userAccount = userAccountRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -119,7 +121,8 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public UserDto updateUser(String login, UserEditDto userEditDto) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		if (userEditDto.getFirstName() != null) {
 			userAccount.setFirstName(userEditDto.getFirstName());
 		}
@@ -135,8 +138,8 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
-		System.out.println("inservice"+userAccount.getRole());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+		System.out.println("inservice" + userAccount.getRole());
 
 		if (isAddRole) {
 			userAccount.addRole(role.toUpperCase());
@@ -149,7 +152,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 	@Override
 	public void changePassword(String login, String newPassword) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		String password = passwordEncoder.encode(newPassword);
 		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
@@ -158,12 +161,11 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 
 
 	@Override
-	public void run(String... args) throws Exception {
-		if(!userAccountRepository.existsById("admin")) {
+	public void run(String... args) {
+		if (!userAccountRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
 			UserAccount userAccount = new UserAccount("admin", password, "", "");
-			userAccount.addRole("MODERATOR");
-			userAccountRepository.save(userAccount);
+
 		}
 	}
 }

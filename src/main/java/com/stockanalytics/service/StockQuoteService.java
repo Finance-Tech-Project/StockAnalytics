@@ -30,8 +30,8 @@ public class StockQuoteService {
 final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final StockQuoteProcessor processor = new StockQuoteProcessor();
-    DataGetter getter = new DataGetter();
-    DecimalFormat df = new DecimalFormat("#.##");
+  final   DataGetter getter = new DataGetter();
+   final DecimalFormat df = new DecimalFormat("#.##");
 
     private double round (double number){
         String str = df.format(number).replace(",", ".");
@@ -78,7 +78,7 @@ final StockQuoteRepository stockQuoteRepository;
                 .collect(Collectors.toList());
     }
 
-    public List<StatisticsDto> getStatistics(Symbol symbol) throws IOException {
+    public List<StatisticsDto> getStatistics(Symbol symbol)  {
         Map<String, String> parameters = getter.getDataForStatisticsFromYahoo(symbol);
         return  null;
     }

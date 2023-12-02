@@ -28,8 +28,8 @@ public  interface PortfolioService {
 
     StockDto addStock(String userName, String portfolioName, String symbol, int quantity);
 
-  void addToWatchList(String userName, String symbol)
-      throws SymbolNotFoundException, InterruptedException;
+    void addToWatchList(String userName, String symbol)
+            throws SymbolNotFoundException;
 
    void removeFromWatchList(String userName, String symbol);
 
