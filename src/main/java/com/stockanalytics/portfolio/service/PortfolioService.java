@@ -1,13 +1,10 @@
 package com.stockanalytics.portfolio.service;
 import java.time.LocalDate;
 import java.util.List;
-
-
 import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
-import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 
 public  interface PortfolioService {

@@ -15,7 +15,6 @@ import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.service.exeptions.PortfolioNotFoundException;
-
 import com.stockanalytics.portfolio.service.exeptions.StocksNotFoundException;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 import com.stockanalytics.service.SymbolService;
@@ -39,7 +38,7 @@ public class PortfolioServiceImpl implements PortfolioService {
      final StockQuoteRepository stockQuoteRepository;
        final SymbolRepository symbolRepository;
     final ModelMapper modelMapper;
-     final SymbolService symbolService;
+   private   final SymbolService symbolService;
 
     static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
 
@@ -70,8 +69,8 @@ public class PortfolioServiceImpl implements PortfolioService {
         }
         return null;
     }
-    public List<WatchlistDto> getWatchlist(String userName) {
-        UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
+    public List<WatchlistDto> getWatchlist(String username) {
+        UserAccount user = userAccountRepository.findByLogin(username).orElseThrow(UserNotFoundException::new);
         List<String> watchlist = user.getWatchlist();
 
         // Getting information about symbols from the symbol repository

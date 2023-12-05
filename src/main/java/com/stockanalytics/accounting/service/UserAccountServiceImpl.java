@@ -1,25 +1,17 @@
 package com.stockanalytics.accounting.service;
-
 import java.util.List;
 import java.util.UUID;
-
-
 import java.util.regex.Pattern;
-
 import com.stockanalytics.portfolio.dao.PortfolioRepository;
-import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.model.Portfolio;
-import com.stockanalytics.portfolio.service.PortfolioServiceImpl;
 import org.apache.tomcat.util.bcel.classfile.ClassFormatException;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
 import com.stockanalytics.accounting.EmailService.EmailSenderService;
-
 import com.stockanalytics.accounting.dao.UserAccountRepository;
 import com.stockanalytics.accounting.dto.RolesDto;
 import com.stockanalytics.accounting.dto.UserDto;
@@ -41,9 +33,9 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	final PasswordEncoder passwordEncoder;
 	final EmailSenderService emailSenderService;
 	final PortfolioRepository portfolioRepository;
-	//	private	final PortfolioServiceImpl portfolioService;
-	static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
-	static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
+
+private static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
+private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
 
 	@Override
 	public UserDto register(UserRegisterDto userRegisterDto) {
@@ -109,7 +101,7 @@ public class UserAccountServiceImpl implements UserAccountService ,CommandLineRu
 	@Override
 	@Transactional
 	public UserDto removeUser(String login) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
 		List<Portfolio> userPortfolios = portfolioRepository.findByUserLogin(userAccount);
 		if (!userPortfolios.isEmpty()) {
 			portfolioRepository.deleteAllByUserLogin(userAccount);

@@ -42,7 +42,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	final UserAccountService userAccountService;
+private  final UserAccountService userAccountService;
 
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
@@ -70,6 +70,7 @@ public class UserAccountController {
 
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
+
 		return userAccountService.getUser(login);
 	}
 

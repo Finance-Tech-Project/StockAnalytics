@@ -17,11 +17,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/portfolio")
 public class PortfolioController {
-  final PortfolioService portfolioService;
-
+private   final PortfolioService portfolioService;
+  public PortfolioController(PortfolioService portfolioService) {
+    this.portfolioService = portfolioService;
+  }
 
   // Create a new portfolio
   @PostMapping("/create")
