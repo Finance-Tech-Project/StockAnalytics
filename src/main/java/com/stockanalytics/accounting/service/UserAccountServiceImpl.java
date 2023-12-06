@@ -46,7 +46,8 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 		}
 		if (userAccountRepository.existsById(userRegisterDto.getLogin())) {
 			logger.error("User with login {} already exists", userRegisterDto.getLogin());
-			throw new UserExistsException();
+			throw new UserExistsException(userRegisterDto.getLogin());
+
 		}
 
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);

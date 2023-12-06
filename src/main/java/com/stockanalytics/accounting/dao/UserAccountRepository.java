@@ -1,5 +1,6 @@
 package com.stockanalytics.accounting.dao;
 
+import lombok.NonNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -15,5 +16,5 @@ import java.util.Optional;
 public interface UserAccountRepository extends JpaRepository<UserAccount, String> {
     @Query("SELECT u FROM UserAccount u WHERE u.login = :login")
    Optional< UserAccount> findByLogin(@Param("login") String login);
-    boolean existsById(String userLogin);
+    boolean existsById( @NonNull String userLogin);
 }

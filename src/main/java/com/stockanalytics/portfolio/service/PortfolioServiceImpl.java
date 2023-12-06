@@ -113,14 +113,11 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Override
     public void addToWatchList(String userName, String symbol)  {
         UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
-
                Symbol newSymbol = symbolRepository.getByName(symbol);
-
         if (newSymbol == null) {
             logger.info("Symbol not found in repository: {}", symbol);
             throw new SymbolNotFoundException();
         }
-
         List<String> watchlist = user.getWatchlist();
         if (!watchlist.contains(symbol)) {
             watchlist.add(symbol);
@@ -131,7 +128,6 @@ public class PortfolioServiceImpl implements PortfolioService {
             logger.error("symbol '{}' already exists in the watchlist.", symbol);
         }
     }
-
 
     @Override
     public void removeFromWatchList(String userName, String symbol) {
@@ -268,12 +264,11 @@ public class PortfolioServiceImpl implements PortfolioService {
                 portfolioRepository.getByPortfolioName(yourPortfolioName); 
                 portfolioRepository.getByPortfolioName(yourPortfolioName);
         if (yourPortfolio == null) {
-            throw new PortfolioNotFoundException(); 
+
             throw new PortfolioNotFoundException(); //Checking that your portfolio exists
         }
 
-                List<SymbolDto> benchmarkSymbols =
-                symbolService.getAllSymbols(); 
+
         List<SymbolDto> benchmarkSymbols =
                 symbolService.getAllSymbols(); // Getting all available symbols from the symbol repository
 

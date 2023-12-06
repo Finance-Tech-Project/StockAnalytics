@@ -7,5 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserExistsException extends RuntimeException {
 
 	private static final long serialVersionUID = 8777376761193864981L;
-
+	public UserExistsException(String login) {
+		super("User with login " + login + " already exists");
+	}
 }
