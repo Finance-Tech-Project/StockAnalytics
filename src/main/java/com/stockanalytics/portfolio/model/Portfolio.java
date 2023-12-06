@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.persistence.*;
 
 import com.stockanalytics.accounting.model.UserAccount;
-import com.stockanalytics.model.Symbol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

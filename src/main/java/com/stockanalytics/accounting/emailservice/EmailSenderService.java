@@ -1,6 +1,4 @@
-package com.stockanalytics.accounting.EmailService;
-
-import org.springframework.beans.factory.annotation.Autowired;
+package com.stockanalytics.accounting.emailservice;
 
 
 import org.springframework.mail.SimpleMailMessage;

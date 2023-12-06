@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
-
     List<Portfolio> findByUserLogin(UserAccount userLogin);
 
     Optional<Object> findByUserLoginAndPortfolioName(UserAccount user, String portfolioName);

@@ -23,7 +23,7 @@ public class DividendService {
     final SymbolRepository symbolRepository;
     final DividendRepository dividendRepository;
     private final ModelMapper mapper;
-  final   HTMLParser parser = new HTMLParser();
+    final HTMLParser parser = new HTMLParser();
 
     @Transactional
     public List<Dividend> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo){

@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
-import com.stockanalytics.accounting.EmailService.EmailSenderService;
+import com.stockanalytics.accounting.emailservice.EmailSenderService;
 import com.stockanalytics.accounting.dao.UserAccountRepository;
 import com.stockanalytics.accounting.dto.RolesDto;
 import com.stockanalytics.accounting.dto.UserDto;
@@ -113,8 +113,7 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 
 	@Override
 	public UserDto updateUser(String login, UserEditDto userEditDto) {
-
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
 		if (userEditDto.getFirstName() != null) {
 			userAccount.setFirstName(userEditDto.getFirstName());
 		}
@@ -130,8 +129,8 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 
 	@Override
 	public RolesDto changeRolesList(String login, String role, boolean isAddRole) {
-		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-		System.out.println("inservice" + userAccount.getRole());
+		UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(() -> new UserNotFoundException());
+		System.out.println("inservice"+userAccount.getRole());
 
 		if (isAddRole) {
 			userAccount.addRole(role.toUpperCase());
@@ -153,8 +152,8 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 
 
 	@Override
-	public void run(String... args) {
-		if (!userAccountRepository.existsById("admin")) {
+	public void run(String... args){
+		if(!userAccountRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
 			UserAccount userAccount = new UserAccount("admin", password, "", "");
 

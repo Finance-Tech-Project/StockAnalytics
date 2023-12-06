@@ -9,7 +9,6 @@ import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import com.stockanalytics.portfolio.model.Portfolio;
 import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.service.PortfolioService;
 
