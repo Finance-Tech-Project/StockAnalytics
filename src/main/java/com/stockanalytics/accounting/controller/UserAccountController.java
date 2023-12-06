@@ -2,8 +2,12 @@ package com.stockanalytics.accounting.controller;
 
 import java.security.Principal;
 
-import org.jetbrains.annotations.NotNull;
+
+import lombok.NonNull;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,12 +25,20 @@ import com.stockanalytics.accounting.dto.UserEditDto;
 import com.stockanalytics.accounting.dto.UserRegisterDto;
 import com.stockanalytics.accounting.service.UserAccountService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	private final UserAccountService userAccountService;
+private  final UserAccountService userAccountService;
 
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
@@ -36,6 +48,16 @@ public class UserAccountController {
 	public UserDto login(Principal principal) {
 		return userAccountService.getUser(principal.getName());
 	}
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			String username = auth.getName(); // Getting the user login
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+			return ResponseEntity.ok("User " + username + " logged out successfully");
+		}
+		return ResponseEntity.ok("No user to log out");
+	}
 
 	@PostMapping("/recovery/{login}")
     public void forgotPassword(@PathVariable String login) {
@@ -44,6 +66,7 @@ public class UserAccountController {
 
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
+
 		return userAccountService.getUser(login);
 	}
 
@@ -70,7 +93,7 @@ public class UserAccountController {
 
 	@PutMapping("/password")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void changePassword(@NotNull Principal principal, @RequestHeader("X-Password") String newPassword) {
+	public void changePassword(@NonNull Principal principal, @RequestHeader("X-Password") String newPassword) {
 		userAccountService.changePassword(principal.getName(), newPassword);
 
 	}

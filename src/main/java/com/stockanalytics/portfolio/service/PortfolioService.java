@@ -1,10 +1,10 @@
 package com.stockanalytics.portfolio.service;
 import java.time.LocalDate;
 import java.util.List;
-
-
 import com.stockanalytics.portfolio.dto.PortfolioDto;
+import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
+import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
 
 public  interface PortfolioService {
@@ -25,8 +25,13 @@ public  interface PortfolioService {
 
     StockDto addStock(String userName, String portfolioName, String symbol, int quantity);
 
-  void addToWatchList(String userName, String symbol)
-      throws SymbolNotFoundException;
+    void addToWatchList(String userName, String symbol)
+            throws SymbolNotFoundException;
 
    void removeFromWatchList(String userName, String symbol);
+
+    List<WatchlistDto> getWatchlist(String userName);
+    public WatchlistDto getSymbolInfo(String symbolName);
+
+    List<PortfolioValueDto> getPortfolioValues(String portfolioName, LocalDate fromDate, LocalDate toDate);
 }

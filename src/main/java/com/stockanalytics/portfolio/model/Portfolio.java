@@ -45,14 +45,14 @@ public class Portfolio {
     this.portfolioDate = portfolioDate;
     this.stocks = stocks;
   }
-
+  // Method for adding stocks from watchlist
 
   public void addStocksFromWatchlist(List<String> watchlist) {
     if (this.stocks == null) {
       this.stocks = new HashMap<>();
     }
+    // all stocks from the watchlist have an initial quantity of 1
 
-    // Assume that all stocks in the watchlist have an initial quantity of 1
     for (String stock : watchlist) {
       this.stocks.put(stock, 1);
     }

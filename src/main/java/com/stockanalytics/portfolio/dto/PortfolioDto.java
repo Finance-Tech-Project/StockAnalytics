@@ -2,7 +2,6 @@ package com.stockanalytics.portfolio.dto;
 
 import java.time.LocalDate;
 import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
