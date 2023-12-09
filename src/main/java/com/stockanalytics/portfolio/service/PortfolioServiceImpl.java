@@ -104,7 +104,7 @@ public class PortfolioServiceImpl implements PortfolioService {
                     .exchange(symbol.getExchange())
                     .industryCategory(symbol.getIndustryCategory())
                     .hasDividends(symbol.getHasDividends())
-                    .close(getStockPriceOnDateOrClosestNext(symbolName, LocalDate.now().minusMonths(4)))
+                    .close(getStockPriceOnDateOrClosestNext(symbolName, LocalDate.now().minusDays(2)))
                     .build();
         } else {
             throw new SymbolNotFoundException();
@@ -124,7 +124,7 @@ public class PortfolioServiceImpl implements PortfolioService {
             watchlist.add(symbol);
             user.setWatchlist(watchlist);
             userAccountRepository.save(user);
-            logger.info("Символ успешно добавлен в список наблюдения: {}", symbol);
+            logger.info("Symbol successfully added to the watchlist: {}", symbol);
         } else {
             logger.error("symbol '{}' already exists in the watchlist.", symbol);
         }
@@ -207,10 +207,10 @@ public class PortfolioServiceImpl implements PortfolioService {
 
 
 
-    public List<PortfolioValueDto> getPortfolioValues(String portfolioName, LocalDate dateFrom, LocalDate dateTo) {
+    public List<PortfolioValueDto> getPortfolioValues(String portfolioName, LocalDate fromDate, LocalDate toDate) {
         List<PortfolioValueDto> portfolioValues = new ArrayList<>();
 
-        for (LocalDate currentDate = dateFrom; currentDate.isBefore(dateTo.plusDays(1)); currentDate = currentDate.plusDays(1)) {
+        for (LocalDate currentDate = fromDate; currentDate.isBefore(toDate.plusDays(1)); currentDate = currentDate.plusDays(1)) {
             double portfolioValue = calculatePortfolioValue(portfolioName, currentDate);
             portfolioValues.add(new PortfolioValueDto(currentDate, portfolioValue));
         }
@@ -231,9 +231,9 @@ public class PortfolioServiceImpl implements PortfolioService {
                                         double stockPrice = getStockPriceOnDateOrClosestNext(symbol, date);
                                         return stockPrice * quantity;
                                     } catch (PortfolioNotFoundException e) {
-                                        // Выводим информацию о символе, вызвавшем ошибку
-                                        logger.error("Ошибка при обработке символа: {}", symbol);
-                                        return 0.0; // Или какое-то другое значение по умолчанию
+
+                                        logger.error("Error processing a symbol: {}", symbol);
+                                        return 0.0;
                                     }
                                 })
                         .sum();
@@ -268,7 +268,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     public double comparePerformance(
             String yourPortfolioName, String benchmarkSymbol, LocalDate dateFrom, LocalDate dateTo) {
         Portfolio yourPortfolio =
-                portfolioRepository.getByPortfolioName(yourPortfolioName); // Получаем ваш портфель
+                portfolioRepository.getByPortfolioName(yourPortfolioName);
         if (yourPortfolio == null) {
 
             throw new PortfolioNotFoundException(); //Checking that your portfolio exists

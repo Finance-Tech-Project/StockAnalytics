@@ -30,8 +30,7 @@ private   final PortfolioService portfolioService;
   }
 @GetMapping("/watchList")
 public  List<WatchlistDto> getWatchlist(@RequestParam String username) {
-  System.out.println("in controller getWatchlist");
-  return portfolioService.getWatchlist(username);
+   return portfolioService.getWatchlist(username);
 }
 
   @GetMapping("/{username}")
