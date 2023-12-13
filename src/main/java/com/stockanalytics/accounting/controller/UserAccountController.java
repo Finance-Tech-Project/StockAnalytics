@@ -27,20 +27,21 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
+@CrossOrigin
 public class UserAccountController {
 
 private  final UserAccountService userAccountService;
-@CrossOrigin
-	@PostMapping("/register")
+
+@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
 		return userAccountService.register(userRegisterDto);
 	}
-	@CrossOrigin
+
 	@PostMapping("/login")
 	public UserDto login(Principal principal) {
 		return userAccountService.getUser(principal.getName());
 	}
-	@CrossOrigin
+
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
