@@ -33,12 +33,12 @@ public class UserAccount implements Serializable {
 		this.watchlist = new ArrayList<>();
 	}
 
-	public UserAccount(String login, String password, String firstName, String lastName) {
+	public UserAccount(String login, String password, String firstName, String lastName, String email) {
 		this.login = login;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.email=email;
+		this.email = email;
 		this.role = "USER";
 		this.watchlist = new ArrayList<>();
 	}

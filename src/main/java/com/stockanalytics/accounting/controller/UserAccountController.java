@@ -1,8 +1,6 @@
 package com.stockanalytics.accounting.controller;
 
 import java.security.Principal;
-
-
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,24 +13,18 @@ import com.stockanalytics.accounting.dto.UserDto;
 import com.stockanalytics.accounting.dto.UserEditDto;
 import com.stockanalytics.accounting.dto.UserRegisterDto;
 import com.stockanalytics.accounting.service.UserAccountService;
-
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
-@CrossOrigin
 public class UserAccountController {
 
-private  final UserAccountService userAccountService;
+	private final UserAccountService userAccountService;
 
-@PostMapping("/register")
+	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
 		return userAccountService.register(userRegisterDto);
 	}
@@ -54,9 +46,9 @@ private  final UserAccountService userAccountService;
 	}
 
 	@PostMapping("/recovery/{login}")
-    public void forgotPassword(@PathVariable String login) {
-        userAccountService.sendTemporaryPassword(login);
-    }
+	public void forgotPassword(@PathVariable String login) {
+		userAccountService.sendTemporaryPassword(login);
+	}
 
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
@@ -73,7 +65,6 @@ private  final UserAccountService userAccountService;
 	public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
 		return userAccountService.updateUser(login, userEditDto);
 	}
-	
 
 	@PutMapping("/user/{login}/role/{role}")
 	public RolesDto addRole(@PathVariable String login, @PathVariable String role) {
@@ -96,6 +87,4 @@ private  final UserAccountService userAccountService;
 	public String getPasswordLink(@PathVariable String login) {
 		return userAccountService.getPasswordLink(login);
 	}
-	
-
 }

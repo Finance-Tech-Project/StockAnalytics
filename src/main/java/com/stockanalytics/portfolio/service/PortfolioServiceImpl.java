@@ -50,8 +50,6 @@ public class PortfolioServiceImpl implements PortfolioService {
                         .findById(portfolioDto.getUserLogin())
                         .orElseThrow(UserNotFoundException::new);
         if (user.getLogin().equals(portfolioDto.getUserLogin())) {
-            String userLogin = portfolioDto.getUserLogin();
-
             LocalDate portfolioDate = portfolioDto.getPortfolioDate();
             String portfolioName = portfolioDto.getPortfolioName();
             List<String> watchlist = user.getWatchlist();

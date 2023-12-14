@@ -47,7 +47,6 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 		if (userAccountRepository.existsById(userRegisterDto.getLogin())) {
 			logger.error("User with login {} already exists", userRegisterDto.getLogin());
 			throw new UserExistsException(userRegisterDto.getLogin());
-
 		}
 
 		UserAccount userAccount = modelMapper.map(userRegisterDto, UserAccount.class);
@@ -94,7 +93,6 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 
 	@Override
 	public UserDto getUser(String login) {
-
 		UserAccount userAccount = userAccountRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -107,7 +105,6 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 		if (!userPortfolios.isEmpty()) {
 			portfolioRepository.deleteAllByUserLogin(userAccount);
 		}
-
 		userAccountRepository.deleteById(login);
 		return modelMapper.map(userAccount, UserDto.class);
 	}
@@ -148,16 +145,14 @@ private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@
 		String password = passwordEncoder.encode(newPassword);
 		userAccount.setPassword(password);
 		userAccountRepository.save(userAccount);
-
 	}
-
 
 	@Override
 	public void run(String... args){
 		if(!userAccountRepository.existsById("admin")) {
 			String password = BCrypt.hashpw("admin", BCrypt.gensalt());
-			UserAccount userAccount = new UserAccount("admin", password, "", "");
-
+			UserAccount userAccount = new UserAccount("admin", password, "", "", "");
+			userAccountRepository.save(userAccount);
 		}
 	}
 }
