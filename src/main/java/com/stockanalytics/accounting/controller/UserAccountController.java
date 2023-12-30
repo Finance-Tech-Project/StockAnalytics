@@ -14,8 +14,6 @@ import com.stockanalytics.accounting.dto.UserEditDto;
 import com.stockanalytics.accounting.dto.UserRegisterDto;
 import com.stockanalytics.accounting.service.UserAccountService;
 import org.springframework.security.core.Authentication;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/account")
@@ -34,16 +32,16 @@ public class UserAccountController {
 		return userAccountService.getUser(principal.getName());
 	}
 
-	@PostMapping("/logout")
-	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null) {
-			String username = auth.getName(); // Getting the user login
-			new SecurityContextLogoutHandler().logout(request, response, auth);
-			return ResponseEntity.ok("User " + username + " logged out successfully");
-		}
-		return ResponseEntity.ok("No user to log out");
-	}
+//	@PostMapping("/logout")
+//	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//		if (auth != null) {
+//			String username = auth.getName(); // Getting the user login
+//			new SecurityContextLogoutHandler().logout(request, response, auth);
+//			return ResponseEntity.ok("User " + username + " logged out successfully");
+//		}
+//		return ResponseEntity.ok("No user to log out");
+//	}
 
 	@PostMapping("/recovery/{login}")
 	public void forgotPassword(@PathVariable String login) {

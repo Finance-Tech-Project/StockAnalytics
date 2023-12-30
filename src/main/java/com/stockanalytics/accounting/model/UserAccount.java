@@ -2,13 +2,9 @@ package com.stockanalytics.accounting.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
-import javax.persistence.ElementCollection;
 @AllArgsConstructor
 @Getter
 @Setter
@@ -18,6 +14,7 @@ public class UserAccount implements Serializable {
 	
 	private static final long serialVersionUID = -6631032945500720346L;
 	@Id
+	@Column(name = "login")
 	public String login;
 	String email;
 	String password;

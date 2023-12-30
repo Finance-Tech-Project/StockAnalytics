@@ -1,7 +1,7 @@
 package com.stockanalytics.model;
 
 import lombok.*;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Builder
 @Entity

@@ -1,11 +1,9 @@
 package com.stockanalytics.model;
 
-import com.sun.istack.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Entity
