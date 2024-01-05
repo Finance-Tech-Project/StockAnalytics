@@ -1,6 +1,8 @@
 package com.stockanalytics.accounting.controller;
 
 import java.security.Principal;
+
+import com.stockanalytics.accounting.emailservice.EmailSenderService;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ import org.springframework.security.core.Authentication;
 public class UserAccountController {
 
 	private final UserAccountService userAccountService;
-
+private EmailSenderService emailSenderService;
 	@PostMapping("/register")
 	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
 		return userAccountService.register(userRegisterDto);
@@ -47,7 +49,11 @@ public class UserAccountController {
 	public void forgotPassword(@PathVariable String login) {
 		userAccountService.sendTemporaryPassword(login);
 	}
-
+@PostMapping("/message")
+String sendEmailMessage(){
+this.emailSenderService.sendEmail("Shkribaev@gmail.com","Hello you dend succesfuly","this is temp password");
+return  "Message is sent";
+	}
 	@GetMapping("/user/{login}")
 	public UserDto getUser(@PathVariable String login) {
 

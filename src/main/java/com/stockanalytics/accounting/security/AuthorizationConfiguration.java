@@ -20,17 +20,17 @@ public class AuthorizationConfiguration {
 			.httpBasic(withDefaults())
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-
 			.authorizeHttpRequests(req ->
 					req.requestMatchers(
+							"/account/user/{login}",
 									"/quote/history",
-								"/account/login",
-							"/account/register",
+								   "/account/login",
+							       "/account/register",
 									"/statistics",
 									"/analitics/**",
 									"/service/addsymbols",
-							"/searchSymbol/",
-					"/start/*")
+							         "/searchSymbol/",
+					                 "/start/*")
 							.permitAll()
 							.anyRequest()
 							.authenticated()
