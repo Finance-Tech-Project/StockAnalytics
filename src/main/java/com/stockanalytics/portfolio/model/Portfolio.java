@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import com.stockanalytics.accounting.model.UserAccount;
 import lombok.AllArgsConstructor;

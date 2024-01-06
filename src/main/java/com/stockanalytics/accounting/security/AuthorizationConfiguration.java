@@ -1,45 +1,39 @@
 package com.stockanalytics.accounting.security;
-
 import org.springframework.context.annotation.Bean;
-
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-
 import static org.springframework.security.config.Customizer.withDefaults;
+import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
-
+@EnableWebSecurity
 public class AuthorizationConfiguration {
 
 	@Bean
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.httpBasic(withDefaults());
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-         http.authorizeRequests(authorize -> authorize
-						 .mvcMatchers("/**")
-						 .permitAll()
+	http
+			.httpBasic(withDefaults())
+			.csrf(AbstractHttpConfigurer::disable)
+			.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+			.authorizeHttpRequests(req -> req
+							.requestMatchers(HttpMethod.GET).permitAll()
+							.requestMatchers(
 
-//
-//        		.mvcMatchers("/start/remove","/start/add","/service/addsymbols","/account/register","/start/symbols", "/statistics?ticker={tickerName}", "/searchSymbol/?search={searchedTickerForLetters}", "/quote/history?dateFrom={dateFrom}&dateTo={dateTo}&ticker={tickerName}")
-//       		.permitAll()
-//       		.mvcMatchers(HttpMethod.GET,"/allsymbols","/account/user/{login}","/account/recovery/{login}","/quote/history","/statistics")
-//       		.permitAll()
-//       		.mvcMatchers("/account/user/{login}/role/{role}")
-//       		.access("#login == authentication.name or hasRole('ADMINISTRATOR')")
-//
-//       	 .mvcMatchers(HttpMethod.PUT, "/account/user/{login}")
-//       	 .access("#login == authentication.name or hasRole('ADMINISTRATOR')")
-//        	    .mvcMatchers(HttpMethod.DELETE, "/account/user/{login}")
-//       	    .access("#login == authentication.name or hasRole('ADMINISTRATOR')")
-//
- 	    .anyRequest()
-  	    .authenticated()
-       );
+								   "/account/login",
+							       "/account/register",
+									"/statistics",
+									"/analitics/**",
+									"/service/addsymbols")
 
+			.permitAll()
+							.anyRequest()
+							.authenticated()
+		);
 		return http.build();
 	}
 }

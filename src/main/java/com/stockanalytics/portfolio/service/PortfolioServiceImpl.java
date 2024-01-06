@@ -50,8 +50,6 @@ public class PortfolioServiceImpl implements PortfolioService {
                         .findById(portfolioDto.getUserLogin())
                         .orElseThrow(UserNotFoundException::new);
         if (user.getLogin().equals(portfolioDto.getUserLogin())) {
-            String userLogin = portfolioDto.getUserLogin();
-
             LocalDate portfolioDate = portfolioDto.getPortfolioDate();
             String portfolioName = portfolioDto.getPortfolioName();
             List<String> watchlist = user.getWatchlist();
@@ -104,7 +102,9 @@ public class PortfolioServiceImpl implements PortfolioService {
                     .exchange(symbol.getExchange())
                     .industryCategory(symbol.getIndustryCategory())
                     .hasDividends(symbol.getHasDividends())
+
                     .close(getStockPriceOnDateOrClosestNext(symbolName, LocalDate.now().minusDays(2)))
+
                     .build();
         } else {
             throw new SymbolNotFoundException();

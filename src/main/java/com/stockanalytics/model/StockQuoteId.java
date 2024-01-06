@@ -2,9 +2,7 @@ package com.stockanalytics.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
