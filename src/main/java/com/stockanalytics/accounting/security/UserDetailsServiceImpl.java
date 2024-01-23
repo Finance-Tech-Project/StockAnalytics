@@ -24,10 +24,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		// Retrieve the role of the userAccount
 		String role = userAccount.getRole();
 
-		// Create a UserDetails object with the user name, password, and role
-		UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(userName)
+		// Create a UserDetails object with the username, password, and role
+        return org.springframework.security.core.userdetails.User.withUsername(userName)
 				.password(userAccount.getPassword()) // You should use a proper password encoder here
 				.roles(role).build();
-		return userDetails;
 	}
 }

@@ -13,34 +13,33 @@ import java.util.List;
 public class SymbolController {
     private final SymbolService symbolService;
 
-    @PostMapping(path = "/service/addsymbols")
+    @PostMapping(path = "/service/addSymbols")
     public int addSymbolsFromList(@RequestBody List<String> symbolNames) {
         return symbolService.addSymbolsFromList(symbolNames);
     }
 
-    @GetMapping(path = "/allsymbols")
+    @GetMapping(path = "/allSymbols")
     public List<SymbolDto> getAllSymbols() {
         return symbolService.getAllSymbols();
     }
 
     @GetMapping(path = "/start/symbols")
-    public List<Symbol>  getStartSymbols(){
+    public List<Symbol> getStartSymbols() {
         return symbolService.findStartingSymbols();
-        }
-
-    @PostMapping( "/start/add")
-    public List<Symbol> addSymbolToStartingPage(@RequestParam String ticker){
-        return symbolService.addSymbolToStart(ticker);
-        }
-
-    @PostMapping("/start/remove")
-    public List<Symbol> removeSymbolFromStartingPage(@RequestParam String ticker){
-        return symbolService.removeSymbolFromStart(ticker);
-        }
-
-    @GetMapping("/searchSymbol/")
-    public List<Symbol> searchSymbolsBySubstring(@RequestParam String search){
-        return  symbolService.searchSymbolsBySubstring(search);
     }
 
+    @PostMapping("/start/add")
+    public List<Symbol> addSymbolToStartingPage(@RequestParam String ticker) {
+        return symbolService.addSymbolToStart(ticker);
+    }
+
+    @PostMapping("/start/remove")
+    public List<Symbol> removeSymbolFromStartingPage(@RequestParam String ticker) {
+        return symbolService.removeSymbolFromStart(ticker);
+    }
+
+    @GetMapping("/searchSymbol/")
+    public List<Symbol> searchSymbolsBySubstring(@RequestParam String search) {
+        return symbolService.searchSymbolsBySubstring(search);
+    }
 }

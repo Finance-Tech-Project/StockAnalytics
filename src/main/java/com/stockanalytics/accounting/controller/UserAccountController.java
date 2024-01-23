@@ -5,9 +5,6 @@ import java.security.Principal;
 import com.stockanalytics.accounting.emailservice.EmailSenderService;
 import lombok.NonNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 import com.stockanalytics.accounting.dto.RolesDto;
@@ -15,80 +12,69 @@ import com.stockanalytics.accounting.dto.UserDto;
 import com.stockanalytics.accounting.dto.UserEditDto;
 import com.stockanalytics.accounting.dto.UserRegisterDto;
 import com.stockanalytics.accounting.service.UserAccountService;
-import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
 public class UserAccountController {
 
-	private final UserAccountService userAccountService;
-private EmailSenderService emailSenderService;
-	@PostMapping("/register")
-	public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
-		return userAccountService.register(userRegisterDto);
-	}
+    private final UserAccountService userAccountService;
+    private final EmailSenderService emailSenderService;
 
-	@PostMapping("/login")
-	public UserDto login(Principal principal) {
-		return userAccountService.getUser(principal.getName());
-	}
+    @PostMapping("/register")
+    public UserDto register(@RequestBody UserRegisterDto userRegisterDto) {
+        return userAccountService.register(userRegisterDto);
+    }
 
-//	@PostMapping("/logout")
-//	public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		if (auth != null) {
-//			String username = auth.getName(); // Getting the user login
-//			new SecurityContextLogoutHandler().logout(request, response, auth);
-//			return ResponseEntity.ok("User " + username + " logged out successfully");
-//		}
-//		return ResponseEntity.ok("No user to log out");
-//	}
+    @PostMapping("/login")
+    public UserDto login(Principal principal) {
+        return userAccountService.getUser(principal.getName());
+    }
 
-	@PostMapping("/recovery/{login}")
-	public void forgotPassword(@PathVariable String login) {
-		userAccountService.sendTemporaryPassword(login);
-	}
-@PostMapping("/message")
-String sendEmailMessage(){
-this.emailSenderService.sendEmail("Shkribaev@gmail.com","Hello you dend succesfuly","this is temp password");
-return  "Message is sent";
-	}
-	@GetMapping("/user/{login}")
-	public UserDto getUser(@PathVariable String login) {
+    @PostMapping("/recovery/{login}")
+    public void forgotPassword(@PathVariable String login) {
+        userAccountService.sendTemporaryPassword(login);
+    }
 
-		return userAccountService.getUser(login);
-	}
+    @PostMapping("/message")
+    String sendEmailMessage() {
+        this.emailSenderService.sendEmail("Shkribaev@gmail.com", "Hello you send successfully", "this is temp password");
+        return "Message is sent";
+    }
 
-	@DeleteMapping("/removeUser/{login}")
-	public UserDto removeUser(@PathVariable String login) {
-		return userAccountService.removeUser(login);
-	}
+    @GetMapping("/user/{login}")
+    public UserDto getUser(@PathVariable String login) {
+        return userAccountService.getUser(login);
+    }
 
-	@PutMapping("/user/update/{login}")
-	public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
-		return userAccountService.updateUser(login, userEditDto);
-	}
+    @DeleteMapping("/removeUser/{login}")
+    public UserDto removeUser(@PathVariable String login) {
+        return userAccountService.removeUser(login);
+    }
 
-	@PutMapping("/user/{login}/role/{role}")
-	public RolesDto addRole(@PathVariable String login, @PathVariable String role) {
-		return userAccountService.changeRolesList(login, role, true);
-	}
+    @PutMapping("/user/update/{login}")
+    public UserDto updateUser(@PathVariable String login, @RequestBody UserEditDto userEditDto) {
+        return userAccountService.updateUser(login, userEditDto);
+    }
 
-	@DeleteMapping("/user/{login}/role/{role}")
-	public RolesDto deleteRole(@PathVariable String login, @PathVariable String role) {
-		return userAccountService.changeRolesList(login, role, false);
-	}
+    @PutMapping("/user/{login}/role/{role}")
+    public RolesDto addRole(@PathVariable String login, @PathVariable String role) {
+        return userAccountService.changeRolesList(login, role, true);
+    }
 
-	@PutMapping("/password")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void changePassword(@NonNull Principal principal, @RequestHeader("X-Password") String newPassword) {
-		userAccountService.changePassword(principal.getName(), newPassword);
+    @DeleteMapping("/user/{login}/role/{role}")
+    public RolesDto deleteRole(@PathVariable String login, @PathVariable String role) {
+        return userAccountService.changeRolesList(login, role, false);
+    }
 
-	}
+    @PutMapping("/password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void changePassword(@NonNull Principal principal, @RequestHeader("X-Password") String newPassword) {
+        userAccountService.changePassword(principal.getName(), newPassword);
+    }
 
-	@GetMapping("/recovery/{login}")
-	public String getPasswordLink(@PathVariable String login) {
-		return userAccountService.getPasswordLink(login);
-	}
+    @GetMapping("/recovery/{login}")
+    public String getPasswordLink(@PathVariable String login) {
+        return userAccountService.getPasswordLink(login);
+    }
 }
