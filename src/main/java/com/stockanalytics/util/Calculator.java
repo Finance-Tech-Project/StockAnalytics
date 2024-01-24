@@ -32,7 +32,7 @@ public class Calculator {
         List<AveragePriceByPeriodDto> movingAverage = new ArrayList<>();
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, days).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
-                .collect(Collectors.toList());
+                .toList();
         for (StockQuote quote : quotes) {
             LocalDate currentDate = quote.getDate();
             if (currentDate.isBefore(dateFrom) || currentDate.isAfter(dateTo)) {
@@ -60,13 +60,12 @@ public class Calculator {
         List<IncomePercentByPeriodDto> incomeList = new ArrayList<>();
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
-                .collect(Collectors.toList());
+                .toList();
 
         for (StockQuote quote : quotes) {
             LocalDate currentDate = quote.getDate();
             if (currentDate.isAfter(dateFrom) && !currentDate.isAfter(dateTo)) {
                 LocalDate startDate = currentDate.minusYears(years);
-
                 StockQuote startQuot = null;
                 for (StockQuote q : quotes) {
                     if (q.getDate().isEqual(startDate) || q.getDate().isAfter(startDate)) {
@@ -74,7 +73,6 @@ public class Calculator {
                         break;
                     }
                 }
-
                 if (startQuot != null) {
                     double income = quote.getClose() - startQuot.getClose();
                     BigDecimal incomePercent = new BigDecimal(100 * income / startQuot.getClose()).setScale(2, RoundingMode.HALF_UP);
@@ -89,11 +87,18 @@ public class Calculator {
 
     private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
         List<StockQuote> quotes;
-        if(symbol.getStatus() == 0){
-            quotes = stockQuoteService.getData(symbol,dateFrom, dateTo).stream()
-                    .map(q -> new StockQuote(new StockQuoteId(q.getDate(), symbol), q.getOpen(), q.getHigh(), q.getLow(), q.getClose(), q.getVolume()))
+        if (symbol.getStatus() == 0) {
+            quotes = stockQuoteService.getData(symbol, dateFrom, dateTo).stream()
+                    .map(q -> new StockQuote(
+                            new StockQuoteId(
+                                    q.getDate(), symbol),
+                                    q.getOpen(),
+                                    q.getHigh(),
+                                    q.getLow(),
+                                    q.getClose(),
+                                    q.getVolume()))
                     .collect(Collectors.toList());
-        }else{
+        } else {
             quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo);
         }
         return quotes;
@@ -108,7 +113,6 @@ public class Calculator {
             DescriptiveStatistics stats = new DescriptiveStatistics();
             if (currentDate.isAfter(dateFrom.minusDays(1)) && !currentDate.isAfter(dateTo.minusDays(1))) {
                 LocalDate startDate = currentDate.minusYears(years);
-
                 for (StockQuote q : quotes) {
                     if (q.getDate().isAfter(quote.getDate())) {
                         break;
@@ -167,7 +171,6 @@ public class Calculator {
                     sharpRatios.add(new SharpRatioDto(currentDate, sharpRatio));
                 }
             }
-
         }
         return sharpRatios.stream().sorted()
                 .sorted(Comparator.comparing(SharpRatioDto::getTime))

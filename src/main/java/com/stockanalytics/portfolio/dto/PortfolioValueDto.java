@@ -9,9 +9,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-    public class PortfolioValueDto {
-        private LocalDate date;
-        private double portfolioValue;
-
-
+public class PortfolioValueDto {
+    private LocalDate date;
+    private double portfolioValue;
 }

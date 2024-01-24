@@ -3,6 +3,7 @@ package com.stockanalytics.model;
 import lombok.*;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
 @Builder
@@ -20,11 +21,9 @@ public class StockQuote {
     Long volume;
 
     public LocalDate getDate() {
-        if (getId() != null){
+        if (getId() != null) {
             return getId().getDate();
+        }
+        return null;
     }
-    return null;
-}
-
-
 }

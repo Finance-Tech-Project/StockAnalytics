@@ -8,5 +8,4 @@ import lombok.Setter;
 public class CashFlowStatement{
     String freeCashflow;
     String operatingCashflow;
-//    String leveredFreeCashFlow;
 }

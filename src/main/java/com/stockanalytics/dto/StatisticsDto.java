@@ -10,23 +10,14 @@ import lombok.*;
 @Setter
 @ToString
 public class StatisticsDto {
-
     private ValuationMeasures valuationMeasures;
-
     Profitability profitability;
-
     StockPriceHistory stockPriceHistory;
-
     ShareStatistics shareStatistics;
-
     IncomeStatement incomeStatement;
-
     BalanceSheet balanceSheet;
-
     CashFlowStatement cashFlowStatement;
-
     DividendsAndSplits dividendsAndSplits;
-
     FiscalYear fiscalYear;
 }
 

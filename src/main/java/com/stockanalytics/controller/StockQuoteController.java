@@ -2,7 +2,6 @@ package com.stockanalytics.controller;
 
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
-import com.stockanalytics.service.StatisticsService;
 import com.stockanalytics.service.StockQuoteService;
 import com.stockanalytics.service.SymbolService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import java.util.List;
 public class StockQuoteController {
     private final StockQuoteService stockQuoteService;
     private  final SymbolService symbolService;
-    private final StatisticsService statisticsService;
 
     @GetMapping("/quote/history")
     public List<List<StockQuoteDto>> getHistoryBySymbol (@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker ){
@@ -27,5 +25,4 @@ public class StockQuoteController {
         LocalDate start = LocalDate.parse(dateFrom);
         return stockQuoteService.getListsForChart(symbol,start, end );
     }
-
 }

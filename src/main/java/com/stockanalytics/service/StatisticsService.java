@@ -28,31 +28,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("CallToPrintStackTrace")
 @RequiredArgsConstructor
 @Service
 @Repository
 public class StatisticsService {
-//    List<String> listValuationMeasures = List.of("Market Cap", "bookValue", "enterpriseValue", "forwardPE", "pegRatio", "priceToSalesTrailing12Months", "priceToBook",
-//            "enterpriseToRevenue", "enterpriseToEbitda", "forwardEps", "trailingEps");
-//    List<String> StockPriceHistory = List.of("beta", "beta3Year", "SandP52WeekChange");
-//    List<String> Profitability = List.of("profitMargins", "Operating Margin (ttm)");
-//    List<String> ShareStatistics = List.of("Avg Vol (3 month)", "Avg Vol (10 day)", "sharesOutstanding", "impliedSharesOutstanding",
-//            "floatShares", "heldPercentInsiders", "heldPercentInstitutions", "sharesShort", "shortRatio", "shortPercentOfFloat", "sharesPercentSharesOut", "sharesShortPriorMonth");
-//    List<String> IncomeStatement = List.of("Revenue", "Revenue Per Share", "revenueQuarterlyGrowth", "Gross Profit", "EBITDA",
-//            "netIncomeToCommon", "Diluted EPS", "earningsQuarterlyGrowth");
-//    List<String> BalanceSheet = List.of("Total Cash", "Total Cash Per Share ", "Total Debt", "Total Debt/Equity", "Current Ratio",
-//            "Book Value Per Share");
-//    List<String> CashFlowStatement = List.of("Operating Cash Flow", "Levered Free Cash Flow");
-//    List<String> DividendsAndSplits = List.of("Forward Annual Dividend Rate", "Forward Annual Dividend Yield", "Trailing Annual Dividend Rate",
-//            "Trailing Annual Dividend Yield", " fiveYearAverageReturn", "threeYearAverageReturn", "lastDividendDate", "lastDividendValue", "Payout Ratio", "Dividend Date", "Ex-Dividend Date", "Last Split Factor", "lastSplitDate"  );
-//    List<String> FiscalYear = List.of("nextFiscalYearEnd", "mostRecentQuarter", "lastFiscalYearEnd");
-
-
 
     final DecimalFormat df = new DecimalFormat("#.##");
     private final StockQuoteService stockQuoteService;
     private final SymbolService symbolService;
-    private  final StatisticsRepository statisticsRepository;
+    private final StatisticsRepository statisticsRepository;
     private final DataGetter getter;
     private final ModelMapper mapper;
 
@@ -61,11 +46,11 @@ public class StatisticsService {
         for (Statistics stat : listStat) {
             statisticsRepository.delete(stat);
             Statistics newStat = getNewStatistics(stat.getSymbol());
-                statisticsRepository.save(newStat);
+            statisticsRepository.save(newStat);
         }
     }
 
-    private String calcMovingAverage(List <StockQuoteDto> list, int days) {
+    private String calcMovingAverage(List<StockQuoteDto> list, int days) {
         double movingAverage = list.stream()
                 .filter(quot -> quot.getDate().isAfter(LocalDate.now().minusDays(days)))
                 .mapToDouble(StockQuoteDto::getClose)
@@ -76,7 +61,7 @@ public class StatisticsService {
     private Map<String, String> calcStatistics(Symbol symbol) {
         Map<String, String> calcMap = new HashMap<>();
         List<StockQuoteDto> sortedList = stockQuoteService.getData(symbol, LocalDate.now().minusDays(365), LocalDate.now());
-        if (sortedList.size() > 0){
+        if (!sortedList.isEmpty()) {
             df.setRoundingMode(RoundingMode.HALF_UP);
             Double lastPrice = sortedList.get(sortedList.size() - 1).getClose();
             Double firstPrice = sortedList.get(0).getClose();
@@ -100,47 +85,47 @@ public class StatisticsService {
         return null;
     }
 
-    public Map<String, String> getStatisticsFromYahoo(Symbol symbol){
+    public Map<String, String> getStatisticsFromYahoo(Symbol symbol) {
         return getter.getDataForStatisticsFromYahoo(symbol);
     }
 
-        @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-        public Statistics getNewStatistics(Symbol symbol) throws IOException, InterruptedException {
-            Statistics stat = new Statistics();
-            List <Map<String, String>> mapList = getter.getDataForAnalisisFromRapidAPI(symbol);
-            List<Map<String, String>> statData = new ArrayList<>(mapList);
-            statData.add(getStatisticsFromRapidAPI(symbol));
-            statData.add(getStatisticsFromYahoo(symbol))      ;
-            statData.add(calcStatistics(symbol));
-            HashMap<String, String> parameters = new HashMap<>();
-            for (Map<String, String> map : statData) {
-                if (map != null) {
-                    for (Map.Entry<String, String> entry : map.entrySet()) {
-                        String key = entry.getKey();
-                        String value = entry.getValue();
-                        parameters.put(key, value);
-                    }
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    public Statistics getNewStatistics(Symbol symbol) throws IOException, InterruptedException {
+        Statistics stat = new Statistics();
+        List<Map<String, String>> mapList = getter.getDataForAnalysisFromRapidAPI(symbol);
+        List<Map<String, String>> statData = new ArrayList<>(mapList);
+        statData.add(getStatisticsFromRapidAPI(symbol));
+        statData.add(getStatisticsFromYahoo(symbol));
+        statData.add(calcStatistics(symbol));
+        HashMap<String, String> parameters = new HashMap<>();
+        for (Map<String, String> map : statData) {
+            if (map != null) {
+                for (Map.Entry<String, String> entry : map.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    parameters.put(key, value);
                 }
             }
-            List<String> missingKeys = new ArrayList<>();
-            for (Map.Entry<String, String> entry : parameters.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                if (value != null && !key.equals("symbol")) {
-                    try {
-                        Field field = stat.getClass().getDeclaredField(key);
-                        field.setAccessible(true);
-                        field.set(stat, value);
-                    } catch (NoSuchFieldException e) {
-                        missingKeys.add(key);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            stat.setSymbol(symbol);
-            return stat;
         }
+        List<String> missingKeys = new ArrayList<>();
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (value != null && !key.equals("symbol")) {
+                try {
+                    Field field = stat.getClass().getDeclaredField(key);
+                    field.setAccessible(true);
+                    field.set(stat, value);
+                } catch (NoSuchFieldException e) {
+                    missingKeys.add(key);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        stat.setSymbol(symbol);
+        return stat;
+    }
 
     private Map<String, String> getStatisticsFromRapidAPI(Symbol symbol) throws IOException, InterruptedException {
         df.setRoundingMode(RoundingMode.HALF_UP);
@@ -180,8 +165,8 @@ public class StatisticsService {
                     } else if (Math.abs(l) > 999_999) {
                         d = l / 1_000_000.;
                         String str = df.format(d).concat("M");
-                         parameters.put(entry.getKey(), str);
-                    }else{
+                        parameters.put(entry.getKey(), str);
+                    } else {
                         parameters.put(entry.getKey(), String.valueOf(l));
                     }
                 }
@@ -191,26 +176,26 @@ public class StatisticsService {
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public StatisticsDto getStatisticsDto (String ticker) throws IOException, InterruptedException {
-            Symbol symbol = symbolService.getSymbol(ticker);
-            Statistics st;
-            StatisticsDto dto =  new StatisticsDto();
-            if(statisticsRepository.existsBySymbol(symbol)) {
-                st = statisticsRepository.findBySymbol(symbol).get();
-            }else{
-                st = getNewStatistics(symbol);
-                statisticsRepository.save(st);
-            }
-            dto.setValuationMeasures(mapper.map(st, ValuationMeasures.class));
-            dto.setStockPriceHistory(mapper.map(st, StockPriceHistory.class));
-            dto.setBalanceSheet(mapper.map(st, com.stockanalytics.dto.statistcs.BalanceSheet.class));
-            dto.setShareStatistics(mapper.map(st, ShareStatistics.class));
-            dto.setCashFlowStatement(mapper.map(st, com.stockanalytics.dto.statistcs.CashFlowStatement.class));
-            dto.setDividendsAndSplits(mapper.map(st, com.stockanalytics.dto.statistcs.DividendsAndSplits.class));
-            dto.setIncomeStatement(mapper.map(st, com.stockanalytics.dto.statistcs.IncomeStatement.class));
-            dto.setFiscalYear(mapper.map(st, com.stockanalytics.dto.statistcs.FiscalYear.class));
-            dto.setProfitability(mapper.map(st, Profitability.class));
-            return dto;
+    public StatisticsDto getStatisticsDto(String ticker) throws IOException, InterruptedException {
+        Symbol symbol = symbolService.getSymbol(ticker);
+        Statistics st;
+        StatisticsDto dto = new StatisticsDto();
+        if (statisticsRepository.existsBySymbol(symbol)) {
+            st = statisticsRepository.findBySymbol(symbol).get();
+        } else {
+            st = getNewStatistics(symbol);
+            statisticsRepository.save(st);
         }
+        dto.setValuationMeasures(mapper.map(st, ValuationMeasures.class));
+        dto.setStockPriceHistory(mapper.map(st, StockPriceHistory.class));
+        dto.setBalanceSheet(mapper.map(st, com.stockanalytics.dto.statistcs.BalanceSheet.class));
+        dto.setShareStatistics(mapper.map(st, ShareStatistics.class));
+        dto.setCashFlowStatement(mapper.map(st, com.stockanalytics.dto.statistcs.CashFlowStatement.class));
+        dto.setDividendsAndSplits(mapper.map(st, com.stockanalytics.dto.statistcs.DividendsAndSplits.class));
+        dto.setIncomeStatement(mapper.map(st, com.stockanalytics.dto.statistcs.IncomeStatement.class));
+        dto.setFiscalYear(mapper.map(st, com.stockanalytics.dto.statistcs.FiscalYear.class));
+        dto.setProfitability(mapper.map(st, Profitability.class));
+        return dto;
     }
+}
 

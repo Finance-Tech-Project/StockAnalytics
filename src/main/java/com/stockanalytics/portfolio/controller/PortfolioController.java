@@ -1,4 +1,5 @@
 package com.stockanalytics.portfolio.controller;
+
 import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
@@ -15,86 +16,84 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/portfolio")
 public class PortfolioController {
+    final PortfolioService portfolioService;
 
+    // Create a new portfolio
+    @PostMapping("/create")
+    public PortfolioDto createPortfolio(@RequestBody PortfolioDto portfolioDto) {
+        return portfolioService.createPortfolio(portfolioDto);
+    }
 
-	final PortfolioService portfolioService;
+    @GetMapping("/watchList")
+    public List<WatchlistDto> getWatchlist(@RequestParam String username) {
+        return portfolioService.getWatchlist(username);
+    }
 
-	// Create a new portfolio
-	@PostMapping("/create")
-	public PortfolioDto createPortfolio(@RequestBody PortfolioDto portfolioDto) {
-		return portfolioService.createPortfolio(portfolioDto);
-	}
+    @GetMapping("/{username}")
+    public List<PortfolioDto> getPortfolios(@PathVariable String username) {
+        return portfolioService.getPortfolios(username);
+    }
 
-	@GetMapping("/watchList")
-	public List<WatchlistDto> getWatchlist(@RequestParam String username) {
-		return portfolioService.getWatchlist(username);
-	}
+    //We receive portfolio prices for each day
+    @GetMapping("/getPortfolioValues")
+    public List<PortfolioValueDto> getPortfolioValues(@RequestParam String portfolioName,
+                                                      @RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+                                                      @RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+        return portfolioService.getPortfolioValues(portfolioName, fromDate, toDate);
+    }
 
-	@GetMapping("/{username}")
-	public List<PortfolioDto> getPortfolios(@PathVariable String username) {
-		return portfolioService.getPortfolios(username);
-	}
+    // Add a stock to the portfolio
+    @PostMapping("/addStock")
+    public StockDto addStockToPortfolio(@RequestParam String userName, @RequestParam String portfolioName,
+                                        @RequestParam String symbol, @RequestParam int quantity) {
+        return portfolioService.addStock(userName, portfolioName, symbol, quantity);
+    }
 
-//We receive portfolio prices for each day
-	@GetMapping("/getPortfolioValues")
-	public List<PortfolioValueDto> getPortfolioValues(@RequestParam String portfolioName,
-			@RequestParam("fromDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
-			@RequestParam("toDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
-		return portfolioService.getPortfolioValues(portfolioName, fromDate, toDate);
-	}
+    @PostMapping("/addToWatchList")
+    public void addToWatchList(@RequestParam String userName, @RequestParam String symbol) {
+        portfolioService.addToWatchList(userName, symbol);
+    }
 
-	// Add a stock to the portfolio
-	@PostMapping("/addStock")
-	public StockDto addStockToPortfolio(@RequestParam String userName, @RequestParam String portfolioName,
-			@RequestParam String symbol, @RequestParam int quantity) {
-		return portfolioService.addStock(userName, portfolioName, symbol, quantity);
-	}
+    @DeleteMapping("/removeFromWatchList")
+    public void removeFromWatchList(@RequestParam String userName, @RequestParam String symbol) {
+        portfolioService.removeFromWatchList(userName, symbol);
+    }
 
-	@PostMapping("/addToWatchList")
-	public void addToWatchList(@RequestParam String userName, @RequestParam String symbol) throws InterruptedException {
-		portfolioService.addToWatchList(userName, symbol);
-	}
+    @PutMapping("/{username}")
+    public PortfolioDto updatePortfolio(@PathVariable String username, @RequestBody PortfolioDto portfolioDto) {
+        return portfolioDto;
+    }
 
-	@DeleteMapping("/removeFromWatchList")
-	public void removeFromWatchList(@RequestParam String userName, @RequestParam String symbol) {
-		portfolioService.removeFromWatchList(userName, symbol);
-	}
+    // Remove a stock from the portfolio
+    @DeleteMapping("/removeStock")
+    public StockDto removeStockFromPortfolio(@RequestParam String portfolioName, @RequestParam String symbol,
+                                             @RequestParam int quantity) {
+        return portfolioService.removeStock(portfolioName, symbol, quantity);
+    }
 
-	@PutMapping("/{username}")
-	public PortfolioDto updatePortfolio(@PathVariable String username, @RequestBody PortfolioDto portfolioDto) {
-		return portfolioDto;
-	}
+    @DeleteMapping("/removePortfolio")
+    public void deletePortfolio(@RequestParam String userName, @RequestParam String portfolioName) {
+        portfolioService.removePortfolio(userName, portfolioName);
+    }
 
-	// Remove a stock from the portfolio
-	@DeleteMapping("/removeStock")
-	public StockDto removeStockFromPortfolio(@RequestParam String portfolioName, @RequestParam String symbol,
-			@RequestParam int quantity) {
-		return portfolioService.removeStock(portfolioName, symbol, quantity);
-	}
+    // Calculate the value of the portfolio as of the specified date
+    @GetMapping("/value")
+    public double calculatePortfolioValue(@RequestParam String portfolioName,
+                                          @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        return portfolioService.calculatePortfolioValue(portfolioName, date);
+    }
 
-	@DeleteMapping("/removePortfolio")
-	public void deletePortfolio(@RequestParam String userName, @RequestParam String portfolioName) {
-		portfolioService.removePortfolio(userName, portfolioName);
-	}
+    //Portfolio and symbol price comparison
+    @GetMapping("/comparePerformance")
+    public double comparePerformance(@RequestParam String yourPortfolioName, @RequestParam String benchmarkSymbol,
+                                     @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam LocalDate dateFrom,
+                                     @DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam LocalDate dateTo) {
+        return portfolioService.comparePerformance(yourPortfolioName, benchmarkSymbol, dateFrom, dateTo);
+    }
 
-	// Calculate the value of the portfolio as of the specified date
-	@GetMapping("/value")
-	public double calculatePortfolioValue(@RequestParam String portfolioName,
-			@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-		return portfolioService.calculatePortfolioValue(portfolioName, date);
-	}
-
-//Portfolio and symbol price comparison
-	@GetMapping("/comparePerformance")
-	public double comparePerformance(@RequestParam String yourPortfolioName, @RequestParam String benchmarkSymbol,
-			@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam LocalDate dateFrom,
-			@DateTimeFormat(pattern = "yyyy-MM-dd") @RequestParam LocalDate dateTo) {
-		return portfolioService.comparePerformance(yourPortfolioName, benchmarkSymbol, dateFrom, dateTo);
-	}
-
-	// Get a list of all portfolios
-	@GetMapping("/getAllPortfolios")
-	public List<PortfolioDto> getAllPortfolios() {
-		return portfolioService.getAllPortfolios();
-	}
+    // Get a list of all portfolios
+    @GetMapping("/getAllPortfolios")
+    public List<PortfolioDto> getAllPortfolios() {
+        return portfolioService.getAllPortfolios();
+    }
 }

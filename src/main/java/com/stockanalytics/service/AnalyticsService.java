@@ -14,7 +14,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class AnaliticsService {
+public class AnalyticsService {
     private final Calculator calculator;
     private final SymbolService symbolService;
 

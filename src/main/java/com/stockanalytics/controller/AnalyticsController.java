@@ -5,7 +5,7 @@ import com.stockanalytics.dto.AveragePriceByPeriodDto;
 import com.stockanalytics.dto.IncomePercentByPeriodDto;
 import com.stockanalytics.dto.SharpRatioDto;
 import com.stockanalytics.dto.VolatilityDto;
-import com.stockanalytics.service.AnaliticsService;
+import com.stockanalytics.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,14 +19,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/analytics")
 public class AnalyticsController {
-    private final AnaliticsService analiticsService;
+    private final AnalyticsService analyticsService;
 
     @GetMapping("/movAvg")
     public List<AveragePriceByPeriodDto> getMovingAverage(@RequestParam String dateFrom, @RequestParam String dateTo,
                                                           @RequestParam String ticker, @RequestParam int period) {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return analiticsService.getMovingAverage(start, end, ticker, period);
+        return analyticsService.getMovingAverage(start, end, ticker, period);
     }
 
     @GetMapping("/simpleIncome")
@@ -34,7 +34,7 @@ public class AnalyticsController {
                                                           @RequestParam String ticker, @RequestParam int years) {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return analiticsService.getSimpleIncome(start, end, ticker, years);
+        return analyticsService.getSimpleIncome(start, end, ticker, years);
     }
 
     @GetMapping("/volatility")
@@ -42,7 +42,7 @@ public class AnalyticsController {
                                                       @RequestParam String ticker, @RequestParam int years) {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return analiticsService.getDataAboutVolatility(start, end, ticker, years);
+        return analyticsService.getDataAboutVolatility(start, end, ticker, years);
     }
 
     @GetMapping("/sharpRatios")
@@ -50,6 +50,6 @@ public class AnalyticsController {
                                               @RequestParam String ticker, @RequestParam int years) {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return analiticsService.getSharpRatios(start, end, ticker, years);
+        return analyticsService.getSharpRatios(start, end, ticker, years);
     }
 }

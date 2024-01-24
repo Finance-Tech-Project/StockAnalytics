@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"unused", "CallToPrintStackTrace"})
 public class HTMLParser {
 
     public String ticker;
@@ -31,21 +32,17 @@ public class HTMLParser {
     public String includeAdjustedClose;
 
     public HTMLParser(String ticker, LocalDate dateFrom, LocalDate dateTo, String interval) {
-        this.ticker = ticker.contains("^")? ticker.replace("^", "%5E") : ticker;
+        this.ticker = ticker.contains("^") ? ticker.replace("^", "%5E") : ticker;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.interval = "1d";
-       }
+    }
 
     public HTMLParser() {
 
     }
-//    String start = String.valueOf(dateFrom.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
-//    String start = dateToSeconds (dateFrom);
-//    String end = String.valueOf(dateTo.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli());
-//    String end = dateToSeconds (dateTo);
 
-    public List<StockQuoteDto> getDividendByPeriod() throws  IOException {
+    public List<StockQuoteDto> getDividendByPeriod() throws IOException {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
         Document doc = Jsoup.connect("https://finance.yahoo.com/quote/AAPL/history?period1=978307200&period2=1691625600&interval=1d&filter=history&frequency=1d&includeAdjustedClose=true").get();
@@ -57,23 +54,22 @@ public class HTMLParser {
         List<List<StockQuoteDto>> data = new ArrayList<>();
         List<StockQuoteDto> daylyData = new ArrayList<>();
         if (rows != null) {
-            for (int i = 1; i < rows.size()-1 ; i++) {
+            for (int i = 1; i < rows.size() - 1; i++) {
                 Element row = rows.get(i);
-                if(row.text().contains("Dividend"))break;
+                if (row.text().contains("Dividend")) break;
                 Elements cols = row.select("td");
                 List<String> quote = (cols.stream()
-//                        .filter(col -> col.text().contains("Dividend"))
-                        .map(col -> col.text().replace(",",""))
-//                        .map(col -> col.replace(".",","))
-                        .collect(Collectors.toList()));
+                        .map(col -> col.text().replace(",", ""))
+                        .toList());
                 StockQuoteDto stockQuoteDto = new StockQuoteDto(LocalDate.parse(quote.get(0), formatter), Double.valueOf(quote.get(1)),
                         Double.valueOf(quote.get(2)), Double.valueOf(quote.get(3)), Double.valueOf(quote.get(4)), Long.valueOf(quote.get(6)));
                 daylyData.add(stockQuoteDto);
             }
-        } return daylyData;
+        }
+        return daylyData;
     }
 
-    private String dateToSeconds (LocalDate date){
+    private String dateToSeconds(LocalDate date) {
         Instant instant = date.atStartOfDay(ZoneId.systemDefault()).toInstant().plusSeconds(10800);
         long seconds = instant.getEpochSecond();
         return Long.toString(seconds);
@@ -83,13 +79,13 @@ public class HTMLParser {
         String url1 = "https://finance.yahoo.com/quote/".concat(symbol.getName().concat("/history?period1=978307200&period2=1356912000&interval=3mo&filter=history&frequency=1d&includeAdjustedClose=true"));
         String url2 = "https://finance.yahoo.com/quote/".concat(symbol.getName().concat("/history?period1=1356998400&period2=1735603200&interval=3mo&filter=history&frequency=1d&includeAdjustedClose=true"));
         List<Dividend> dividends = new ArrayList<>();
-        getDividendFromTable(url1 , dividends, symbol);
-        getDividendFromTable(url2 , dividends, symbol);
+        getDividendFromTable(url1, dividends, symbol);
+        getDividendFromTable(url2, dividends, symbol);
 
-        if (dividends.size() == 0) {
+        if (dividends.isEmpty()) {
             symbol.setHasDividends(1);
         }
-        if (dividends.size() != 0) {
+        if (!dividends.isEmpty()) {
             symbol.setHasDividends(2);
         }
 
@@ -97,7 +93,7 @@ public class HTMLParser {
                 .collect(Collectors.toList());
     }
 
-    private void  getDividendFromTable(String url, List<Dividend> dividends, Symbol symbol){
+    private void getDividendFromTable(String url, List<Dividend> dividends, Symbol symbol) {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy", Locale.ENGLISH);
         Document doc = null;
         try {
@@ -115,14 +111,14 @@ public class HTMLParser {
         }
 
         if (rows != null) {
-            for (int i = 1; i < rows.size()-1 ; i++) {
+            for (int i = 1; i < rows.size() - 1; i++) {
                 Element row = rows.get(i);
-                if(row.text().contains("Dividend")) {
+                if (row.text().contains("Dividend")) {
                     Elements cols = row.select("td");
                     Element dateElement = cols.select("td:nth-of-type(1) span").first();
                     LocalDate date = null;
                     if (dateElement != null) {
-                        date = LocalDate.parse(dateElement.text(),formatter);
+                        date = LocalDate.parse(dateElement.text(), formatter);
                     }
                     Element dividendElement = row.select("td:nth-of-type(2) strong").first();
                     Double dividendRate = null;
@@ -134,7 +130,6 @@ public class HTMLParser {
                     dividend.setDate(date);
                     dividend.setDividendRate(dividendRate);
                     dividend.setSymbol(symbol);
-
                     dividends.add(dividend);
                 }
             }

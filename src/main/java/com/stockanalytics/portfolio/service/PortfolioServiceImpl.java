@@ -1,4 +1,5 @@
 package com.stockanalytics.portfolio.service;
+
 import com.stockanalytics.accounting.dao.UserAccountRepository;
 import com.stockanalytics.accounting.dto.exceptions.UserNotFoundException;
 import com.stockanalytics.accounting.model.UserAccount;
@@ -24,6 +25,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,15 +33,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("ALL")
 @Service
 @RequiredArgsConstructor
 public class PortfolioServiceImpl implements PortfolioService {
-      final PortfolioRepository portfolioRepository;
-     final UserAccountRepository userAccountRepository;
-     final StockQuoteRepository stockQuoteRepository;
-       final SymbolRepository symbolRepository;
+    final PortfolioRepository portfolioRepository;
+    final UserAccountRepository userAccountRepository;
+    final StockQuoteRepository stockQuoteRepository;
+    final SymbolRepository symbolRepository;
     final ModelMapper modelMapper;
-   private   final SymbolService symbolService;
+    private final SymbolService symbolService;
 
     static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
 
@@ -68,16 +71,15 @@ public class PortfolioServiceImpl implements PortfolioService {
         }
         return null;
     }
+
     public List<WatchlistDto> getWatchlist(String username) {
         UserAccount user = userAccountRepository.findByLogin(username).orElseThrow(UserNotFoundException::new);
         List<String> watchlist = user.getWatchlist();
 
         // Getting information about symbols from the symbol repository
-        List<WatchlistDto> watchlistInfo = watchlist.stream()
+        return watchlist.stream()
                 .map(this::getWatchlistInfo)
                 .collect(Collectors.toList());
-
-        return watchlistInfo;
     }
 
     @Override
@@ -91,6 +93,7 @@ public class PortfolioServiceImpl implements PortfolioService {
             throw new SymbolNotFoundException();
         }
     }
+
     private WatchlistDto getWatchlistInfo(String symbolName) {
         Symbol symbol = symbolRepository.getByName(symbolName);
 
@@ -112,9 +115,9 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public void addToWatchList(String userName, String symbol)  {
+    public void addToWatchList(String userName, String symbol) {
         UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
-               Symbol newSymbol = symbolRepository.getByName(symbol);
+        Symbol newSymbol = symbolRepository.getByName(symbol);
         if (newSymbol == null) {
             logger.info("Symbol not found in repository: {}", symbol);
             throw new SymbolNotFoundException();
@@ -204,44 +207,37 @@ public class PortfolioServiceImpl implements PortfolioService {
         }
     }
 
-
-
-
     public List<PortfolioValueDto> getPortfolioValues(String portfolioName, LocalDate fromDate, LocalDate toDate) {
         List<PortfolioValueDto> portfolioValues = new ArrayList<>();
-
         for (LocalDate currentDate = fromDate; currentDate.isBefore(toDate.plusDays(1)); currentDate = currentDate.plusDays(1)) {
             double portfolioValue = calculatePortfolioValue(portfolioName, currentDate);
             portfolioValues.add(new PortfolioValueDto(currentDate, portfolioValue));
         }
         return portfolioValues;
     }
+
     @Override
     public double calculatePortfolioValue(String portfolioName, LocalDate date) {
         Portfolio portfolio = portfolioRepository.getByPortfolioName(portfolioName);
         Map<String, Integer> stocks = portfolio.getStocks();
-        double portfolioValue =
-                stocks.entrySet().stream()
-                        .mapToDouble(
-                                entry -> {
-                                    String symbol = entry.getKey();
-                                    int quantity = entry.getValue();
 
-                                    try {
-                                        double stockPrice = getStockPriceOnDateOrClosestNext(symbol, date);
-                                        return stockPrice * quantity;
-                                    } catch (PortfolioNotFoundException e) {
+        return stocks.entrySet().stream()
+                .mapToDouble(
+                        entry -> {
+                            String symbol = entry.getKey();
+                            int quantity = entry.getValue();
 
-                                        logger.error("Error processing a symbol: {}", symbol);
-                                        return 0.0;
-                                    }
-                                })
-                        .sum();
+                            try {
+                                double stockPrice = getStockPriceOnDateOrClosestNext(symbol, date);
+                                return stockPrice * quantity;
+                            } catch (PortfolioNotFoundException e) {
 
-        return portfolioValue;
+                                logger.error("Error processing a symbol: {}", symbol);
+                                return 0.0;
+                            }
+                        })
+                .sum();
     }
-
-
 
     private boolean isTickerValidOnDate(String symbol, LocalDate date) {
         List<StockQuote> quotes = stockQuoteRepository.findAllById_Symbol_Name(symbol);
@@ -265,18 +261,14 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public double comparePerformance(
-            String yourPortfolioName, String benchmarkSymbol, LocalDate dateFrom, LocalDate dateTo) {
-        Portfolio yourPortfolio =
-                portfolioRepository.getByPortfolioName(yourPortfolioName);
+    public double comparePerformance(String yourPortfolioName, String benchmarkSymbol, LocalDate dateFrom, LocalDate dateTo) {
+        Portfolio yourPortfolio = portfolioRepository.getByPortfolioName(yourPortfolioName);
         if (yourPortfolio == null) {
-
             throw new PortfolioNotFoundException(); //Checking that your portfolio exists
         }
 
-
-        List<SymbolDto> benchmarkSymbols =
-                symbolService.getAllSymbols(); // Getting all available symbols from the symbol repository
+        // Getting all available symbols from the symbol repository
+        List<SymbolDto> benchmarkSymbols = symbolService.getAllSymbols();
 
         //calculate the value of your portfolio for given dates
         double yourPortfolioValueFrom = calculatePortfolioValue(yourPortfolioName, dateFrom);
@@ -287,14 +279,12 @@ public class PortfolioServiceImpl implements PortfolioService {
         double yourPerformance =
                 (yourPortfolioValueTo - yourPortfolioValueFrom) / yourPortfolioValueFrom;
         double benchmarkPerformance = (benchmarkValueTo - benchmarkValueFrom) / benchmarkValueFrom;
-
         return yourPerformance - benchmarkPerformance;
     }
 
     @Override
     public List<PortfolioDto> getPortfolios(String userName) {
-        UserAccount userAccount =
-                userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
+        UserAccount userAccount = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
         return portfolioRepository.findByUserLogin(userAccount).stream()
                 .map(p -> modelMapper.map(p, PortfolioDto.class))
                 .collect(Collectors.toList());

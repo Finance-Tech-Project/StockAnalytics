@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 
+@SuppressWarnings("unused")
 @Component
 @RequiredArgsConstructor
 public class QuotScheduler {
@@ -48,5 +49,4 @@ public class QuotScheduler {
         statisticsService.updateStatistics();
         System.out.println("Statistics  updated  " + LocalDate.now() + " at " + LocalTime.now());
     }
-
 }

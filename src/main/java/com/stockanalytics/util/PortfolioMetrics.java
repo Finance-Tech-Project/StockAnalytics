@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PortfolioMetrics {
     public static List<SharpRatioDto> getSharpRatio(List<StockQuote> stockQuotes, List<BondYield> bondYields, int years) {
         List<SharpRatioDto> sharpRatios = new ArrayList<>();
@@ -24,7 +25,6 @@ public class PortfolioMetrics {
                 sharpRatios.add(new SharpRatioDto(currentDate, sharpRatio));
             }
         }
-
         return sharpRatios;
     }
 
@@ -53,7 +53,7 @@ public class PortfolioMetrics {
         }
 
         double averageBondReturn = totalBondReturn / bondCount;
-            return averageStockReturn - averageBondReturn;
+        return averageStockReturn - averageBondReturn;
     }
 
     private static double calculatePortfolioStdDev(List<StockQuote> stockQuotes, List<BondYield> bondYields, LocalDate startDate, LocalDate endDate) {

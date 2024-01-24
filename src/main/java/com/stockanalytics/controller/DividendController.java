@@ -20,22 +20,18 @@ public class DividendController {
     private final SymbolService symbolService;
 
     @GetMapping("/dividends/history")
-    public List<Dividend> getDividends(@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker){
-
+    public List<Dividend> getDividends(@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker) {
         Symbol symbol = symbolService.getSymbol(ticker);
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-
         return dividendService.getData(symbol, start, end);
     }
 
     @GetMapping("/dividends/sum")
     public double getYieldDividends(@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker) {
-
         Symbol symbol = symbolService.getSymbol(ticker);
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-
         return dividendService.DividendYieldPerPeriod(symbol, start, end);
     }
 }

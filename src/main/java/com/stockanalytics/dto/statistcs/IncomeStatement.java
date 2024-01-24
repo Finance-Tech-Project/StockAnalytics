@@ -14,6 +14,4 @@ public class IncomeStatement{
     String ebitda;
     String ebitdaMargins;
     String netIncomeToCommon;
-//    String dilutedEPS;
-//    String earningsQuarterlyGrowth;
 }

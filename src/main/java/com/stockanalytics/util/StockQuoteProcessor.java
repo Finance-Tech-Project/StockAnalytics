@@ -23,11 +23,11 @@ public class StockQuoteProcessor {
                 .sorted(Comparator.comparing(StockQuoteDto::getDate))
                 .collect(Collectors.toList());
     }
+
     public List<StockQuoteDto> getWeeklyStockQuotes(List<StockQuoteDto> quotes, LocalDate dateFrom, LocalDate dateTo) {
         LocalDate start = dateFrom.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate end = dateTo.with(TemporalAdjusters.nextOrSame(DayOfWeek.FRIDAY));
-        //                    LocalDate weekStartingDate = entry.getKey();
-         List<StockQuoteDto> res =quotes.stream()
+        List<StockQuoteDto> res = quotes.stream()
                 .filter(quote -> quote.getDate().isAfter(start.minusDays(1)) && quote.getDate().isBefore(end.plusDays(1)))
                 .collect(Collectors.groupingBy(this::getWeekStartingDate))
                 .values().stream()
@@ -46,12 +46,12 @@ public class StockQuoteProcessor {
         LocalDate start = YearMonth.from(dateFrom).atDay(1);
         LocalDate end = dateTo.withDayOfMonth(dateTo.getMonth().length(dateTo.isLeapYear()));
         return quotes.stream()
-               .filter(quote -> quote.getDate().isAfter(start.minusDays(1)) && quote.getDate().isBefore(end.plusDays(1)))
-               .collect(Collectors.groupingBy(quote -> YearMonth.from(quote.getDate())))
-               .values().stream()
-               .map(this::calculateMonthlyQuote)
-               .sorted(Comparator.comparing(StockQuoteDto::getDate))
-               .collect(Collectors.toList());
+                .filter(quote -> quote.getDate().isAfter(start.minusDays(1)) && quote.getDate().isBefore(end.plusDays(1)))
+                .collect(Collectors.groupingBy(quote -> YearMonth.from(quote.getDate())))
+                .values().stream()
+                .map(this::calculateMonthlyQuote)
+                .sorted(Comparator.comparing(StockQuoteDto::getDate))
+                .collect(Collectors.toList());
     }
 
     public List<StockQuoteDto> getYearlyStockQuotes(List<StockQuoteDto> quotes, LocalDate dateFrom, LocalDate dateTo) {
@@ -67,11 +67,11 @@ public class StockQuoteProcessor {
     }
 
     private StockQuoteDto calculateWeeklyQuote(List<StockQuoteDto> weekQuotes) {
-        return calculateQuote( weekQuotes, weekQuotes.get(0).getDate());
+        return calculateQuote(weekQuotes, weekQuotes.get(0).getDate());
     }
 
-    private StockQuoteDto calculateMonthlyQuote( List<StockQuoteDto> monthQuotes) {
-        return calculateQuote(monthQuotes,monthQuotes.get(0).getDate());
+    private StockQuoteDto calculateMonthlyQuote(List<StockQuoteDto> monthQuotes) {
+        return calculateQuote(monthQuotes, monthQuotes.get(0).getDate());
     }
 
     private StockQuoteDto calculateYearlyQuote(List<StockQuoteDto> yearQuotes) {
@@ -92,7 +92,6 @@ public class StockQuoteProcessor {
         List<StockQuoteDto> weeklyQuotes = getWeeklyStockQuotes(quotes, dateFrom, dateTo);
         List<StockQuoteDto> monthlyQuotes = getMonthlyStockQuotes(quotes, dateFrom, dateTo);
         List<StockQuoteDto> yearlyQuotes = getYearlyStockQuotes(quotes, dateFrom, dateTo);
-
         return Arrays.asList(daylyQuotes, weeklyQuotes, monthlyQuotes, yearlyQuotes);
     }
 }

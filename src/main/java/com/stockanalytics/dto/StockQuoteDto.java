@@ -14,8 +14,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class StockQuoteDto {
-//    String symbol;
-@CsvCustomBindByName(column = "date", converter = LocalDateConverter.class)
+    @CsvCustomBindByName(column = "date", converter = LocalDateConverter.class)
     LocalDate date;
     @CsvBindByName(column = "open")
     Double open;
@@ -23,11 +22,8 @@ public class StockQuoteDto {
     Double high;
     @CsvBindByName(column = "low")
     Double low;
-
     @CsvBindByName(column = "close")
     Double close;
     @CsvBindByName(column = "volume")
     Long volume;
-
-
 }

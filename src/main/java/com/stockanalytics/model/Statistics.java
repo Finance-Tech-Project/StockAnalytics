@@ -10,17 +10,13 @@ import jakarta.persistence.*;
 @Getter
 @Setter
 @ToString
-//@Table(name = "statistics")
 public class Statistics {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-//    @Column(name = "id", nullable = false)
     private Long id;
 
     @OneToOne(optional = false)
-//    @JoinColumn(name = "symbol_name")
     Symbol symbol;
-
     String marketCap;
     String bookValue;
     String enterpriseValue;
@@ -61,8 +57,6 @@ public class Statistics {
     String averageVolume10days;
     String averageDailyVolume10Day;
     String averageDailyVolume3Month;
-//    String ytdReturn;
-//    String yield;
     String profitMargins;
     String operatingMargins;
     String grossMargins;
@@ -73,27 +67,21 @@ public class Statistics {
     String ebitda;
     String ebitdaMargins;
     String netIncomeToCommon;
-//    String dilutedEPS;
-//    String earningsQuarterlyGrowth;
     String nextFiscalYearEnd;
     String mostRecentQuarter;
     String lastFiscalYearEnd;
     String trailingAnnualDividendRate;
     String forwardAnnualDividendRate;
     String forwardAnnualDividendYield;
-//    String fiveYearAverageReturn;
-//    String threeYearAverageReturn;
     String lastDividendDate;
     String lastDividendValue;
     String payoutRatio;
     String dividendsPerShare;
     String dividendDate;
     String exDividendDate;
-//    String lastSplitFactor;
     String lastSplitDate;
     String freeCashflow;
     String operatingCashflow;
-//    String leveredFreeCashFlow;
     String totalAssets;
     String totalCash;
     String totalCashPerShare;
@@ -102,5 +90,4 @@ public class Statistics {
     String currentRatio;
     String returnOnAssets;
     String returnOnEquity;
-
 }

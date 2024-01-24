@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,19 +27,19 @@ import java.util.stream.Collectors;
 @Repository
 public class StockQuoteService {
 
-final StockQuoteRepository stockQuoteRepository;
+    final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final StockQuoteProcessor processor = new StockQuoteProcessor();
     final DataGetter getter = new DataGetter();
     final DecimalFormat df = new DecimalFormat("#.##");
 
-    private double round (double number){
+    private double round(double number) {
         String str = df.format(number).replace(",", ".");
         return Double.parseDouble(str);
     }
 
     @Transactional
-    public List<StockQuoteDto> getData(Symbol symbol,LocalDate dateFrom, LocalDate dateTo) {
+    public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
         if (symbol.getStatus() != 0) {
             return getQuotesByPeriod(dateFrom, dateTo, symbol);
         } else {
@@ -50,20 +51,21 @@ final StockQuoteRepository stockQuoteRepository;
             }
             List<StockQuoteDto> result = new ArrayList<>();
             for (StockQuoteDto quote : quotes) {
-                if (quote.getDate().isBefore(dateTo) && quote.getDate().isAfter(dateFrom)){
+                if (quote.getDate().isBefore(dateTo) && quote.getDate().isAfter(dateFrom)) {
                     quote.setOpen(round(quote.getOpen()));
                     quote.setHigh(round(quote.getHigh()));
                     quote.setLow(round(quote.getLow()));
                     quote.setClose(round(quote.getClose()));
                 }
-            result.add(quote);
+                result.add(quote);
             }
             return result;
         }
     }
-    public List<List<StockQuoteDto>> getListsForChart (Symbol symbol, LocalDate dateFrom, LocalDate dateTo){
+
+    public List<List<StockQuoteDto>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
         List<StockQuoteDto> list = getData(symbol, dateFrom, dateTo);
-        return processor.getAllQuoteLists(list,dateFrom, dateTo);
+        return processor.getAllQuoteLists(list, dateFrom, dateTo);
     }
 
 
@@ -77,8 +79,8 @@ final StockQuoteRepository stockQuoteRepository;
                 .collect(Collectors.toList());
     }
 
-    public List<StatisticsDto> getStatistics(Symbol symbol){
+    public List<StatisticsDto> getStatistics(Symbol symbol) {
         Map<String, String> parameters = getter.getDataForStatisticsFromYahoo(symbol);
-        return  null;
+        return null;
     }
 }

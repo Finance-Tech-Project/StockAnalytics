@@ -12,7 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-
 public class Symbol implements Serializable {
     @Id
     String name;
@@ -26,6 +25,4 @@ public class Symbol implements Serializable {
     int status;
     @NotNull
     int hasDividends;
-
-
 }
