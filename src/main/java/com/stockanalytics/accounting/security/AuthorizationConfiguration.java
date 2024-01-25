@@ -1,4 +1,5 @@
 package com.stockanalytics.accounting.security;
+import com.stockanalytics.configuration.CorsConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,7 @@ public class AuthorizationConfiguration {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
+                .cors(cors -> cors.configurationSource(CorsConfig.corsConfigurationSource()))
                 .httpBasic(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
