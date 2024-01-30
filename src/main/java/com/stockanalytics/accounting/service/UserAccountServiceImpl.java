@@ -77,13 +77,10 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     @Override
     public String getPasswordLink(String login) {
         String tempPassword = UUID.randomUUID().toString();
-
         UserDto userDto = getUser(login);
-
         String toEmail = userDto.getEmail();
         try {
             emailSenderService.sendEmail(toEmail, "This is temporary password", tempPassword);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,14 +108,19 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     @Override
     public UserDto updateUser(String login, UserEditDto userEditDto) {
         UserAccount userAccount = userAccountRepository.findById(login).orElseThrow(UserNotFoundException::new);
-        if (userEditDto.getFirstName() != null) {
+        System.out.println(userAccount.getFirstName() + userAccount.getLastName() + userAccount.getEmail() + userAccount.getPassword());
+        if (userEditDto.getFirstName() != null && userEditDto.getFirstName() != "") {
             userAccount.setFirstName(userEditDto.getFirstName());
         }
-        if (userEditDto.getLastName() != null) {
+        if (userEditDto.getLastName() != null && userEditDto.getLastName() != "") {
             userAccount.setLastName(userEditDto.getLastName());
         }
-        if (userEditDto.getEmail() != null) {
+        if (userEditDto.getEmail() != null && userEditDto.getEmail() != "") {
             userAccount.setEmail(userEditDto.getEmail());
+        }
+        if (userEditDto.getPassword() != null && userEditDto.getPassword() != "") {
+            String password = passwordEncoder.encode(userEditDto.getPassword());
+            userAccount.setPassword(password);
         }
         userAccountRepository.save(userAccount);
         return modelMapper.map(userAccount, UserDto.class);
