@@ -25,7 +25,8 @@ public class CorsConfig {
                 "Access-Control-Request-Headers",
                 "Origin", "Cache-Control",
                 "Content-Type",
-                "Authorization"
+                "Authorization",
+                "X-Password"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
