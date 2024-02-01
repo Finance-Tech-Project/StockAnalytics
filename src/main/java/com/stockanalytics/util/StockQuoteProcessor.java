@@ -34,7 +34,6 @@ public class StockQuoteProcessor {
                 .map(this::calculateWeeklyQuote)
                 .sorted(Comparator.comparing(StockQuoteDto::getDate))
                 .collect(Collectors.toList());
-        System.out.println(res);
         return res;
     }
 

@@ -25,7 +25,9 @@ public class AuthorizationConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/account/login").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/account/user/update/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/account/login").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/account/removeUser/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/account/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/statistics").permitAll()
                         .requestMatchers(HttpMethod.GET, "/analytics/**").permitAll()

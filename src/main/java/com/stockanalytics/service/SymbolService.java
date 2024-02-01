@@ -27,7 +27,6 @@ public class SymbolService {
     private final StockQuoteService stockQuoteService;
     private final ModelMapper modelMapper;
 
-
     public int addSymbolsFromList(List<String> symbolNames) {
         return symbolNames.stream()
                 .map(sn -> {
