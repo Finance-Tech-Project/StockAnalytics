@@ -2,6 +2,7 @@ package com.stockanalytics.accounting.service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.stockanalytics.portfolio.dao.PortfolioRepository;
 import com.stockanalytics.portfolio.model.Portfolio;
@@ -36,7 +37,17 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     final PortfolioRepository portfolioRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_.+-]+@gmail\\.com$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$");
+
+    private boolean validateEmail(String email) {
+        Matcher matcher = EMAIL_PATTERN.matcher(email);
+        if (!matcher.matches()) {
+            logger.error("Email {} does not match the format example@gmail.com", email);
+            throw new ClassFormatException("Invalid email format");
+        }
+        return true;
+    }
 
     @Override
     public UserDto register(UserRegisterDto userRegisterDto) {
@@ -114,7 +125,9 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
             userAccount.setLastName(userEditDto.getLastName());
         }
         if (userEditDto.getEmail() != null && !userEditDto.getEmail().isEmpty()) {
-            userAccount.setEmail(userEditDto.getEmail());
+            if (validateEmail(userEditDto.getEmail())) {
+                userAccount.setEmail(userEditDto.getEmail());
+            }
         }
         if (userEditDto.getPassword() != null && !userEditDto.getPassword().isEmpty()) {
             String password = passwordEncoder.encode(userEditDto.getPassword());
