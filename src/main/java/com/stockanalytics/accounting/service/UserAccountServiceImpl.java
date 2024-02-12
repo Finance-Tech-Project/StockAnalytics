@@ -37,8 +37,14 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     final PortfolioRepository portfolioRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
+    // So some of the email addresses that will be valid via this email validation technique are:
+    // username@domain.com
+    // user.name@domain.com
+    // user-name@domain.com
+    // username@domain.co.in
+    // user_name@domain.com
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$");
+            "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,4})$");
 
     private boolean validateEmail(String email) {
         Matcher matcher = EMAIL_PATTERN.matcher(email);
@@ -52,10 +58,6 @@ public class UserAccountServiceImpl implements UserAccountService, CommandLineRu
     @Override
     public UserDto register(UserRegisterDto userRegisterDto) {
         String email = userRegisterDto.getEmail();
-        if (!EMAIL_PATTERN.matcher(email).matches()) {
-            logger.error("Login {} does not match the format example@gmail.com", email);
-            throw new ClassFormatException("сexample@gmail.com");
-        }
         if (userAccountRepository.existsById(userRegisterDto.getLogin())) {
             logger.error("User with login {} already exists", userRegisterDto.getLogin());
             throw new UserExistsException(userRegisterDto.getLogin());
