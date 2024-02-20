@@ -73,7 +73,9 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     public List<WatchlistDto> getWatchlist(String username) {
+
         UserAccount user = userAccountRepository.findByLogin(username).orElseThrow(UserNotFoundException::new);
+        System.out.println(user.getLogin());
         List<String> watchlist = user.getWatchlist();
 
         // Getting information about symbols from the symbol repository
@@ -251,7 +253,7 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     private double getStockPriceOnDateOrClosestNext(String symbol, LocalDate date) {
         for (int i = 0; i <= 2; i++) {
-            LocalDate currentDate = date.plusDays(i);
+            LocalDate currentDate = date.minusDays(i);
             Double result = stockQuoteRepository.findStockPriceBySymbolNameAndDate(symbol, currentDate);
             if (result != null) {
                 return result;

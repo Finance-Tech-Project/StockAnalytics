@@ -25,8 +25,8 @@ public class PortfolioController {
     }
 
     @GetMapping("/watchList")
-    public List<WatchlistDto> getWatchlist(@RequestParam String username) {
-        return portfolioService.getWatchlist(username);
+    public List<WatchlistDto> getWatchlist(@RequestParam String userName) {
+        return portfolioService.getWatchlist(userName);
     }
 
     @GetMapping("/{username}")
