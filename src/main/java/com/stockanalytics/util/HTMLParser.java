@@ -80,9 +80,8 @@ public class HTMLParser {
     }
 
     public List<Dividend> getDividend(Symbol symbol) {
-        List<Dividend> dividends = new ArrayList<>();
         String url = "https://query1.finance.yahoo.com/v7/finance/download/".concat(symbol.getName().concat("?period1=0&period2=3476250418&interval=1d&events=div&includeAdjustedClose=true"));
-        dividends = downloadAndProcessDividends(url, symbol);
+        List<Dividend> dividends = downloadAndProcessDividends(url, symbol);
 
         if (dividends.isEmpty()) {
             symbol.setHasDividends(0);
@@ -109,7 +108,6 @@ public class HTMLParser {
      *
      * @param urlString The URL from which to download the dividend data, formatted as a string.
      * @return A List of {@link Dividend} objects, each representing a dividend payment as parsed from the downloaded CSV.
-     * @throws IOException If an input or output exception occurred during network connection or file processing.
      */
     public static List<Dividend> downloadAndProcessDividends(String urlString, Symbol symbol) {
         List<Dividend> dividends = new ArrayList<>();
