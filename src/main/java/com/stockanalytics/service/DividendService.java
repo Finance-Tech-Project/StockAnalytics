@@ -25,12 +25,15 @@ public class DividendService {
     @Transactional
     public List<Dividend> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
         List<Dividend> listDiv = new ArrayList<>();
-        if (symbol.getHasDividends() == 1)
-            return listDiv;
+        if (symbol.getHasDividends() == 1) {
+            return dividendRepository.findAllBySymbolAndDateBetween(symbol, dateFrom, dateTo);
+        }
         if (symbol.getHasDividends() == 0) {
             listDiv = parser.getDividend(symbol);
             dividendRepository.saveAll(listDiv);
         }
+        listDiv = parser.getDividend(symbol);
+        dividendRepository.saveAll(listDiv);
         return dividendRepository.findAllBySymbolAndDateBetween(symbol, dateFrom, dateTo);
     }
 

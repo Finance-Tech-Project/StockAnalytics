@@ -39,28 +39,30 @@ public class StockQuoteService {
     }
 
     @Transactional
-    public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        if (symbol.getStatus() != 0) {
-            return getQuotesByPeriod(dateFrom, dateTo, symbol);
-        } else {
-            List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);
-            for (StockQuoteDto quote : quotes) {
-                StockQuoteId id = new StockQuoteId(quote.getDate(), symbol);
-                StockQuote stockQuote = new StockQuote(id, round(quote.getOpen()), round(quote.getHigh()), round(quote.getLow()), round(quote.getClose()), quote.getVolume());
-                stockQuoteRepository.save(stockQuote);
-            }
-            List<StockQuoteDto> result = new ArrayList<>();
-            for (StockQuoteDto quote : quotes) {
-                if (quote.getDate().isBefore(dateTo) && quote.getDate().isAfter(dateFrom)) {
-                    quote.setOpen(round(quote.getOpen()));
-                    quote.setHigh(round(quote.getHigh()));
-                    quote.setLow(round(quote.getLow()));
-                    quote.setClose(round(quote.getClose()));
-                }
-                result.add(quote);
-            }
-            return result;
+    private void loadAll(Symbol symbol){
+        List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);
+        for (StockQuoteDto quote : quotes) {
+            StockQuoteId id = new StockQuoteId(quote.getDate(), symbol);
+            StockQuote stockQuote = new StockQuote(id, round(quote.getOpen()), round(quote.getHigh()), round(quote.getLow()), round(quote.getClose()), quote.getVolume());
+            stockQuoteRepository.save(stockQuote);
         }
+    }
+
+    @Transactional
+    public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
+        if (symbol.getStatus() == 0) {
+            loadAll(symbol);
+        }
+        List<StockQuoteDto> result = getQuotesByPeriod(dateFrom, dateTo, symbol);
+        return result;
+    }
+
+    public StockQuote getSingleDate(Symbol symbol, LocalDate date) {
+        if (symbol.getStatus() == 0) {
+            loadAll(symbol);
+        }
+        StockQuote quote = stockQuoteRepository.getBySymbolAndDate(symbol, date);
+        return quote;
     }
 
     public List<List<StockQuoteDto>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
