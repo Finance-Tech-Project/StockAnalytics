@@ -1,10 +1,7 @@
 package com.stockanalytics.controller;
 
 
-import com.stockanalytics.dto.AveragePriceByPeriodDto;
-import com.stockanalytics.dto.IncomePercentByPeriodDto;
-import com.stockanalytics.dto.SharpRatioDto;
-import com.stockanalytics.dto.VolatilityDto;
+import com.stockanalytics.dto.*;
 import com.stockanalytics.service.AnalyticsService;
 import com.stockanalytics.service.IRRService;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +73,17 @@ public class AnalyticsController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/irrlist")
+    public List<IrrDto> getIRRDto(@RequestParam String dateFrom,
+                                  @RequestParam String dateTo,
+                                  @RequestParam Double startAmount,
+                                  @RequestParam String ticker) {
+        LocalDate start = LocalDate.parse(dateFrom);
+        LocalDate end = LocalDate.parse(dateTo);
+
+        return iRRService.calculateHistoricalIRRList(start, end, startAmount, ticker);
     }
 
 }

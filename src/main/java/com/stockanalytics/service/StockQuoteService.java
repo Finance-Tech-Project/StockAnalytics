@@ -65,6 +65,13 @@ public class StockQuoteService {
         return quote;
     }
 
+    public List<StockQuote> getListByIdAndDateBetween(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
+        if (symbol.getStatus() == 0) {
+            loadAll(symbol);
+        }
+        return stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom, dateTo);
+    }
+
     public List<List<StockQuoteDto>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
         List<StockQuoteDto> list = getData(symbol, dateFrom, dateTo);
         return processor.getAllQuoteLists(list, dateFrom, dateTo);

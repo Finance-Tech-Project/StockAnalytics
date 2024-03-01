@@ -1,5 +1,6 @@
 package com.stockanalytics.service;
 
+import com.stockanalytics.dto.IrrDto;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Dividend;
 import com.stockanalytics.model.StockQuote;
@@ -91,4 +92,46 @@ public class IRRService {
         return npvDerivative;
     }
 
+    public List<IrrDto> calculateHistoricalIRRList(LocalDate dateFrom, LocalDate dateTo, Double startAmount, String ticker) {
+        // Inside the calculateHistoricalIRR method
+        Symbol symbol = symbolService.getSymbol(ticker);
+
+        List<IrrDto> irrDtos = new ArrayList<>();
+
+        // Calculate number of shares
+        List<StockQuote> quotes = stockQuoteService.getListByIdAndDateBetween(symbol, dateFrom, dateTo);
+
+        Double numberOfShares = startAmount / quotes.get(0).getOpen().doubleValue();
+
+        for (int i = 1; i < quotes.size(); i++) {
+            IrrDto irrDto = new IrrDto();
+            StockQuote lastQuote = quotes.get(i);
+            irrDto.setDate(lastQuote.getDate());
+
+            List<Double> cashFlows = new ArrayList<>();
+            cashFlows.add(-startAmount); // Initial investment as a negative cash flow
+
+            // Calculate final amount
+            Double finalAmount = numberOfShares * lastQuote.getClose().doubleValue();
+
+            // Add the final sale value as a positive cash flow
+            cashFlows.add(finalAmount);
+
+            double irr = calculateIRR(cashFlows) * 100; // Leverage an existing IRR calculation method
+
+            irrDto.setValue(irr);
+
+            irrDtos.add(irrDto);
+        }
+
+
+        // Add dividends
+//        List<Dividend> dividends = dividendService.getData(symbol, dateFrom.plusDays(1), dateTo);
+//        for (int i = 0; i < dividends.size(); i++) {
+//            cashFlows.add(numberOfShares * dividends.get(i).getDividendRate().doubleValue()); // Add all dividends as positive cash flows
+//        }
+
+
+        return irrDtos;
+    }
 }
