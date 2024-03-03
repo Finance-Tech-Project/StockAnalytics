@@ -1,13 +1,9 @@
 package com.stockanalytics.service;
 
 import com.stockanalytics.dto.IrrDto;
-import com.stockanalytics.dto.StockQuoteDto;
-import com.stockanalytics.model.Dividend;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,7 +14,6 @@ import java.util.List;
 @Service
 public class IRRService {
 
-    private final DividendService dividendService;
     private final StockQuoteService stockQuoteService;
     private final SymbolService symbolService;
 
@@ -41,7 +36,7 @@ public class IRRService {
 
         // Calculate number of shares
         StockQuote firstQuote = stockQuoteService.getSingleDate(symbol, dateFrom);
-        Double numberOfShares = startAmount / firstQuote.getOpen().doubleValue();
+        double numberOfShares = startAmount / firstQuote.getOpen();
 
         // Add dividends
 //        List<Dividend> dividends = dividendService.getData(symbol, dateFrom.plusDays(1), dateTo);
@@ -51,19 +46,17 @@ public class IRRService {
 
         // Calculate final amount
         StockQuote lastQuote = stockQuoteService.getSingleDate(symbol, dateTo);
-        Double finalAmount = numberOfShares * lastQuote.getClose().doubleValue();
+        Double finalAmount = numberOfShares * lastQuote.getClose();
 
         // Add the final sale value as a positive cash flow
         cashFlows.add(finalAmount);
 
-        double irr = calculateIRR(cashFlows) * 100; // Leverage an existing IRR calculation method
-        return irr;
+        return calculateIRR(cashFlows) * 100;
     }
 
 
     public static double calculateIRR(List<Double> cashFlows) {
         final double TOLERANCE = 1e-7;
-        double x0 = 0.0;
         double x1 = 0.1; // Initial guess
         double npv = npv(x1, cashFlows);
 
@@ -101,7 +94,7 @@ public class IRRService {
         // Calculate number of shares
         List<StockQuote> quotes = stockQuoteService.getListByIdAndDateBetween(symbol, dateFrom, dateTo);
 
-        Double numberOfShares = startAmount / quotes.get(0).getOpen().doubleValue();
+        double numberOfShares = startAmount / quotes.get(0).getOpen();
 
         for (int i = 1; i < quotes.size(); i++) {
             IrrDto irrDto = new IrrDto();
@@ -112,7 +105,7 @@ public class IRRService {
             cashFlows.add(-startAmount); // Initial investment as a negative cash flow
 
             // Calculate final amount
-            Double finalAmount = numberOfShares * lastQuote.getClose().doubleValue();
+            Double finalAmount = numberOfShares * lastQuote.getClose();
 
             // Add the final sale value as a positive cash flow
             cashFlows.add(finalAmount);

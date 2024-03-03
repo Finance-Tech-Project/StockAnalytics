@@ -9,15 +9,13 @@ import com.stockanalytics.model.StockQuoteId;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.util.DataGetter;
 import com.stockanalytics.util.StockQuoteProcessor;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
-
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,16 +51,14 @@ public class StockQuoteService {
         if (symbol.getStatus() == 0) {
             loadAll(symbol);
         }
-        List<StockQuoteDto> result = getQuotesByPeriod(dateFrom, dateTo, symbol);
-        return result;
+        return getQuotesByPeriod(dateFrom, dateTo, symbol);
     }
 
     public StockQuote getSingleDate(Symbol symbol, LocalDate date) {
         if (symbol.getStatus() == 0) {
             loadAll(symbol);
         }
-        StockQuote quote = stockQuoteRepository.getBySymbolAndDate(symbol, date);
-        return quote;
+        return stockQuoteRepository.getBySymbolAndDate(symbol, date);
     }
 
     public List<StockQuote> getListByIdAndDateBetween(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
