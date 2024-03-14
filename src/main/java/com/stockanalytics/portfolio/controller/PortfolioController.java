@@ -55,8 +55,8 @@ public class PortfolioController {
     }
 
     @DeleteMapping("/removeFromWatchList")
-    public void removeFromWatchList(@RequestParam String userName, @RequestParam String symbol) {
-        portfolioService.removeFromWatchList(userName, symbol);
+    public void removeSymbolsFromWatchList(@RequestParam String userName, @RequestBody List<String> symbols) {
+        portfolioService.removeSymbolsFromWatchList(userName, symbols);
     }
 
     @PutMapping("/{username}")

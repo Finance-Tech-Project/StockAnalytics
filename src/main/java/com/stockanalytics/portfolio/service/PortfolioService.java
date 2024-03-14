@@ -7,7 +7,7 @@ import com.stockanalytics.portfolio.dto.PortfolioDto;
 import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
-import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
+import com.stockanalytics.portfolio.service.exceptions.SymbolNotFoundException;
 
 public interface PortfolioService {
     PortfolioDto createPortfolio(PortfolioDto portfolioDto);
@@ -30,7 +30,7 @@ public interface PortfolioService {
     void addToWatchList(String userName, String symbol)
             throws SymbolNotFoundException;
 
-    void removeFromWatchList(String userName, String symbol);
+    void removeSymbolsFromWatchList(String userName, List<String> symbols);
 
     List<WatchlistDto> getWatchlist(String userName);
 

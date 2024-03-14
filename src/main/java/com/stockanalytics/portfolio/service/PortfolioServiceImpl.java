@@ -15,17 +15,17 @@ import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
-import com.stockanalytics.portfolio.service.exeptions.PortfolioNotFoundException;
-import com.stockanalytics.portfolio.service.exeptions.StocksNotFoundException;
+import com.stockanalytics.portfolio.service.exceptions.PortfolioNotFoundException;
+import com.stockanalytics.portfolio.service.exceptions.StocksNotFoundException;
 
-import com.stockanalytics.portfolio.service.exeptions.SymbolNotFoundException;
+import com.stockanalytics.portfolio.service.exceptions.SymbolExistInWatchListException;
+import com.stockanalytics.portfolio.service.exceptions.SymbolNotFoundException;
 import com.stockanalytics.service.SymbolService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +73,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     public List<WatchlistDto> getWatchlist(String username) {
+
         UserAccount user = userAccountRepository.findByLogin(username).orElseThrow(UserNotFoundException::new);
         List<String> watchlist = user.getWatchlist();
 
@@ -97,7 +98,10 @@ public class PortfolioServiceImpl implements PortfolioService {
     private WatchlistDto getWatchlistInfo(String symbolName) {
         Symbol symbol = symbolRepository.getByName(symbolName);
 
-        if (symbol != null) {
+        // Gets the last existing date for which there is historical data for the symbol.
+        List<LocalDate> dates = stockQuoteRepository.getQuotDatesList(symbol);
+
+        if (symbol != null || !dates.isEmpty()) {
             // Convert the Symbol object to WatchlistDto to get the fields you need
             return WatchlistDto.builder()
                     .symbolName(symbol.getName())
@@ -105,7 +109,7 @@ public class PortfolioServiceImpl implements PortfolioService {
                     .exchange(symbol.getExchange())
                     .industryCategory(symbol.getIndustryCategory())
                     .hasDividends(symbol.getHasDividends())
-                    .close(getStockPriceOnDateOrClosestNext(symbolName, LocalDate.now().minusDays(2)))
+                    .close(getStockPriceOnDateOrClosestNext(symbolName, dates.get(0)))
                     .build();
         } else {
             throw new SymbolNotFoundException();
@@ -116,7 +120,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     public void addToWatchList(String userName, String symbol) {
         UserAccount user = userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
         Symbol newSymbol = symbolRepository.getByName(symbol);
-        if (newSymbol == null) {
+        if (newSymbol == null || !stockQuoteRepository.existsById_Symbol(newSymbol)) {
             logger.info("Symbol not found in repository: {}", symbol);
             throw new SymbolNotFoundException();
         }
@@ -128,19 +132,23 @@ public class PortfolioServiceImpl implements PortfolioService {
             logger.info("Symbol successfully added to the watchlist: {}", symbol);
         } else {
             logger.error("symbol '{}' already exists in the watchlist.", symbol);
+            throw  new SymbolExistInWatchListException(symbol);
         }
     }
 
     @Override
-    public void removeFromWatchList(String userName, String symbol) {
+    public void removeSymbolsFromWatchList(String userName, List<String> symbols) {
         UserAccount user =
                 userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
+        if (symbols.isEmpty()) return;
         List<String> watchlist = user.getWatchlist();
-        if (watchlist.contains(symbol)) {
-            watchlist.remove(symbol);
-            user.setWatchlist(watchlist);
-            userAccountRepository.save(user);
-        }
+        symbols.stream().forEach((symbol) -> {
+            if (watchlist.contains(symbol)) {
+                watchlist.remove(symbol);
+            }
+        });
+        user.setWatchlist(watchlist);
+        userAccountRepository.save(user);
     }
 
     @Override

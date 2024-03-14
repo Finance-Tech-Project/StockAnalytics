@@ -32,6 +32,7 @@ public class AuthorizationConfiguration {
                         .requestMatchers(HttpMethod.POST, "/statistics").permitAll()
                         .requestMatchers(HttpMethod.GET, "/analytics/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/service/addSymbols").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/portfolio/addToWatchList").authenticated()
                         .anyRequest()
                         .authenticated()
                 );

@@ -68,7 +68,6 @@ public class StockQuoteService {
         return processor.getAllQuoteLists(list, dateFrom, dateTo);
     }
 
-
     public List<StockQuoteDto> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
         List<StockQuote> quotes = stockQuoteRepository.findAllById_Symbol(symbol);
         LocalDate start = dateFrom.withMonth(1).withDayOfMonth(1);

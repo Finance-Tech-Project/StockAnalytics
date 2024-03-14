@@ -23,6 +23,6 @@ public class StockQuoteController {
         Symbol symbol = symbolService.getSymbol(ticker);
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
-        return stockQuoteService.getListsForChart(symbol,start, end );
+        return stockQuoteService.getListsForChart(symbol, start, end);
     }
 }
