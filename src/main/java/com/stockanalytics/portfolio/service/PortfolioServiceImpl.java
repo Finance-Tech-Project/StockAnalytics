@@ -137,10 +137,10 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public void removeSymbolsFromWatchList(String userName, List<String> symbols) {
+    public List<WatchlistDto>  removeSymbolsFromWatchList(String userName, List<String> symbols) {
         UserAccount user =
                 userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
-        if (symbols.isEmpty()) return;
+        if (symbols.isEmpty()) return getWatchlist(userName);
         List<String> watchlist = user.getWatchlist();
         symbols.stream().forEach((symbol) -> {
             if (watchlist.contains(symbol)) {
@@ -149,6 +149,7 @@ public class PortfolioServiceImpl implements PortfolioService {
         });
         user.setWatchlist(watchlist);
         userAccountRepository.save(user);
+        return getWatchlist(userName);
     }
 
     @Override

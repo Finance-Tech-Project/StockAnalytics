@@ -30,7 +30,7 @@ public interface PortfolioService {
     void addToWatchList(String userName, String symbol)
             throws SymbolNotFoundException;
 
-    void removeSymbolsFromWatchList(String userName, List<String> symbols);
+    List<WatchlistDto>  removeSymbolsFromWatchList(String userName, List<String> symbols);
 
     List<WatchlistDto> getWatchlist(String userName);
 
