@@ -15,11 +15,8 @@ import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
-import com.stockanalytics.portfolio.service.exceptions.PortfolioNotFoundException;
-import com.stockanalytics.portfolio.service.exceptions.StocksNotFoundException;
+import com.stockanalytics.portfolio.service.exceptions.*;
 
-import com.stockanalytics.portfolio.service.exceptions.SymbolExistInWatchListException;
-import com.stockanalytics.portfolio.service.exceptions.SymbolNotFoundException;
 import com.stockanalytics.service.SymbolService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -52,17 +49,25 @@ public class PortfolioServiceImpl implements PortfolioService {
                 userAccountRepository
                         .findById(portfolioDto.getUserLogin())
                         .orElseThrow(UserNotFoundException::new);
+        if (portfolioRepository.existsByPortfolioName(portfolioDto.getPortfolioName())) {
+            throw new PortfolioExistsException();
+        }
         if (user.getLogin().equals(portfolioDto.getUserLogin())) {
             LocalDate portfolioDate = portfolioDto.getPortfolioDate();
             String portfolioName = portfolioDto.getPortfolioName();
-            List<String> watchlist = user.getWatchlist();
-            Map<String, Integer> stockData = new HashMap<>();
-            for (String stockSymbol : watchlist) {
-                Symbol symbol = symbolRepository.getByName(stockSymbol);
-                stockData.put(symbol.getName(), 1);
-            }
             Portfolio portfolio = modelMapper.map(portfolioDto, Portfolio.class);
-            portfolio.setStocks(stockData);
+            Map<String, Integer> selectedSymbols = portfolioDto.getStocks();
+            if (selectedSymbols != null && !selectedSymbols.isEmpty()) {
+                Map<String, Integer> stocks = new HashMap<>();
+                for (Map.Entry<String, Integer> entry : selectedSymbols.entrySet()) {
+                    String symbol = entry.getKey();
+                    int quantity = entry.getValue();
+                    stocks.put(symbol, quantity);
+                }
+                portfolio.setStocks(stocks);
+            } else {
+                portfolio.setStocks(new HashMap<>());
+            }
             portfolio.setPortfolioDate(portfolioDate);
             portfolio.setPortfolioName(portfolioName);
             portfolio.setUserLogin(user);
