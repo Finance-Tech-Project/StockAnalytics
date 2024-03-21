@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,32 +50,27 @@ public class PortfolioServiceImpl implements PortfolioService {
                 userAccountRepository
                         .findById(portfolioDto.getUserLogin())
                         .orElseThrow(UserNotFoundException::new);
-        if (portfolioRepository.existsByPortfolioName(portfolioDto.getPortfolioName())) {
+        Portfolio portfolio = modelMapper.map(portfolioDto, Portfolio.class);
+
+        if (portfolioRepository.getByPortfolioName(portfolio.getPortfolioName()) != null) {
             throw new PortfolioExistsException();
         }
-        if (user.getLogin().equals(portfolioDto.getUserLogin())) {
-            LocalDate portfolioDate = portfolioDto.getPortfolioDate();
-            String portfolioName = portfolioDto.getPortfolioName();
-            Portfolio portfolio = modelMapper.map(portfolioDto, Portfolio.class);
-            Map<String, Integer> selectedSymbols = portfolioDto.getStocks();
-            if (selectedSymbols != null && !selectedSymbols.isEmpty()) {
-                Map<String, Integer> stocks = new HashMap<>();
-                for (Map.Entry<String, Integer> entry : selectedSymbols.entrySet()) {
-                    String symbol = entry.getKey();
-                    int quantity = entry.getValue();
-                    stocks.put(symbol, quantity);
-                }
-                portfolio.setStocks(stocks);
-            } else {
-                portfolio.setStocks(new HashMap<>());
+
+        Map<String, Integer> selectedSymbols = portfolio.getStocks();
+        if (selectedSymbols != null && !selectedSymbols.isEmpty()) {
+            Map<String, Integer> stocks = new HashMap<>();
+            for (Map.Entry<String, Integer> entry : selectedSymbols.entrySet()) {
+                String symbol = entry.getKey();
+                int quantity = entry.getValue();
+                stocks.put(symbol, quantity);
             }
-            portfolio.setPortfolioDate(portfolioDate);
-            portfolio.setPortfolioName(portfolioName);
-            portfolio.setUserLogin(user);
-            portfolioRepository.save(portfolio);
-            return modelMapper.map(portfolio, PortfolioDto.class);
+            portfolio.setStocks(stocks);
+        } else {
+            portfolio.setStocks(new HashMap<>());
         }
-        return null;
+        portfolio.setUserLogin(user);
+        portfolioRepository.save(portfolio);
+        return modelMapper.map(portfolio, PortfolioDto.class);
     }
 
     public List<WatchlistDto> getWatchlist(String username) {
@@ -137,12 +133,12 @@ public class PortfolioServiceImpl implements PortfolioService {
             logger.info("Symbol successfully added to the watchlist: {}", symbol);
         } else {
             logger.error("symbol '{}' already exists in the watchlist.", symbol);
-            throw  new SymbolExistInWatchListException(symbol);
+            throw new SymbolExistInWatchListException(symbol);
         }
     }
 
     @Override
-    public List<WatchlistDto>  removeSymbolsFromWatchList(String userName, List<String> symbols) {
+    public List<WatchlistDto> removeSymbolsFromWatchList(String userName, List<String> symbols) {
         UserAccount user =
                 userAccountRepository.findById(userName).orElseThrow(UserNotFoundException::new);
         if (symbols.isEmpty()) return getWatchlist(userName);

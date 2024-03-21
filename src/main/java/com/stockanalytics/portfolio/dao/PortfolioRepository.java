@@ -10,7 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
-    Boolean existsByPortfolioName(String portfolioName);
 
     List<Portfolio> findByUserLogin(UserAccount userLogin);
 
