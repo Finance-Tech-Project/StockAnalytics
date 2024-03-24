@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "2903f46c-ca77-487e-a4e0-b42086fab9fc",
+		"name": "StockAnalitics localhost",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "21496636"
+	},
+	"item": [
+		{
+			"name": "Service",
+			"item": [
+				{
+					"name": "admin:add symbols from file",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:8081/symbols/add?path=\"C:\\Users\\user\\symbols.csv\"",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"symbols",
+								"add"
+							],
+							"query": [
+								{
+									"key": "path",
+									"value": "\"C:\\Users\\user\\symbols.csv\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin:add symbols by ticker's list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\"NIO\", \"WBD\", \"AMD\", \"NU\", \"TLRY\", \"NVDA\", \"AAPL\", \"PLTR\", \"INTC\", \"AMZN\", \"BAC\", \"F\", \"VALE\", \"WBA\", \"PARA\", \"XPEV\", \"DELL\", \"DNA\", \"DIS\", \"NUVA\", \"KVUE\", \"Itub\" ]\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8082/service/addsymbols",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"service",
+								"addsymbols"
+							],
+							"query": [
+								{
+									"key": "tickers",
+									"value": "{\n    \"items\": [\"значение1\", \"значение2\", \"значение3\"]\n}",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "add Symbols By Tickers List",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\"NIO\", \"WBD\", \"AMD\", \"NU\", \"TLRY\", \"NVDA\", \"AAPL\", \"PLTR\", \"INTC\", \"AMZN\", \"BAC\", \"F\", \"VALE\", \"WBA\", \"PARA\", \"XPEV\", \"DELL\", \"DNA\", \"DIS\", \"NUVA\", \"KVUE\", \"Itub\"]\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "localhost:8082/service/addsymbols"
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 05 Sep 2023 09:17:24 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "22"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Starting Page",
+			"item": [
+				{
+					"name": "get symbols for starting page",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true,
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"AAPL\",\r\n\t\"companyName\": \"Apple Corp.\",\r\n\t\"exchange\": \"NASDAQ\",\r\n\t\"industryCategory\": \"Internet\",\r\n    \"type\" : \"quote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "localhost:8082/start/symbols"
+					},
+					"response": []
+				},
+				{
+					"name": "admin:add symbol to starting page",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/start/s?symbol =AMZN",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"start",
+								"s"
+							],
+							"query": [
+								{
+									"key": "symbol ",
+									"value": "AMZN"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin:remove symbol from starting page",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/start/remove?symbol=NIO",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"start",
+								"remove"
+							],
+							"query": [
+								{
+									"key": "symbol",
+									"value": "NIO"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getting statistics",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8082/statistics?ticker=AAPL",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"statistics"
+					],
+					"query": [
+						{
+							"key": "ticker",
+							"value": "AAPL"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get historical data for a period",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/quote/history?dateFrom=2023-07-01&dateTo=2023-09-11&ticker=\"AMZN\"",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"quote",
+						"history"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-07-01"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-09-11"
+						},
+						{
+							"key": "ticker",
+							"value": "\"AMZN\""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "serch symbols by starting substring",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/searchSymbol/?search=",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"searchSymbol",
+						""
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getting Moving Average",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{host}}/analitics/movAvg"
+			},
+			"response": []
+		},
+		{
+			"name": "obtaining data on simple profitability",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/analitics/simpleIncome?dateFrom=2023-01-01&dateTo=2023-09-20&ticker=AAPL&period=30",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"analitics",
+						"simpleIncome"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-01-01"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-09-20"
+						},
+						{
+							"key": "ticker",
+							"value": "AAPL"
+						},
+						{
+							"key": "period",
+							"value": "30"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
