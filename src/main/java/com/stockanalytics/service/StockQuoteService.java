@@ -10,16 +10,16 @@ import com.stockanalytics.model.Symbol;
 import com.stockanalytics.util.DataGetter;
 import com.stockanalytics.util.StockQuoteProcessor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
-
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -38,35 +38,42 @@ public class StockQuoteService {
         return Double.parseDouble(str);
     }
 
-    @Transactional
-    public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        if (symbol.getStatus() != 0) {
-            return getQuotesByPeriod(dateFrom, dateTo, symbol);
-        } else {
-            List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);
-            for (StockQuoteDto quote : quotes) {
-                StockQuoteId id = new StockQuoteId(quote.getDate(), symbol);
-                StockQuote stockQuote = new StockQuote(id, round(quote.getOpen()), round(quote.getHigh()), round(quote.getLow()), round(quote.getClose()), quote.getVolume());
-                stockQuoteRepository.save(stockQuote);
-            }
-            List<StockQuoteDto> result = new ArrayList<>();
-            for (StockQuoteDto quote : quotes) {
-                if (quote.getDate().isBefore(dateTo) && quote.getDate().isAfter(dateFrom)) {
-                    quote.setOpen(round(quote.getOpen()));
-                    quote.setHigh(round(quote.getHigh()));
-                    quote.setLow(round(quote.getLow()));
-                    quote.setClose(round(quote.getClose()));
-                }
-                result.add(quote);
-            }
-            return result;
+    @Async
+    public void loadAll(Symbol symbol){
+        List<StockQuoteDto> quotes = getter.getAllHistoryStockQuotes(symbol);
+        for (StockQuoteDto quote : quotes) {
+            StockQuoteId id = new StockQuoteId(quote.getDate(), symbol);
+            StockQuote stockQuote = new StockQuote(id, round(quote.getOpen()), round(quote.getHigh()), round(quote.getLow()), round(quote.getClose()), quote.getVolume());
+            stockQuoteRepository.save(stockQuote);
         }
+        symbol.setStatus(1);
     }
 
-    public List<List<StockQuoteDto>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        List<StockQuoteDto> list = getData(symbol, dateFrom, dateTo);
-        return processor.getAllQuoteLists(list, dateFrom, dateTo);
+
+    public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
+        return getQuotesByPeriod(dateFrom, dateTo, symbol);
     }
+
+    public StockQuote getSingleDate(Symbol symbol, LocalDate date) {
+        if (symbol.getStatus() == 0) {
+            loadAll(symbol);
+        }
+        return stockQuoteRepository.getBySymbolAndDate(symbol, date);
+    }
+
+    public List<StockQuote> getListByIdAndDateBetween(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
+        if (symbol.getStatus() == 0) {
+            loadAll(symbol);
+        }
+        return stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom, dateTo);
+    }
+
+    @Async
+    public CompletableFuture<List<List<StockQuoteDto>>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
+        List<StockQuoteDto> list = getQuotesByPeriod(dateFrom, dateTo, symbol);
+        return new AsyncResult<>(processor.getAllQuoteLists(list, dateFrom, dateTo)).completable();
+    }
+
 
     public List<StockQuoteDto> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
         List<StockQuote> quotes = stockQuoteRepository.findAllById_Symbol(symbol);

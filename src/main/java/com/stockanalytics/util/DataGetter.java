@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,7 +40,6 @@ public class DataGetter {
         long endTimestamp = endDate.atStartOfDay().toInstant(offset).getEpochSecond();
         String ticker = symbol.getName();
         String BASE_URL = "https://query1.finance.yahoo.com/v7/finance/download/%s";
-        
         String urlString = String.format(BASE_URL, ticker) +
                 "?period1=" + startTimestamp +
                 "&period2=" + endTimestamp +
@@ -53,32 +53,36 @@ public class DataGetter {
                 String.class
         );
         String csvData = response.getBody();
-        symbol.setStatus(1);
         return getStockQuoteDtos(csvData);
     }
 
     @NotNull
     private static List<StockQuoteDto> getStockQuoteDtos(String csvData) {
         List<StockQuoteDto> stockQuotes = new ArrayList<>();
-
         String[] lines = new String[0];
         if (csvData != null) {
             lines = csvData.split("\n");
         }
         boolean isFirstLine = true;
         for (String line : lines) {
-            String[] values = line.split(",");
-            if (isFirstLine) {
+            List<String> values = new ArrayList<>();
+            List<String> res = new ArrayList<>();
+            if (isFirstLine || line.contains("null")) {
                 isFirstLine = false;
                 continue;
             }
-
-            LocalDate date = LocalDate.parse(values[0]);
-            Double open = Double.parseDouble(values[1]);
-            Double high = Double.parseDouble(values[2]);
-            Double low = Double.parseDouble(values[3]);
-            Double close = Double.parseDouble(values[4]);
-            Long volume = Long.parseLong(values[6]);
+            values = List.of(line.split(","));
+            for (int i = 0; i < values.size(); i++) {
+                if (i != 5) {
+                    res.add(values.get(i));
+                }
+            }
+            LocalDate date = LocalDate.parse(res.get(0));
+            Double open = Double.parseDouble(res.get(1));
+            Double high = Double.parseDouble(res.get(2));
+            Double low = Double.parseDouble(res.get(3));
+            Double close = Double.parseDouble(res.get(4));
+            Long volume = Long.parseLong(res.get(5));
             StockQuoteDto stockQuote = new StockQuoteDto(date, open, high, low, close, volume);
             stockQuotes.add(stockQuote);
         }
@@ -87,6 +91,10 @@ public class DataGetter {
 
     public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol) {
         return getHistoryStockQuotes(LocalDate.of(2001, 1, 1), LocalDate.now(), symbol);
+    }
+
+    public List<StockQuoteDto> getHistoryStockQuotesInDateRange(Symbol symbol, LocalDate startDate) {
+        return getHistoryStockQuotes(startDate, LocalDate.now(), symbol);
     }
 
     @SuppressWarnings("unchecked")
