@@ -33,13 +33,13 @@ public class StockQuoteController {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
 
+        System.out.println(symbol.getName() + " -> " +symbol.getStatus());
 
-        if (symbol.getStatus() == 0) {
-            stockQuoteService.loadAll(symbol);
-            System.out.println("In Save");
-            return processor.getAllQuoteLists(getter.getHistoryStockQuotesInDateRange(symbol, start), start, end);
+        if (!stockQuoteService.getListsForChart(symbol, start, end).isDone()) {
+            return processor.getAllQuoteLists(
+                    getter.getHistoryStockQuotesInDateRange(symbol, start), start, end);
+        } else {
+            return stockQuoteService.getListsForChart(symbol,start, end ).get();
         }
-
-        return stockQuoteService.getListsForChart(symbol,start, end ).get();
     }
 }

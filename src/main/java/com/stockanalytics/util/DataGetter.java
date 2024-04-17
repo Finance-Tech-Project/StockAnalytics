@@ -65,13 +65,13 @@ public class DataGetter {
         }
         boolean isFirstLine = true;
         for (String line : lines) {
-            List<String> values = new ArrayList<>();
+
             List<String> res = new ArrayList<>();
             if (isFirstLine || line.contains("null")) {
                 isFirstLine = false;
                 continue;
             }
-            values = List.of(line.split(","));
+            List<String> values = List.of(line.split(","));
             for (int i = 0; i < values.size(); i++) {
                 if (i != 5) {
                     res.add(values.get(i));
