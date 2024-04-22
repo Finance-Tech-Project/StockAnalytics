@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -41,7 +42,7 @@ public class StatisticsService {
     private final DataGetter getter;
     private final ModelMapper mapper;
 
-    public void updateStatistics() throws IOException, InterruptedException {
+    public void updateStatistics() throws IOException, InterruptedException, SQLException {
         List<Statistics> listStat = statisticsRepository.findAll();
         for (Statistics stat : listStat) {
             statisticsRepository.delete(stat);
@@ -58,7 +59,7 @@ public class StatisticsService {
         return df.format(movingAverage);
     }
 
-    private Map<String, String> calcStatistics(Symbol symbol) {
+    private Map<String, String> calcStatistics(Symbol symbol) throws SQLException {
         Map<String, String> calcMap = new HashMap<>();
         List<StockQuoteDto> sortedList = stockQuoteService.getData(symbol, LocalDate.now().minusDays(365), LocalDate.now());
         if (!sortedList.isEmpty()) {
@@ -90,7 +91,7 @@ public class StatisticsService {
     }
 
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    public Statistics getNewStatistics(Symbol symbol) throws IOException, InterruptedException {
+    public Statistics getNewStatistics(Symbol symbol) throws IOException, InterruptedException, SQLException {
         Statistics stat = new Statistics();
         List<Map<String, String>> mapList = getter.getDataForAnalysisFromRapidAPI(symbol);
         List<Map<String, String>> statData = new ArrayList<>(mapList);
@@ -176,7 +177,7 @@ public class StatisticsService {
     }
 
     @SuppressWarnings("OptionalGetWithoutIsPresent")
-    public StatisticsDto getStatisticsDto(String ticker) throws IOException, InterruptedException {
+    public StatisticsDto getStatisticsDto(String ticker) throws IOException, InterruptedException, SQLException {
         Symbol symbol = symbolService.getSymbol(ticker);
         Statistics st;
         StatisticsDto dto = new StatisticsDto();

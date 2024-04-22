@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,7 +29,7 @@ public class Calculator {
     private final BondYieldRepository bondYieldRepository;
     private final StockQuoteService stockQuoteService;
 
-    public List<AveragePriceByPeriodDto> calcMovingAvg(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
+    public List<AveragePriceByPeriodDto> calcMovingAvg(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) throws SQLException {
         List<AveragePriceByPeriodDto> movingAverage = new ArrayList<>();
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, days).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
@@ -56,7 +57,7 @@ public class Calculator {
         return movingAverage;
     }
 
-    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) throws SQLException {
         List<IncomePercentByPeriodDto> incomeList = new ArrayList<>();
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
@@ -85,7 +86,7 @@ public class Calculator {
                 .collect(Collectors.toList());
     }
 
-    private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+    private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) throws SQLException {
         List<StockQuote> quotes;
         if (symbol.getStatus() == 0) {
             quotes = stockQuoteService.getData(symbol, dateFrom, dateTo).stream()
@@ -104,7 +105,7 @@ public class Calculator {
         return quotes;
     }
 
-    public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+    public List<VolatilityDto> calculateVolatility(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) throws SQLException {
         List<VolatilityDto> result = new ArrayList<>();
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years);
 
@@ -133,7 +134,7 @@ public class Calculator {
                 .collect(Collectors.toList());
     }
 
-    public List<SharpRatioDto> calculateSharpRatios(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+    public List<SharpRatioDto> calculateSharpRatios(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) throws SQLException {
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years);
         List<BondYield> bondYields = bondYieldRepository.findBondYieldsBetweenDates(dateFrom, dateTo);
         List<SharpRatioDto> sharpRatios = new ArrayList<>();

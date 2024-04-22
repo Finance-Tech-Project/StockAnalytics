@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -45,7 +46,7 @@ public class QuotScheduler {
     }
 
     @Scheduled(cron = "0 0 7 * * 6")
-    public void updateStatistics() throws IOException, InterruptedException {
+    public void updateStatistics() throws IOException, InterruptedException, SQLException {
         statisticsService.updateStatistics();
         System.out.println("Statistics  updated  " + LocalDate.now() + " at " + LocalTime.now());
     }

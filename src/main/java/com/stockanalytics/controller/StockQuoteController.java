@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class StockQuoteController {
     private  final SymbolService symbolService;
 
     @GetMapping("/quote/history")
-    public List<List<StockQuoteDto>> getHistoryBySymbol (@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker ){
+    public List<List<StockQuoteDto>> getHistoryBySymbol (@RequestParam String dateFrom, @RequestParam String dateTo, @RequestParam String ticker ) throws SQLException {
         Symbol symbol = symbolService.getSymbol(ticker);
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);

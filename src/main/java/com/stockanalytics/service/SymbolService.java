@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -93,7 +94,7 @@ public class SymbolService {
         return symbolRepository.findAllByIsStartingEquals(1);
     }
 
-    public List<Symbol> addSymbolToStart(String ticker) {
+    public List<Symbol> addSymbolToStart(String ticker) throws SQLException {
         Symbol symbol = symbolRepository.getByName(ticker);
         symbol.setIsStarting(1);
         stockQuoteService.getData(symbol, LocalDate.now().minusDays(1), LocalDate.now());

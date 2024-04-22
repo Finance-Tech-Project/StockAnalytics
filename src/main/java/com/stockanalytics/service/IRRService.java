@@ -6,6 +6,7 @@ import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class IRRService {
      * @param ticker      The stock ticker symbol for which to calculate the IRR.
      * @return The calculated historical IRR as a double.
      */
-    public double calculateHistoricalIRR(LocalDate dateFrom, LocalDate dateTo, Double startAmount, String ticker) {
+    public double calculateHistoricalIRR(LocalDate dateFrom, LocalDate dateTo, Double startAmount, String ticker) throws SQLException {
         // Inside the calculateHistoricalIRR method
         Symbol symbol = symbolService.getSymbol(ticker);
 
@@ -85,7 +86,7 @@ public class IRRService {
         return npvDerivative;
     }
 
-    public List<IrrDto> calculateHistoricalIRRList(LocalDate dateFrom, LocalDate dateTo, Double startAmount, String ticker) {
+    public List<IrrDto> calculateHistoricalIRRList(LocalDate dateFrom, LocalDate dateTo, Double startAmount, String ticker) throws SQLException {
         // Inside the calculateHistoricalIRR method
         Symbol symbol = symbolService.getSymbol(ticker);
 

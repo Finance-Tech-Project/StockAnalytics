@@ -6,6 +6,7 @@ import com.stockanalytics.service.SymbolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class SymbolController {
     }
 
     @PostMapping("/start/add")
-    public List<Symbol> addSymbolToStartingPage(@RequestParam String ticker) {
+    public List<Symbol> addSymbolToStartingPage(@RequestParam String ticker) throws SQLException {
         return symbolService.addSymbolToStart(ticker);
     }
 

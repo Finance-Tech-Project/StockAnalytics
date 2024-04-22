@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -25,7 +26,7 @@ public class AnalyticsController {
 
     @GetMapping("/movAvg")
     public List<AveragePriceByPeriodDto> getMovingAverage(@RequestParam String dateFrom, @RequestParam String dateTo,
-                                                          @RequestParam String ticker, @RequestParam int period) {
+                                                          @RequestParam String ticker, @RequestParam int period) throws SQLException {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
         return analyticsService.getMovingAverage(start, end, ticker, period);
@@ -33,7 +34,7 @@ public class AnalyticsController {
 
     @GetMapping("/simpleIncome")
     public List<IncomePercentByPeriodDto> getSimpleIncome(@RequestParam String dateFrom, @RequestParam String dateTo,
-                                                          @RequestParam String ticker, @RequestParam int years) {
+                                                          @RequestParam String ticker, @RequestParam int years) throws SQLException {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
         return analyticsService.getSimpleIncome(start, end, ticker, years);
@@ -41,7 +42,7 @@ public class AnalyticsController {
 
     @GetMapping("/volatility")
     public List<VolatilityDto> getDataAboutVolatility(@RequestParam String dateFrom, @RequestParam String dateTo,
-                                                      @RequestParam String ticker, @RequestParam int years) {
+                                                      @RequestParam String ticker, @RequestParam int years) throws SQLException {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
         return analyticsService.getDataAboutVolatility(start, end, ticker, years);
@@ -49,7 +50,7 @@ public class AnalyticsController {
 
     @GetMapping("/sharpRatios")
     public List<SharpRatioDto> getSharpRatios(@RequestParam String dateFrom, @RequestParam String dateTo,
-                                              @RequestParam String ticker, @RequestParam int years) {
+                                              @RequestParam String ticker, @RequestParam int years) throws SQLException {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
         return analyticsService.getSharpRatios(start, end, ticker, years);
@@ -79,7 +80,7 @@ public class AnalyticsController {
     public List<IrrDto> getIRRDto(@RequestParam String dateFrom,
                                   @RequestParam String dateTo,
                                   @RequestParam Double startAmount,
-                                  @RequestParam String ticker) {
+                                  @RequestParam String ticker) throws SQLException {
         LocalDate start = LocalDate.parse(dateFrom);
         LocalDate end = LocalDate.parse(dateTo);
 
