@@ -18,9 +18,9 @@ import java.util.List;
 @Service
 @Repository
 public class DividendService {
-    final SymbolRepository symbolRepository;
-    final DividendRepository dividendRepository;
-    final HTMLParser parser = new HTMLParser();
+    private final SymbolRepository symbolRepository;
+    private final DividendRepository dividendRepository;
+    private final HTMLParser parser = new HTMLParser();
 
     @Transactional
     public List<Dividend> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {

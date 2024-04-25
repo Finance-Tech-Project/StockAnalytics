@@ -33,7 +33,7 @@ public class StockQuoteController {
         LocalDate end = LocalDate.parse(dateTo);
         LocalDate start = LocalDate.parse(dateFrom);
 
-        System.out.println(symbol.getName() + " -> " +symbol.getStatus());
+//        System.out.println(symbol.getName() + " -> " +symbol.getStatus());
 
         if (!stockQuoteService.getListsForChart(symbol, start, end).isDone()) {
             return processor.getAllQuoteLists(

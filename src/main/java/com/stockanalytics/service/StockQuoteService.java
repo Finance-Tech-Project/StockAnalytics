@@ -1,14 +1,10 @@
 package com.stockanalytics.service;
 
 import com.stockanalytics.dao.StockQuoteRepository;
-import com.stockanalytics.dao.SymbolRepository;
-import com.stockanalytics.dto.StatisticsDto;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
-import com.stockanalytics.util.DataGetter;
-import com.stockanalytics.util.QuoteDataRounding;
-import com.stockanalytics.util.StockQuoteProcessor;
+import com.stockanalytics.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
@@ -16,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -24,41 +19,25 @@ import java.util.stream.Collectors;
 @Service
 @Repository
 public class StockQuoteService {
-    final QuoteDataRounding quoteDataRounding;
-    final StockQuoteRepository stockQuoteRepository;
-    final SymbolRepository symbolRepository;
-    final StockQuoteProcessor processor = new StockQuoteProcessor();
-    final DataGetter getter = new DataGetter();
-    final StockQuoteAsyncLoadAllService stockQuoteAsyncLoadAllService;
+    private final StockQuoteRepository stockQuoteRepository;
+    private final StockQuoteProcessor stockQuoteProcessor;
+    private final DataGetter getter;
+    private final SavingStockQuoteDataInDB savingStockQuoteDataInDB;
+    private final DateGetter dateGetter;
 
     public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        if (symbol.getStatus() == 0) {
-            if (getQuotesByPeriod(dateFrom, dateTo, symbol).isEmpty()) {
-                stockQuoteAsyncLoadAllService.loadAll(symbol);
-            }
-            return getter.getHistoryStockQuotesInDateRange(symbol, dateFrom);
+        System.out.println(stockQuoteRepository.getMaxDateBySymbol(symbol));
+        LocalDate maxDate = dateGetter.getMaxDateFromStockQuoteForSavingData(symbol, stockQuoteRepository);
+        if (dateGetter.getFlagToSaveData(symbol, stockQuoteRepository)) {
+            savingStockQuoteDataInDB.saveStockQuoteData(symbol, getter.getHistoryStockQuotesInDateRange(symbol, maxDate));
         }
         return getQuotesByPeriod(dateFrom, dateTo, symbol);
-    }
-
-    public StockQuote getSingleDate(Symbol symbol, LocalDate date) {
-        if (symbol.getStatus() == 0) {
-            stockQuoteAsyncLoadAllService.loadAll(symbol);
-        }
-        return stockQuoteRepository.getBySymbolAndDate(symbol, date);
-    }
-
-    public List<StockQuote> getListByIdAndDateBetween(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        if (symbol.getStatus() == 0) {
-            stockQuoteAsyncLoadAllService.loadAll(symbol);
-        }
-        return stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom, dateTo);
     }
 
     @Async
     public CompletableFuture<List<List<StockQuoteDto>>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
         List<StockQuoteDto> list = getData(symbol, dateFrom, dateTo);
-        return CompletableFuture.completedFuture(processor.getAllQuoteLists(list, dateFrom, dateTo)) ;
+        return CompletableFuture.completedFuture(stockQuoteProcessor.getAllQuoteLists(list, dateFrom, dateTo)) ;
     }
 
     public List<StockQuoteDto> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {
@@ -76,10 +55,5 @@ public class StockQuoteService {
                         quote.getClose(),
                         quote.getVolume()))
                 .collect(Collectors.toList());
-    }
-
-    public List<StatisticsDto> getStatistics(Symbol symbol) {
-        Map<String, String> parameters = getter.getDataForStatisticsFromYahoo(symbol);
-        return null;
     }
 }

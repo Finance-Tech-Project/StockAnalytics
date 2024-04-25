@@ -71,7 +71,7 @@ public class SymbolService {
                         .industryCategory(String.valueOf(quote.get("industryDisp").getAsString()))
                         .companyName(String.valueOf(quote.get("longname").getAsString()))
                         .type(String.valueOf(quote.get("typeDisp").getAsString()))
-                        .status(0)
+//                        .status(0)
                         .isStarting(0)
                         .build();
                 symbolRepository.save(symbol);
@@ -113,8 +113,8 @@ public class SymbolService {
             return null;
         }
         List<Symbol> searchedSymbols = symbolRepository.findByCompanyNameOrTickerStartingWith(substring);
-        Comparator<Symbol> statusComparator = Comparator.comparingInt(Symbol::getStatus).reversed();
-        searchedSymbols.sort(statusComparator);
+//        Comparator<Symbol> statusComparator = Comparator.comparingInt(Symbol::getStatus).reversed();
+//        searchedSymbols.sort(statusComparator);
         if (searchedSymbols.size() >= 10) {
             return searchedSymbols.subList(0, 10);
         }

@@ -11,6 +11,10 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 public interface StockQuoteRepository extends JpaRepository<StockQuote, LocalDate> {
+
+    @Query("select max(r.id.date) from StockQuote r where r.id.symbol = :symbol")
+    LocalDate getMaxDateBySymbol(@Param("symbol") Symbol symbol);
+
     @Query("select r from StockQuote r where r.id.symbol = :symbol and r.id.date = :date")
     StockQuote getBySymbolAndDate(@Param("symbol") Symbol symbol,
                                   @Param("date") LocalDate date);

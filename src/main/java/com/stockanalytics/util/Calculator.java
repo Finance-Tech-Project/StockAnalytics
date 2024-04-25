@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-
 public class Calculator {
     private final StockQuoteRepository stockQuoteRepository;
     private final BondYieldRepository bondYieldRepository;
     private final StockQuoteService stockQuoteService;
+    private final DateGetter dateGetter;
 
     public List<AveragePriceByPeriodDto> calcMovingAvg(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int days) {
         List<AveragePriceByPeriodDto> movingAverage = new ArrayList<>();
@@ -56,7 +56,12 @@ public class Calculator {
         return movingAverage;
     }
 
-    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
+    public List<IncomePercentByPeriodDto> calcSimpleIncomeList(
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Symbol symbol,
+            int years
+    ) {
         List<IncomePercentByPeriodDto> incomeList = new ArrayList<>();
         List<StockQuote> quotes = getListQuotes(dateFrom, dateTo, symbol, years).stream()
                 .sorted(Comparator.comparing(StockQuote::getDate))
@@ -87,7 +92,7 @@ public class Calculator {
 
     private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
         List<StockQuote> quotes;
-        if (symbol.getStatus() == 0) {
+        if (dateGetter.getFlagToSaveData(symbol, stockQuoteRepository)) {
             quotes = stockQuoteService.getData(symbol, dateFrom, dateTo).stream()
                     .map(q -> new StockQuote(
                             new StockQuoteId(
@@ -99,7 +104,8 @@ public class Calculator {
                                     q.getVolume()))
                     .collect(Collectors.toList());
         } else {
-            quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(symbol, dateFrom.minusYears(years), dateTo);
+            quotes = stockQuoteRepository.findAllByIdIdAndDateBetween(
+                    symbol, dateFrom.minusYears(years == 2 ? 0 : years), dateTo);
         }
         return quotes;
     }

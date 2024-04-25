@@ -2,6 +2,8 @@ package com.stockanalytics.util;
 
 import lombok.NoArgsConstructor;
 import com.stockanalytics.dto.StockQuoteDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -13,8 +15,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-@NoArgsConstructor
+@Component
+@RequiredArgsConstructor
 public class StockQuoteProcessor {
 
     public List<StockQuoteDto> getDailyStockQuotes(List<StockQuoteDto> quotes, LocalDate dateFrom, LocalDate dateTo) {

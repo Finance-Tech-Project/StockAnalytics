@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpMethod;
@@ -23,10 +22,8 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Setter
 public class DataGetter {
     private final RestTemplate restTemplate = new RestTemplate();
@@ -87,10 +84,6 @@ public class DataGetter {
             stockQuotes.add(stockQuote);
         }
         return stockQuotes;
-    }
-
-    public List<StockQuoteDto> getAllHistoryStockQuotes(Symbol symbol) {
-        return getHistoryStockQuotes(LocalDate.of(2001, 1, 1), LocalDate.now(), symbol);
     }
 
     public List<StockQuoteDto> getHistoryStockQuotesInDateRange(Symbol symbol, LocalDate startDate) {
