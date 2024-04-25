@@ -96,7 +96,7 @@ public class SymbolService {
         Symbol symbol = symbolRepository.getByName(ticker);
         symbol.setIsStarting(1);
         stockQuoteService.getData(symbol, LocalDate.now().minusDays(1), LocalDate.now());
-        symbol.setStatus(1);
+//        symbol.setStatus(1);
         symbolRepository.save(symbol);
         return symbolRepository.findAllByIsStartingEquals(1);
     }
