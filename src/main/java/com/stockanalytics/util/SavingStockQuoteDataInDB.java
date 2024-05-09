@@ -1,14 +1,11 @@
 package com.stockanalytics.util;
 
-import com.stockanalytics.dao.StockQuoteRepository;
-import com.stockanalytics.dao.SymbolRepository;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class SavingStockQuoteDataInDB {
 
     @Value("${spring.datasource.url}")
@@ -35,17 +33,8 @@ public class SavingStockQuoteDataInDB {
     private final String datasourcePassword;
 
     private final QuoteDataRounding quoteDataRounding;
-    private final SymbolRepository symbolRepository;
-    private final DateGetter dateGetter;
-    private final StockQuoteRepository stockQuoteRepository;
 
-//    @Async
-//    @Transactional
     public void saveStockQuoteData(Symbol symbol, List<StockQuoteDto> quotes) {
-//        System.out.println(
-//                "Max date -> " +
-//                        dateGetter.getMaxDateFromStockQuoteForSavingData(symbol, stockQuoteRepository) + " -> " + symbol.getName());
-
         String csvData = quotes.stream()
                 .map(quote -> formatToCsvLine(quote, symbol))
                 .collect(Collectors.joining("\n"));
@@ -59,13 +48,11 @@ public class SavingStockQuoteDataInDB {
                 throw new RuntimeException(e);
             }
         }
-//        symbol.setStatus(1);
-//        symbolRepository.save(symbol);
     }
 
     private String formatToCsvLine(StockQuoteDto quote, Symbol symbol) {
         // Assuming CSV format: date, symbol, open, high, low, close, volume
-        return String.format("%s,%s,%f,%f,%f,%f,%d",
+        return String.format("%s,%s,%s,%s,%s,%s,%d",
                 quote.getDate(),
                 symbol.getName(),
                 quoteDataRounding.round(quote.getOpen()),

@@ -32,7 +32,7 @@ public class QuotScheduler {
 
     @Scheduled(cron = "0 0 4 * * 1-5") //
     public void updateHistoryData() {
-        List<Symbol> sym = symbolRepository.findAllByStatusIsGreaterThan(0);
+        List<Symbol> sym = symbolRepository.findAll();
         for (Symbol symbol : sym){
             LocalDate lastDate= stockQuoteRepository.getQuotDatesList(symbol).get(0);
             List<StockQuoteDto> newDtos = getter.getHistoryStockQuotes(lastDate.plusDays(1), LocalDate.now(), symbol);

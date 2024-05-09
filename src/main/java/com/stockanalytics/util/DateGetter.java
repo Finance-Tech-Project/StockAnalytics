@@ -12,7 +12,6 @@ import java.time.LocalDate;
 public class DateGetter {
 
     public LocalDate getMaxDateFromStockQuoteForSavingData(Symbol symbol, StockQuoteRepository stockQuoteRepository) {
-//        System.out.println("Max Date for symbol -> " + symbol.getName() + " from DB -> " + stockQuoteRepository.getMaxDateBySymbol(symbol));
         if (stockQuoteRepository.getMaxDateBySymbol(symbol) == null) {
             return LocalDate.of(2001, 1, 1);
         } else if (stockQuoteRepository.getMaxDateBySymbol(symbol).isEqual(LocalDate.now())) {
@@ -22,7 +21,7 @@ public class DateGetter {
         }
     }
 
-    public boolean getFlagToSaveData(Symbol symbol,StockQuoteRepository stockQuoteRepository) {
-        return getMaxDateFromStockQuoteForSavingData(symbol,stockQuoteRepository).isBefore(LocalDate.now());
+    public boolean getFlagToSaveData(LocalDate maxDate) {
+        return maxDate.isBefore(LocalDate.now());
     }
 }

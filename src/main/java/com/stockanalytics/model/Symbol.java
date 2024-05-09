@@ -25,8 +25,6 @@ public class Symbol implements Serializable {
     String type;
     @Column(nullable = false)
     int isStarting;
-//    @NotNull
-//    int status;
     @NotNull
     int hasDividends;
 }

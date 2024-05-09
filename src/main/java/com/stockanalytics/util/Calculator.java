@@ -92,7 +92,8 @@ public class Calculator {
 
     private List<StockQuote> getListQuotes(LocalDate dateFrom, LocalDate dateTo, Symbol symbol, int years) {
         List<StockQuote> quotes;
-        if (dateGetter.getFlagToSaveData(symbol, stockQuoteRepository)) {
+        LocalDate maxDate = dateGetter.getMaxDateFromStockQuoteForSavingData(symbol, stockQuoteRepository);
+        if (dateGetter.getFlagToSaveData(maxDate)) {
             quotes = stockQuoteService.getData(symbol, dateFrom, dateTo).stream()
                     .map(q -> new StockQuote(
                             new StockQuoteId(

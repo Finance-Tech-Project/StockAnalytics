@@ -6,13 +6,11 @@ import com.stockanalytics.model.StockQuote;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.util.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -26,18 +24,16 @@ public class StockQuoteService {
     private final DateGetter dateGetter;
 
     public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        System.out.println(stockQuoteRepository.getMaxDateBySymbol(symbol));
         LocalDate maxDate = dateGetter.getMaxDateFromStockQuoteForSavingData(symbol, stockQuoteRepository);
-        if (dateGetter.getFlagToSaveData(symbol, stockQuoteRepository)) {
-            savingStockQuoteDataInDB.saveStockQuoteData(symbol, getter.getHistoryStockQuotesInDateRange(symbol, maxDate));
+        if (dateGetter.getFlagToSaveData(maxDate)) {
+           savingStockQuoteDataInDB.saveStockQuoteData(symbol, getter.getHistoryStockQuotesInDateRange(symbol, maxDate));
         }
         return getQuotesByPeriod(dateFrom, dateTo, symbol);
     }
 
-    @Async
-    public CompletableFuture<List<List<StockQuoteDto>>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
+    public List<List<StockQuoteDto>> getListsForChart(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
         List<StockQuoteDto> list = getData(symbol, dateFrom, dateTo);
-        return CompletableFuture.completedFuture(stockQuoteProcessor.getAllQuoteLists(list, dateFrom, dateTo)) ;
+        return stockQuoteProcessor.getAllQuoteLists(list, dateFrom, dateTo);
     }
 
     public List<StockQuoteDto> getQuotesByPeriod(LocalDate dateFrom, LocalDate dateTo, Symbol symbol) {

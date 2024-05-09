@@ -4,11 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.stockanalytics.model.Symbol;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface SymbolRepository extends JpaRepository<Symbol, String> {
-    List<Symbol> findAllByStatusIsGreaterThan(int status);
 
     @Query("select s from Symbol s where s.isStarting=1 ")
     List<Symbol> findAllByIsStartingEquals(int isStarting);

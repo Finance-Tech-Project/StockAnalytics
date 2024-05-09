@@ -7,6 +7,7 @@ import com.stockanalytics.dto.VolatilityDto;
 import com.stockanalytics.model.Symbol;
 import com.stockanalytics.util.Calculator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Repository
 public class AnalyticsService {
     private final Calculator calculator;
     private final SymbolService symbolService;
