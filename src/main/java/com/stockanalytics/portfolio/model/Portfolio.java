@@ -1,12 +1,7 @@
 package com.stockanalytics.portfolio.model;
-
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import jakarta.persistence.*;
-
 import com.stockanalytics.accounting.model.UserAccount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,29 +27,16 @@ public class Portfolio {
 
     @ElementCollection
     @CollectionTable(name = "portfolio_stocks")
-    @MapKeyColumn(name = "stock_symbol")
-    @Column(name = "stock_quantity")
-    private Map<String, Integer> stocks;
+    private List<PortfolioStocks> stocks;
 
     public Portfolio(
             UserAccount userLogin,
             String portfolioName,
             LocalDate portfolioDate,
-            Map<String, Integer> stocks) {
+            List<PortfolioStocks> stocks) {
         this.userLogin = userLogin;
         this.portfolioName = portfolioName;
         this.portfolioDate = portfolioDate;
         this.stocks = stocks;
-    }
-
-    // Method for adding stocks from watchlist
-    public void addStocksFromWatchlist(List<String> watchlist) {
-        if (this.stocks == null) {
-            this.stocks = new HashMap<>();
-        }
-        // all stocks from the watchlist have an initial quantity of 1
-        for (String stock : watchlist) {
-            this.stocks.put(stock, 1);
-        }
     }
 }

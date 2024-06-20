@@ -15,9 +15,11 @@ import com.stockanalytics.portfolio.dto.PortfolioValueDto;
 import com.stockanalytics.portfolio.dto.StockDto;
 import com.stockanalytics.portfolio.dto.WatchlistDto;
 import com.stockanalytics.portfolio.model.Portfolio;
+import com.stockanalytics.portfolio.model.PortfolioStocks;
 import com.stockanalytics.portfolio.service.exceptions.*;
 
 import com.stockanalytics.service.SymbolService;
+import com.stockanalytics.util.QuoteDataRounding;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -26,9 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("ALL")
@@ -40,6 +40,7 @@ public class PortfolioServiceImpl implements PortfolioService {
     final StockQuoteRepository stockQuoteRepository;
     final SymbolRepository symbolRepository;
     final ModelMapper modelMapper;
+    final QuoteDataRounding quoteDataRounding;
     private final SymbolService symbolService;
 
     static final Logger logger = LoggerFactory.getLogger(UserAccountServiceImpl.class);
@@ -56,17 +57,21 @@ public class PortfolioServiceImpl implements PortfolioService {
             throw new PortfolioExistsException();
         }
 
-        Map<String, Integer> selectedSymbols = portfolio.getStocks();
+        List<PortfolioStocks> selectedSymbols = portfolio.getStocks();
         if (selectedSymbols != null && !selectedSymbols.isEmpty()) {
-            Map<String, Integer> stocks = new HashMap<>();
-            for (Map.Entry<String, Integer> entry : selectedSymbols.entrySet()) {
-                String symbol = entry.getKey();
-                int quantity = entry.getValue();
-                stocks.put(symbol, quantity);
-            }
-            portfolio.setStocks(stocks);
+            selectedSymbols.forEach(s -> {
+                String symbolName = s.getSymbolName();
+                Symbol symbol = Symbol.builder()
+                        .name(s.getSymbolName())
+                        .companyName(s.getCompanyName()).build();
+                LocalDate lastDay = stockQuoteRepository.getMaxDateBySymbol(symbol);
+                Double close = stockQuoteRepository.findStockPriceBySymbolNameAndDate(symbolName, lastDay);
+                s.setClose(close);
+                s.setSumOfAmountOfStocks(quoteDataRounding.round(close * s.getAmountOfStocksForUserPortfolio()));
+            });
+            portfolio.setStocks(selectedSymbols);
         } else {
-            portfolio.setStocks(new HashMap<>());
+            portfolio.setStocks(new ArrayList<>());
         }
         portfolio.setUserLogin(user);
         portfolioRepository.save(portfolio);
@@ -174,8 +179,11 @@ public class PortfolioServiceImpl implements PortfolioService {
 
             List<String> watchlist = user.getWatchlist();
             if (watchlist.contains(symbol)) {
-                Map<String, Integer> stocks = portfolio.getStocks();
-                stocks.put(symbol, stocks.getOrDefault(symbol, 0) + quantity);
+                List<PortfolioStocks> stocks = portfolio.getStocks();
+                PortfolioStocks portfolioStock = stocks.get(stocks.indexOf(symbol));
+                int newQuantity = portfolioStock.getAmountOfStocksForUserPortfolio() + quantity;
+                portfolioStock.setAmountOfStocksForUserPortfolio(newQuantity);
+                stocks.set(stocks.indexOf(symbol), portfolioStock);
                 portfolio.setStocks(stocks);
                 portfolioRepository.save(portfolio);
                 return modelMapper.map(portfolio, StockDto.class);
@@ -190,18 +198,18 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Override
     public StockDto removeStock(String portfolioName, String symbol, int quantity) {
         Portfolio portfolio = portfolioRepository.getByPortfolioName(portfolioName);
-        Map<String, Integer> stocks = portfolio.getStocks();
-        if (stocks.containsKey(symbol) && stocks.get(symbol) == 0) {
+        List<PortfolioStocks> stocks = portfolio.getStocks();
+        if (stocks.contains(symbol)) {
             stocks.remove(symbol);
             portfolio.setStocks(stocks);
             portfolioRepository.save(portfolio);
             return modelMapper.map(portfolio, StockDto.class);
         }
 
-        if (stocks.containsKey(symbol)) {
-            int currentQuantity = stocks.get(symbol);
+        if (stocks.contains(symbol)) {
+            int currentQuantity = stocks.get(stocks.indexOf(symbol)).getAmountOfStocksForUserPortfolio();
             if (currentQuantity >= quantity) {
-                stocks.put(symbol, currentQuantity - quantity);
+                stocks.get(stocks.indexOf(symbol)).setAmountOfStocksForUserPortfolio(currentQuantity - quantity);
                 portfolio.setStocks(stocks);
                 portfolioRepository.save(portfolio);
                 return modelMapper.map(portfolio, StockDto.class);
@@ -227,13 +235,13 @@ public class PortfolioServiceImpl implements PortfolioService {
     @Override
     public double calculatePortfolioValue(String portfolioName, LocalDate date) {
         Portfolio portfolio = portfolioRepository.getByPortfolioName(portfolioName);
-        Map<String, Integer> stocks = portfolio.getStocks();
+        List<PortfolioStocks> stocks = portfolio.getStocks();
 
-        return stocks.entrySet().stream()
+        return stocks.stream()
                 .mapToDouble(
-                        entry -> {
-                            String symbol = entry.getKey();
-                            int quantity = entry.getValue();
+                        stock -> {
+                            String symbol = stock.getSymbolName();
+                            int quantity = stock.getAmountOfStocksForUserPortfolio();
 
                             try {
                                 double stockPrice = getStockPriceOnDateOrClosestNext(symbol, date);

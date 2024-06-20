@@ -24,7 +24,8 @@ public class StockQuoteService {
     private final DateGetter dateGetter;
 
     public List<StockQuoteDto> getData(Symbol symbol, LocalDate dateFrom, LocalDate dateTo) {
-        LocalDate maxDate = dateGetter.getMaxDateFromStockQuoteForSavingData(symbol, stockQuoteRepository);
+
+        LocalDate maxDate = dateGetter.getMaxDateFromStockQuoteForSavingData(symbol, stockQuoteRepository, dateFrom);
         if (dateGetter.getFlagToSaveData(maxDate)) {
            savingStockQuoteDataInDB.saveStockQuoteData(symbol, getter.getHistoryStockQuotesInDateRange(symbol, maxDate));
         }

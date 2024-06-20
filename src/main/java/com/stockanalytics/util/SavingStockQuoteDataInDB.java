@@ -1,5 +1,6 @@
 package com.stockanalytics.util;
 
+import com.stockanalytics.dao.StockQuoteRepository;
 import com.stockanalytics.dto.StockQuoteDto;
 import com.stockanalytics.model.Symbol;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,8 @@ public class SavingStockQuoteDataInDB {
     private final String datasourcePassword;
 
     private final QuoteDataRounding quoteDataRounding;
+    private final StockQuoteRepository stockQuoteRepository;
+
 
     public void saveStockQuoteData(Symbol symbol, List<StockQuoteDto> quotes) {
         String csvData = quotes.stream()

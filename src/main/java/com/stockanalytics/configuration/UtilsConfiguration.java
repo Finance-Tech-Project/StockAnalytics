@@ -11,8 +11,8 @@ public class UtilsConfiguration {
     DataGetter dataGetter() { return new DataGetter(); }
 
     @Bean
-    DateGetter dateGetter() { return new DateGetter(); }
+    DateGetter dateGetter() { return new DateGetter(dataGetter()); }
 
     @Bean
-    String stringGetter() { return new String(); }
+    String stringGetter() { return ""; }
 }

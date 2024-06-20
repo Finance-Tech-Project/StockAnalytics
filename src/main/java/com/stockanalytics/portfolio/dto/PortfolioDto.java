@@ -1,7 +1,7 @@
 package com.stockanalytics.portfolio.dto;
-
 import java.time.LocalDate;
-import java.util.Map;
+import java.util.List;
+import com.stockanalytics.portfolio.model.PortfolioStocks;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +17,5 @@ public class PortfolioDto {
     private String userLogin;
     private String portfolioName;
     private LocalDate portfolioDate;
-    private Map<String, Integer> stocks;
+    private List<PortfolioStocks> stocks;
 }

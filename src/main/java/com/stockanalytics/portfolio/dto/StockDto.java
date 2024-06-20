@@ -1,8 +1,7 @@
 package com.stockanalytics.portfolio.dto;
-
+import com.stockanalytics.portfolio.model.PortfolioStocks;
 import lombok.*;
-
-import java.util.Map;
+import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
@@ -10,5 +9,5 @@ import java.util.Map;
 @Builder
 public class StockDto {
     public  String portfolioName;
-    private Map<String, Integer> stocks;
+    private List<PortfolioStocks> stocks;
 }
